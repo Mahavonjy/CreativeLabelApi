@@ -162,7 +162,7 @@ class Secure:
             if not song:
                 return custom_response("Song not found", 404)
             kwargs["up_file"], kwargs['up'] = request.files.get('file'), {}
-            kwargs["data"], kwargs["ser_user"], kwargs["song"] = data, ser_user, song,
+            kwargs["data"], kwargs["ser_user"], kwargs["song"] = data, ser_user, song
             return func(*args, **kwargs)
 
         return music_secure

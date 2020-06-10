@@ -18,7 +18,7 @@ from sources.models.medias.mediaListened import Listened, ListenedSchema
 from sources.models.artists.history.history import ArtistHistory, ArtistHistorySchema
 from sources.tools.tools import librosa_collect
 from sources.models.profiles.profile import ProfileSchema
-from sources.models.search.basicSearch import document_delete
+from sources.models.search.basicSearch import document_delete as d_delete
 from sources.models.users.user import User, UserSchema
 from preferences import defaultDataConf
 
@@ -256,7 +256,7 @@ def delete_media(song_id, user_connected_model, user_connected_schema):
         args['keys'], args['filename'], args['file'] = user_connected_model.id, media_song["storage_name"], None
         update_file_storage(args)
         media.delete()
-        document_delete({"id": media_song['id']}, {"storage_name": media_song['storage_name']})
+        d_delete("albums_and_songs", "songs", {"id": media_song['id']}, {"storage_name": media_song['storage_name']})
         return custom_response("Deleted", 200)
     return custom_response("file not found or deleted", 400)
 
