@@ -116,6 +116,17 @@ def librosa_collect(file):
     os.remove(dirname)
     return bpm, tm
 
+def check_validations_errors(resp, key):
+
+    new_resp = resp[key]
+    new_key = list(new_resp)[0]
+    tmp = new_resp[new_key][0].replace('Field', key)
+    if not bool(new_resp[new_key][0].find('Field')):
+        tmp = tmp.replace('Field', key)
+        return tmp.replace('data', new_key), True
+    tmp = tmp.replace('data', new_key) if not bool(tmp.find('data')) else new_key + " " + tmp
+    return tmp.replace('field', key), True
+
 
 def validate_data(_schema, requested, return_dict=True):
     """
@@ -155,12 +166,9 @@ def validate_data(_schema, requested, return_dict=True):
             if not bool(resp[key][0].find('Field')):
                 return resp[key][0].replace('Field', key), True
             return resp[key][0].replace('field', key), True
-        except KeyError or AttributeError:
-            new_resp = resp[key]
-            new_key = list(new_resp)[0]
-            tmp = new_resp[new_key][0].replace('Field', key)
-            if not bool(new_resp[new_key][0].find('Field')):
-                tmp = tmp.replace('Field', key)
-                return tmp.replace('data', new_key), True
-            tmp = tmp.replace('data', new_key) if not bool(tmp.find('data')) else new_key + " " + tmp
-            return tmp.replace('field', key), True
+        except KeyError:
+            return check_validations_errors(resp, key)
+        except AttributeError:
+            return check_validations_errors(resp, key)
+
+
