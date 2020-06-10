@@ -7,7 +7,7 @@ import requests
 from flask import Blueprint, request
 from flask import g as auth
 from google.cloud import storage
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 
 from sources.models import custom_response
 from auth.authentification import Auth

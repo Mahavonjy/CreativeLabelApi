@@ -3,7 +3,7 @@
 
 from sources.models.partnership.partnership import Partner, PartnerSchema
 from sources.models.users.user import UserSchema
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from auth.authentification import Auth
 from preferences import defaultDataConf
 from sources.models import custom_response

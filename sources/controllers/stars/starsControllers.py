@@ -10,7 +10,7 @@ from sources.models.users.user import User
 from sources.models import custom_response
 from auth.authentification import Auth
 from preferences.defaultDataConf import USER_AUDITOR_PRO
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.controllers import convert_dict_to_sql_json
 from sources.models.stars.noteStars import Stars, StarSchema
 

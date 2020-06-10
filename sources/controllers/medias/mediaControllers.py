@@ -9,14 +9,14 @@ from google.cloud import storage
 from auth.authentification import Auth
 from sources.controllers import update_medias_shared, update_file_storage, create_artist_new_story_dict
 from sources.controllers.medias.mediaBeatSuggestion import media_beat_suggestion
-from sources.controllers.security.verification import Secure
+from sources.security.verification import Secure
 from sources.models import custom_response, add_in_storage
 from sources.models.admirations.admirations import Admiration, AdmireSchema
 from sources.models.medias.albums import Albums, AlbumSchema
 from sources.models.medias.media import Media, MediaSchema
 from sources.models.medias.mediaListened import Listened, ListenedSchema
 from sources.models.artists.history.history import ArtistHistory, ArtistHistorySchema
-from sources.controllers.tools.tools import librosa_collect
+from sources.tools.tools import librosa_collect
 from sources.models.profiles.profile import ProfileSchema
 from sources.models.search.basicSearch import document_delete
 from sources.models.users.user import User, UserSchema

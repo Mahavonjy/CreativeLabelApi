@@ -14,7 +14,7 @@ from sources.models.artists.services.artistServices import Services
 from sources.models.revokeToken.tokenRevoke import RevokedTokenModel
 from sources.controllers.profiles.profilesControllers import create_profile
 from preferences.defaultDataConf import type_of_isl_artist
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.controllers import create_artist_story
 from preferences import USER_ARTIST_BEATMAKER
 from auth.authentification import Auth

@@ -2,7 +2,7 @@
 """ shebang """
 
 from sources.models.bankingDetails.banking import BankingDetails, BankingSchema
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from auth.authentification import Auth
 from sources.models import custom_response
 from flask import Blueprint, request

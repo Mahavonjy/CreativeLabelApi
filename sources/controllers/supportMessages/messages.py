@@ -2,7 +2,7 @@
 """ shebang """
 
 from sources.models.supportMessages.messages import SupportMessages, SupportMessagesSchema
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.models import custom_response
 from auth.authentification import Auth
 from flask import request, Blueprint

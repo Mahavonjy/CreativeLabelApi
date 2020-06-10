@@ -4,7 +4,7 @@
 from flask import Blueprint, request
 from preferences.defaultDataConf import refund_allowed_type
 
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.models.users.user import User
 from sources.models import custom_response
 from sources.models.artists.conditions.globals import ConditionGlobals, ConditionGlobalSchema

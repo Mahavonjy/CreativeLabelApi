@@ -5,7 +5,7 @@ from sources.controllers import add_albums_media_in_storage
 from sources.models.medias.media import MediaSchema
 from sources.models import custom_response, add_in_storage
 from sources.models.profiles.profile import ProfileSchema
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.models.users.user import User, UserSchema
 from sources.models.medias.albums import AlbumSchema
 from preferences import defaultDataConf

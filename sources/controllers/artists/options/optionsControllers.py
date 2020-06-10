@@ -8,7 +8,7 @@ from sources.controllers.artists.materials.materialsControllers import create_ne
 from sources.controllers import convert_dict_to_sql_json
 from sources.models.artists.options.artistOptions import Options, OptionsSchema
 from auth.authentification import Auth
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.models import custom_response
 from flask import Blueprint, request
 

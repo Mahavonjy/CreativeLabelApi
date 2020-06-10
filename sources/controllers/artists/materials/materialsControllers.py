@@ -6,7 +6,7 @@ from flask import Blueprint, request
 from auth.authentification import Auth
 from preferences import GOOGLE_BUCKET_TECHNICAL_SHEET
 from sources.controllers import update_file_storage
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.models import custom_response, add_in_storage
 from sources.models.artists.materials.artistMaterials import Materials, MaterialsSchema
 

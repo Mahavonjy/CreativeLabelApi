@@ -3,9 +3,9 @@
 
 from sources.models.admirations.admirations import AdmireSchema
 from sources.models.medias.albums import Albums, AlbumSchema
-from sources.controllers.tools.tools import by_user_genre_list
-from sources.controllers.tools.tools import by_all_user_admire
-from sources.controllers.tools.tools import merge_suggestion as merge_
+from sources.tools.tools import by_user_genre_list
+from sources.tools.tools import by_all_user_admire
+from sources.tools.tools import merge_suggestion as merge_
 from operator import itemgetter
 
 albumSchema = AlbumSchema()

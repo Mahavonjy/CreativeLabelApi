@@ -9,7 +9,7 @@ from sources.models import custom_response
 from auth.authentification import Auth
 from sources.models.carts.cart import Carts, CartSchema
 from sources.models.users.user import User, UserSchema
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.models.medias.media import Media, MediaSchema
 
 cart_api = Blueprint('carts', __name__)

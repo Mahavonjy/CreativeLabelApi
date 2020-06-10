@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """ shebang """
 
-from sources.controllers.tools.tools import merge_suggestion as merge_
-from sources.controllers.tools.tools import by_user_genre_list
-from sources.controllers.tools.tools import by_all_user_admire
+from sources.tools.tools import merge_suggestion as merge_
+from sources.tools.tools import by_user_genre_list
+from sources.tools.tools import by_all_user_admire
 from sources.models.medias.media import Media, MediaSchema
 from operator import itemgetter
 

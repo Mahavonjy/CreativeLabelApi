@@ -6,7 +6,7 @@ from flask import Blueprint
 from sources.models import custom_response
 from preferences import defaultDataConf
 from auth.authentification import Auth
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.models.artists.beatMakers.contractBeatmaking.contractBeatmaking import ContractBeatMaking, \
     ContractBeatMakingSchema
 

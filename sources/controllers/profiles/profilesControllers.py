@@ -18,7 +18,7 @@ from sources.models.users.user import User, UserSocial
 from preferences.defaultDataConf import USER_AUDITOR_PRO
 from sources.models.bankingDetails.banking import BankingSchema
 from sources.models.artists.conditions.globals import ConditionGlobalSchema
-from sources.controllers.tools.tools import validate_data, check_user_options_and_services
+from sources.tools.tools import validate_data, check_user_options_and_services
 from sources.models.keyResetPassword.keyResetPasswords import ResetPassword
 from sources.models.artists.history.paymentHistory import PaymentHistorySchema
 

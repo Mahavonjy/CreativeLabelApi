@@ -9,9 +9,9 @@ from preferences import defaultDataConf
 from auth.authentification import Auth
 from sources.models.users.user import User, UserSchema
 from sources.models.medias.media import Media, MediaSchema
-from sources.controllers.security.verification import Secure
+from sources.security.verification import Secure
 from sources.models.profiles.profile import ProfileSchema
-from sources.controllers.tools.tools import librosa_collect
+from sources.tools.tools import librosa_collect
 from sources.controllers import update_medias_shared, update_file_storage
 from sources.models import custom_response, add_in_storage as add_s, Percent
 from sources.controllers.medias.mediaControllers import get_media, stream_song_public_url, get_all_song_by_beats_genre

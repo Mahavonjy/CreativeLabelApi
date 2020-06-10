@@ -5,9 +5,9 @@ from sources.controllers.medias.mediaControllers import stream_song_public_url, 
 from sources.controllers.medias.albumSuggestion import top_album_and_suggestion as top_suggestion
 from sources.models.admirations.admirations import AdmireSchema
 from sources.models.medias.albums import Albums, AlbumSchema
-from sources.controllers.security.verification import Secure
+from sources.security.verification import Secure
 from sources.models.medias.media import Media, MediaSchema
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.models.profiles.profile import ProfileSchema
 from sources.models.search.basicSearch import document_delete
 from sources.models.users.user import User, UserSchema

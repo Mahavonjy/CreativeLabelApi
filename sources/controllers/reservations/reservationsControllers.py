@@ -7,7 +7,7 @@ from auth.authentification import Auth
 from preferences import KANTOBIZ, PENDING, DECLINED, ACCEPTED
 from sources.controllers import random_string
 from sources.controllers.artists.payments.paymentsControllers import payment_success_send_email, translator
-from sources.controllers.tools.tools import validate_data
+from sources.tools.tools import validate_data
 from sources.mail.SendMail import payment_refused, canceled_by_auditor_after_accept, accepted_reservation_by_artist, \
     canceled_reservation_by_artist
 from sources.models.artists.history.paymentHistory import PaymentHistory, PaymentHistorySchema
