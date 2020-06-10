@@ -95,7 +95,7 @@ def update_month_history(user_id, month_pre_stream=None, month_admirers=None, mo
     story_k.update(_story)
 
 
-def update_file_storage(args: dict, **kwargs):
+def update_file_storage(args: dict):
     """ Update one file in google cloud storage """
 
     storage_client = storage.Client()

@@ -80,4 +80,4 @@ def delete_material_technical_sheet(material):
         bucket_n, user_repo, filename = technical_sheet_link_split_list[3].split("/", 4)
         repository_name, keys = user_repo.split("_")
         kwargs = dict(bucket_name=bucket_n, repository_name=repository_name, delete=True, keys=keys, filename=filename)
-        update_file_storage(**kwargs)
+        update_file_storage(kwargs)
