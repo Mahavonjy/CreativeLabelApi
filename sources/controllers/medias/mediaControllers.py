@@ -80,8 +80,10 @@ def get_all_songs(get=0, false=None):
 
     all_songs = Media.get_all_song_not_album(get)
     songs, count = {}, 0
-    for row in all_songs: songs[count], count = media_schema.dump(row), count + 1
-    if get or false: return songs
+    for row in all_songs:
+        songs[count], count = media_schema.dump(row), count + 1
+    if get or false:
+        return songs
     return custom_response(songs, 200)
 
 

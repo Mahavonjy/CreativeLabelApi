@@ -13,7 +13,6 @@ from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 from flask_mail import Mail
 import datetime
-import json
 import os
 
 load_dotenv()

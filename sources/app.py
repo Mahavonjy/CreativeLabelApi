@@ -11,8 +11,8 @@ from .models import db, bcrypt, mail, migrate
 from flask_swagger_ui import get_swaggerui_blueprint
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
-from sources.controllers.carts.cartsControllers import cart_api
 
+from sources.controllers.carts.cartsControllers import cart_api
 from sources.controllers.users.userControllers import user_api as user_blueprint
 from sources.controllers import refresh_all_api as refresh_all_blueprint
 from sources.controllers.medias.albumControllers import album_api as album_blueprint
