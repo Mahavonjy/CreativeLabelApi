@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """ shebang """
 
+from ..app import mail
+from ..models import add_in_storage
+
 import os
 import socket
 import flask
@@ -8,9 +11,7 @@ from werkzeug.datastructures import FileStorage
 from xhtml2pdf import pisa
 from flask import render_template as r
 from flask_mail import Message
-from ..app import mail
 from preferences import GOOGLE_BUCKET_INVOICE
-from ..models import add_in_storage
 
 template_mail = "Mail/"
 reference_path_in_sources = "BeatsReferencePdf/"
