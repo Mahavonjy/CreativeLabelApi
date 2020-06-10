@@ -1,0 +1,134 @@
+"""
+    Here is my variables that will be used everywhere in the API
+"""
+
+from preferences import *
+
+beats_pricing = {
+    "basic": 14.58,
+    "silver": 29.16,
+    "gold": 58.32,
+    "platinum": 131.22
+}
+
+allowed_events = [
+    MARIAGE, TRADITIONAL_PARTY, BIRTHDAY_PARTY, SHOW_CASE, FESTIVAL, SPORT_EVENTS, ENTERPRISE_EVENTS, CREATE_BEATS,
+    ASSOCIATION_EVENTS, VIDEO_EDITOR
+]
+
+allowed_dj_options = [ANIMATOR, MIX, LIVE_SET, DJ_SET]
+
+allowed_magician_options = [CLOSE_UP, MENTALISTS, PRESTIDIGITATORS, OTHERS]
+
+allowed_audio_visual_options = [MUSIC_VIDEO_EDITOR, CAMERAMAN, PHOTOGRAPHERS, VIDEO_CLIP_DIRECTOR, OTHERS]
+
+allowed_comedian_options = [BURLESQUE, COMEDY, STORYTELLER, DRAMA, EXPERIMENTAL, HUMORIST, IMITATOR, STAND_UP, OTHERS]
+
+allowed_cirque_or_child_options = [ACROBATE, CLOWN, FIRE_EATERS, BALANCE_TRAINERS, JUGGLER, PUPPETEER, MIME, OTHERS]
+
+allowed_dance_options = [
+    BACHATA, CAPOEIRA, CHACHACHA, CLASSIC, CONTEMPORARY, ETHNIQUE, EXPERIMENTAL, HIP_HOP_ALLOWED, IMPROVISATION,
+    JAZZ_ALLOWED, KIZOMBA_ALLOWED, MODERN, ORIENTAL, SALSA, SAMBA_ALLOWED, TANGO, KILALAKY_ALLOWED, BATRELAKY_ALLOWED,
+    SALEGY_ALLOWED, NDOMBOLO_ALLOWED, VAKODRAZANA_ALLOWED, ZOUK_LOVE_ALLOWED, KAWITRY_ALLOWED, MALOYA_ALLOWED,
+    KOMPAS_ALLOWED, OTHERS
+]
+
+allowed_beat_maker_options = allowed_chant_and_music_options = [
+    AFROBEAT_ALLOWED, BLUES_ALLOWED, BREAKBEAT_ALLOWED, CLASSIQUE_ALLOWED, DANCEHALL_ALLOWED,
+    ELECTRONICA_ALLOWED, FOLK_ALLOWED, METAL_ALLOWED, FUNK_ALLOWED, GOSPEL_ALLOWED, HOUSE_ALLOWED, JAZZ_ALLOWED,
+    POP_ALLOWED, SLAM_ALLOWED, SWING_ALLOWED, SOUL_ALLOWED, RAP_ALLOWED, REGGAE_ALLOWED, ROCK_ALLOWED, SAMBA_ALLOWED,
+    VAKODRAZANA_ALLOWED, RUMBA_ALLOWED, KILALAKY_ALLOWED, NDOMBOLO_ALLOWED, BASESA_ALLOWED, HIRA_GASY_ALLOWED,
+    RNB_ALLOWED, BATRELAKY_ALLOWED, REGGAE_MUFFIN_ALLOWED, REGGAETON_ALLOWED, REMIX_ALLOWED, GOMA_ALLOWED,
+    KUDURO_ALLOWED, AFRO_TRAP_ALLOWED, KAWITRY_ALLOWED, MALESA_ALLOWED, TSAPIKY_ALLOWED, ZAFINDRAONA_ALLOWED,
+    SLOW_ALLOWED, COUPE_DECALE_ALLOWED
+]
+
+# END THEMATICS
+
+refund_allowed_type = [REFUND_POLICY_FLEXIBLE, REFUND_POLICY_STRICT]
+prestige_allowed_type = [CAFE_PRESTIGE, BASY_MENA_PRESTIGE, PRESTIGE_MONEY]
+media_allowed_Extensions = [ALLOWED_MUSIC_MP3, ALLOWED_MUSIC_WAVE, ALLOWED_MUSIC_WAV, ALLOWED_MUSIC_MPEG]
+media_allowed_genre_musical = [MUSICAL_GENRE_MUSIC, MUSICAL_GENRE_BEATS]
+media_allowed_Photos_Extensions = [IMAGE_ALLOWED_TYPE_UPPERCASE_JPEG, IMAGE_ALLOWED_TYPE_LOWERCASE_JPEG,
+                                   IMAGE_ALLOWED_TYPE_PNG]
+media_allowed_albums = [FILE_ZIPPED]
+media_allowed_Genres = [
+    RNB_ALLOWED, HIP_HOP_ALLOWED, KILALAKY_ALLOWED, SLOW_ALLOWED, ZOUK_LOVE_ALLOWED, KOMPAS_ALLOWED, REMIX_ALLOWED,
+    RAP_ALLOWED, ACAPELLA_ALLOWED, SALEGY_ALLOWED, AFRO_TRAP_ALLOWED, BATRELAKY_ALLOWED, REGGAE_ALLOWED, ROCK_ALLOWED,
+    REGGAE_MUFFIN_ALLOWED, MALOYA_ALLOWED, COUPE_DECALE_ALLOWED, NDOMBOLO_ALLOWED, AFROBEAT_ALLOWED, AFRO_POP_ALLOWED,
+    KUDURO_ALLOWED, KIZOMBA_ALLOWED, MAKOSSA_ALLOWED, REGGAETON_ALLOWED, RUMBA_ALLOWED, POP_ALLOWED, TECHNO_ALLOWED,
+    DUBSTEP_ALLOWED, FOLK_ALLOWED, TSAPIKY_ALLOWED, BASESA_ALLOWED, MALESA_ALLOWED, KAWITRY_ALLOWED, DANCEHALL_ALLOWED,
+    VAKODRAZANA_ALLOWED, GOMA_ALLOWED, ZAFINDRAONA_ALLOWED, HIRA_GASY_ALLOWED,
+]
+
+discovery_allowed_genres = [
+    SALEGY_ALLOWED, BATRELAKY_ALLOWED, MALOYA_ALLOWED, NDOMBOLO_ALLOWED, MAKOSSA_ALLOWED, TSAPIKY_ALLOWED,
+    BASESA_ALLOWED, MALESA_ALLOWED, KAWITRY_ALLOWED, VAKODRAZANA_ALLOWED, GOMA_ALLOWED, ZAFINDRAONA_ALLOWED,
+    HIRA_GASY_ALLOWED, REMIX_ALLOWED
+]
+
+type_of_isl_artist = [
+    {
+        "name": USER_ARTIST_DJ,
+        "value": USER_ARTIST_DJ,
+        "label": USER_ARTIST_DJ_FR,
+        "description": allowed_dj_options,
+    },
+    {
+        "name": USER_ARTIST_BEATMAKER,
+        "value": USER_ARTIST_BEATMAKER,
+        "label": USER_ARTIST_BEATMAKER_FR,
+        "description": allowed_beat_maker_options,
+    },
+    {
+        "name": USER_ARTIST_MUSICIAN,
+        "value": USER_ARTIST_MUSICIAN,
+        "label": USER_ARTIST_MUSICIAN_FR,
+        "description": allowed_chant_and_music_options,
+    },
+    {
+        "name": USER_ARTIST_COMEDIAN,
+        "value": USER_ARTIST_COMEDIAN,
+        "label": USER_ARTIST_COMEDIAN_FR,
+        "description": allowed_comedian_options,
+    },
+    {
+        "name": USER_AUDIOVISUAL_SPECIALIST,
+        "value": USER_AUDIOVISUAL_SPECIALIST,
+        "label": USER_AUDIOVISUAL_SPECIALIST_FR,
+        "description": allowed_audio_visual_options,
+    },
+    {
+        "name": USER_ARTIST_MAGICIAN,
+        "value": USER_ARTIST_MAGICIAN,
+        "label": USER_ARTIST_MAGICIAN_FR,
+        "description": allowed_magician_options,
+    },
+    {
+        "name": USER_ARTIST_DANCERS,
+        "value": USER_ARTIST_DANCERS,
+        "label": USER_ARTIST_DANCERS_FR,
+        "description": allowed_dance_options,
+    },
+    {
+        "name": USER_STREET_ARTIST,
+        "value": USER_STREET_ARTIST,
+        "label": USER_STREET_ARTIST_FR,
+        "description": allowed_cirque_or_child_options,
+    }
+]
+
+all_genre_of_different_artist = {
+    USER_ARTIST_DJ: allowed_dj_options,
+    USER_ARTIST_BEATMAKER: allowed_beat_maker_options,
+    USER_ARTIST_MUSICIAN: allowed_chant_and_music_options,
+    USER_ARTIST_COMEDIAN: allowed_comedian_options,
+    USER_AUDIOVISUAL_SPECIALIST: allowed_audio_visual_options,
+    USER_ARTIST_MAGICIAN: allowed_magician_options,
+    USER_ARTIST_DANCERS: allowed_dance_options,
+    USER_STREET_ARTIST: allowed_cirque_or_child_options,
+}
+
+list_of_status = [PENDING, ACCEPTED, DECLINED]
+
+allowed_lang = [FR]

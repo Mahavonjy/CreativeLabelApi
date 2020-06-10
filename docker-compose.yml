@@ -1,0 +1,50 @@
+version: '2'
+services:
+
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: creative_api
+    depends_on:
+      - creative-db
+      - elasticsearch
+    networks:
+      - creative-network
+    ports:
+      - 80:80
+
+#    volumes:
+#      - ./migrations_copy:/usr/src/app/migrations
+    restart: always
+
+  creative-db:
+    image: postgres:12.2-alpine
+    container_name: creative_database
+    environment:
+      POSTGRES_USER: cynthionmahavonjy
+      POSTGRES_PASSWORD: 2245
+      POSTGRES_DB: creative
+    networks:
+      - creative-network
+    ports:
+      - 5432:5432
+#    volumes:
+#      - ./database_copy:/var/lib/postgresql/data
+    restart: always
+
+  elasticsearch:
+    image: elasticsearch:7.6.1
+    container_name: creative_elasticsearch
+#    volumes:
+#      - ./elastic_search_data_copy:/usr/share/elasticsearch/data
+    networks:
+      - creative-network
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+    restart: always
+
+networks:
+  creative-network:

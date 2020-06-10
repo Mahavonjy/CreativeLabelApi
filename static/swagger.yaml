@@ -1,0 +1,12 @@
+swagger: "2.0"
+info:
+  description: This is the document of creative label api made in Flask
+  version: "1.0.0"
+  title: Creative Label API
+  contact:
+    email: mahavonjy.cynthion@gmail.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+basePath: "/static"

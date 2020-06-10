@@ -1,0 +1,295 @@
+{
+  "Diana": {
+    "Ambanja": ["Ambalahonko","Ambanja","Ambodimanga","Ambohimarina","Ankatafa","Ankingameloko","Anorotsangana",
+      "Antafiambotry","Antranokarany","Antsahabe","Antsakoamanondro","Antsatsaka","Antsirabe","Benavony",
+      "Bemanevika Est","Bemaneviky Ouest","Djangoa","Maevatanana","Maherivaratra","Marotolana","Marovato"],
+    "Ambilobe": ["Ambakirano","Ambalan'anjavy","Ambarakaraka","Ambilobe","Ambodibonara","Ampondralava","Anaborano Ifasy"
+    ,"Anjiabe Ambony","Antanambe","Antsaravibe","Antsohimbondrona","Beramanja","Betsihaka","Manambato",
+      "Mantaly","Sirama Ankaragna","Tanambao Marivorahona"],
+    "Antsiranana": ["Antsiranana"],
+    "Antsiranana II": ["Ambondrona","Ambolobozobe","Andrafiabe","Andranofanjava","Andranovondronina","Anivorano Nord",
+      "Ankarangona","Anketrakabe","Antanamitarana","Antsahampano","Antsakoabe","Antsalaka","Antsoha",
+      "Bobasakoa","Bobakilandy","Joffreville","Mahalina","Mahavanona", "Mangaoka","Mosorolava","Ramena"
+    ,"Sadjoavato","Sakaramy"],
+    "Nosy Be": ["Nosy Be"]
+  },
+  "Sava": {
+    "Andapa": ["Ambalamanasy II","Ambodiangezoka","Ambodimanga","Andapa","Andrakata","Andranomena","Anjialava Be",
+      "Ankiaka Be Nord","Anoviara","Antsahamena","Bealampona","Belaoka Marovato","Betsakotsako Andranotsara",
+      "Doany","Marovato","Matsohely","Tanandava"],
+    "Antalaha": ["Ambalabe","Ambinanifaho","Ambohitralanana","Ampahana","Ampohibe","Antalaha","Antananambo","Antombana",
+      "Antsahanoro","Antsambalahy","Lanjarivo","Marofinaritra","Sarahandrano","Vinanivao"],
+    "Sambava": ["Ambatoafo","Amboangibe","Ambodiampana","Ambodivoara","Ambohimalaza","Ambohimitsinjo","Analamaho",
+      "Andrahanjo","Andratamarina","Anjangoveratra","Anjialava","Anjinjaomby","Antindra","Antsahambaharo",
+      "Antsahavaribe","Bemanevika","Bevonotra","Farahalana","Maroambiny","Marogaona","Marojala","Morafeno",
+      "Nosiarina","Sambava","Tanambao Daoud"],
+    "Vohemar": ["Ambalasatrana","Ambinanin'andravory","Amboriala","Ampanefena","Ampisikina","Ampondra","Andrafainkona",
+      "Andravory","Antsahavaribe","Antsirabe Nord","Belambo","Bobakindro","Daraina","Fanambana","Maromokotra",
+      "Milanoa","Nosibe","Tsarabaria","Vohemar"]
+  },
+  "Itasy": {
+    "Arivonimamo": ["Alakamisikely","Ambatomanga","Ambatomirahavavy","Amboanana","Ambohimandry","Ambohimasina",
+      "Ambohipandrano","Ambohitrambo","Ampahimanga","Andranomiely","Antambolo","Antenimbe","Arivonimamo",
+      "Arivonimamo II","Imerintsiatosika","Mahatsinjo Est","Manalalondo","Marofangady","Miantsoarivo","Morafeno",
+      "Morarano"],
+    "Miarinarivo": ["Ambatomanjaka","Analavory","Andolofotsy","Anosibe Ifanja","Antoby Est","Manazary",
+      "Mandiavato","Miarinarivo","Miarinarivo II","Sarobaratra Ifanja","Soamahamanina","Soavimbazaha","Zoma Bealoka"],
+    "Soavinandriana": ["Ambatoasana Centre","Amberomanga","Amparaky","Ampary","Ampefy","Ankaranana","Ankisabe",
+      "Antanetibe","Dondona","Mahavelona","Mananasy","Masindray","Soavinandriana","Tamponala"]
+  },
+  "Analamanga": {
+    "Ambohidratrimo": ["Ambato (Madagascar),Ambatolampy,Ambohidratrimo,Ambohimanjaka","Ambohipihaonana",
+      "Ambohitrimanjaka","Ampangabe","Ampanotokana","Anjanadoria","Anosiala","Antanetibe","Antehiroka","Antsahafilo",
+      "Avaratsena","Fiadanana","Iarinarivo","Ivato (aéroport)","Ivato Firaisana","Mahabo","Mahereza","Mahitsy",
+      "Mananjara","Manjakavaradrano","Merimandroso","Talatamaty"],
+    "Andramasina": ["Abohimiadana","Alarobia Vatosola","Alatsinainy Bakaro","Andohariana","Andramasina",
+      "Anosibe Trimoloharana","Fitsinjovana Bakaro","Mandrosoa","Sabotsy Ambohitromby","Sabotsy Manjakavcahoaka",
+      "Tankafatra"],
+    "Anjozorobe": ["Alakamisy","Ambatomanoina","Amboasary","Ambohibary","Ambongamarina","Analaroa","Anjozorobe",
+      "Antanetibe","Beronono","Betatao","Mangamila","Marotsipoy"],
+    "Ankazobe": ["Ambohitromby","Ambolotarakely","Ankazobe","Antakavana","Antotohazo","Fiadanana","Fihaonana",
+      "Kiangara","Mahavelona","Miantso","Talata Angavo","Tsaramasoandro"],
+    "Antananarivo Renivohitra": ["Antananarivo I","Antananarivo II","Antananarivo III","Antananarivo IV",
+      "Antananarivo V","Antananarivo VI"],
+    "Antananarivo Atsimondrano": ["Ambalavao","Ambatofahavalo","Ambohidrapeto","Ambohijanaka","Ampitatafika"
+    ,"Andoharanofotsy","Andranonahoatra","Androhibe","Ankaraobato","Antanetikely","Bemasoandro","Bongotsara"
+    ,"Fenoarivo","Itaosy","Soalandy","Tanjombato","Tsiafahy"],
+    "Antananarivo Avaradrano": ["Alasora","Ambohimalaza Miray","Ambohimanambola","Ambohimang Rova","Ambohimangakely"
+    ,"Anjeva Gara","Ankadikely Ilafy","Ankadinandriana","Fieferana","Masindray","Sabotsy Namehana","Talatavolonondry"],
+    "Manjakandriana": ["Alarobia","Ambanitsena","Ambatolaona","Ambatomanga","Ambatomena","Ambohibary",
+      "Ambohitrandriamanitra","Ambohitrolomahitsy","Ambohitrony","Ambohitseheno","Anjepy","Anjoma Betoho",
+      "Ankazondandy","Antsahalalina","Manjakandriana","Mantasoa","Merimanjaka","Miadanandriana","Nandihizana","Ranovao",
+      "Sadabe","Sambaina","Soavinandriana"]
+  },
+  "Vakinankaratra": {
+    "Ambatolampy": ["Ambatolampy","Ambatondrakalavao","Ambodifarihy Fenomanana","Ambohipihaonana","Andranovelona",
+      "Andravola Vohipeno","Andriambilany","Antakasina","Antanamalaza","Antanimasaka","Antsampandrano","Behenjy",
+      "Belambo","Manjakatompo","Morarano","Sabotsy Namatoana","Tsiafajavona Ankaratra","Tsinjoarivo"],
+    "Antanifotsy": ["Ambatolahy","Ambatomiady","Ambatotsipihina","Ambodiriana","Ambohimandroso","Ambohitompoina",
+      "Ampitatafika","Andranofito","Antanifotsy","Antsahalava","Antsampandrano"],
+    "Antsirabe": ["Antsirabe"],
+    "Antsirabe II": ["Alakamisy","Ambano","Ambatomena","Ambohibary","Ambohidranandriana","Ambohimiarivo",
+      "Ambohitsimanova","Andranomanelatra","Antanambao","Antanimandry","Antsoatany","Belazao","Ibity","Manandona",
+      "Mandrosohasina","Mangatano","Sahanivotry Mandona","Soanindrariny","Tsarahonenana Sahanivotry","Vinaninkarena"],
+    "Betafo": ["Alakamisy Anativato","Alakamisy Marososona","Alarobia Bemaha","Ambatonikonilahy","Ambohimanambola",
+      "Ambohimasina","Andranomafana","Andrembesoa","Anosiarivo Manapa","Antohobe","Antsotso","Betafo","Inanantona",
+      "Mahaiza","Mandritsara","Manohisoa","Soavina","Tritriva"],
+    "Faratsiho": ["Ambohiborona","Andranomiady","Antsapanimahazo","Faratsiho","Miandrarivo","Ramainandro",
+      "Valabetokana","Vinaninony-Atsimo","Vinaninony Nord"],
+    "Mandoto": ["Anjoma Ramartina","Ankazomiriotra","Antanambao Ambary","Betsohana","Fidirana","Mandoto",
+      "Vasiana","Vinany"]
+  },
+  "Bongolava": {
+    "Fenoarivobe": ["Ambatomainty Atsimo","Ambohitromby","Fenoarivobe","Firavahana","Kiranomena","Mahajeby",
+      "Maritampona","Tsinjoarivo"],
+    "Tsiroanomandidy": ["Ambalanirana","Ambararatabe","Ambatolampy","Ankadinondry Sakay","Ankerana Avaratra","Anosy",
+      "Belobaka","Bemahatazana","Bevato","Fierenana","Mahasolo","Maroharana","Miandanarivo","Soanierana","Tsinjoarivo",
+      "Tsiroanomandidy Fihaonana","Tsiroanomandidy"]
+  },
+  "Sofia": {
+    "Analalava": ["Ambaliha","Ambarijeby","Analalava","Andriambavontsona","Ankaramy Be","Antonibe","Befotaka",
+      "Mahadrodroka","Maromandia","Marovantaza","Marovatolena"],
+    "Antsohihy": ["Ambimadiro","Ambodimanary","Ambodimandresy","Ampandriakalindy","Anahidrano","Andreba","Anjalazala",
+      "Anjiamangirana I","Ankerika","Antsahabe","Antsohihy","Maroala"],
+    "Bealanana": ["Ambalaromba","Ambatoriha","Ambatosia","Ambodiadabo","Ambodisikidy","Ambonomby","Analila",
+      "Antananivo Haut","Antsamaka","Bealanana","Beandrarezona","Mangidrano","Marotolana"],
+    "Befandriana Avaratra": ["Ambararata","Ambodimotso-Atsimo","Ambolidibe Est","Ankarongana","Antsakabary",
+      "Antsakanalabe","Befandriana-Avaratra","Maroamalona","Matsondana","Morafeno","Tsarahonenana","Tsiamalao"],
+    "Boriziny": ["Ambanjabe","Ambodimahabibo","Ambodisakoana","Ambodivongo","Amparihy","Andranomeva",
+      "Boriziny","Boriziny II","Leanja","Maevaranohely","Marovato","Tsarahasina","Tsaratanana","Tsiningia",
+      "Tsinjomitondraka"],
+    "Mampikony": ["Ambohitoaka","Ampasimatera","Bekoratsaka","Komajia","Mampikony","Mampikony II"],
+    "Mandritsara": ["Ambalakirajy","Ambarikorano","Ambaripaika","Ambilombe","Amboaboa","Ambodiadabo","Ambohisoa",
+      "Amborondolo","Ampatakamaroreny","Andohajango","Anjiabe","Ankiabe Salohy","Antanambaon'amberina","Antananadava",
+      "Antsatramidoladola","Antsirabe Afovoany","Antsoha","Kalandy","Manampaneva","Mandritsara","Marotandrano",
+      "Tsaratanana"]
+  },
+  "Boeny": {
+    "Ambato-Boeny": ["Ambato-Boeny","Ambesisika","Ambondromamy","Andranofasika","Andranomamy","Anjiajia","Ankijabe",
+      "Ankirihitra","Madirovalo","Manerinerina","Sitampiky","Tsaramandroso"],
+    "Mahajanga": ["Mahajanga"],
+    "Mahajanga II": ["Ambalabe Befanjava","Ambalakida","Andranoboka","Bekobay","Belobaka","Betsako","Boanamary",
+      "Mahajamba Usine","Mariarano"],
+    "Marovoay": ["Ambolomoty","Ankaraobato","Ankazomborona","Anosinalainolona","Antanambao Andranolava","Antanimasaka"
+    ,"Bemaharivo","Manaratsandry","Marosakoa","Marovoay","Marovoay Banlieue","Tsararano"],
+    "Mitsinjo": ["Ambarimaninga","Antongomena Bevary","Antseza","Bekipay","Katsepy","Matsakabanja","Mitsinjo"],
+    "Soalala": ["Ambohipaky","Andranomavo","Soalala"]
+  },
+  "Betsiboka": {
+    "Kandreho": ["Ambaliha","Andasibe","Antanimbaribe","Behazomaty","Betaimboay","Kandreho"],
+    "Maevatanana": ["Ambalajia","Ambalanjanakomby","Andriba","Antanimbary","Antsiafabositra","Bemokotra","Beratsimanana"
+    ,"Madiromirafy","Maevatanana","Maevatanana II","Mahatsinjo","Mahazoma","Mangabe","Maria","Morafeno","Tsararano"],
+    "Tsaratanana": ["Ambakireny","Andriamena","Bekapaika","Betrandraka","Brieville","Keliloha","Manakana","Sarobaratra",
+      "Tsararova","Tsaratanana"]
+  },
+  "Melaky": {
+    "Ambatomainty": ["Ambatomainty","Bemarivo","Marotsialeha","Sarodrano"],
+    "Antsalova": ["Antsalova","Bekopaka","Masoarivo","Soahany","Trangahy"],
+    "Besalampy": ["Ambolodia Sud","Bekodoka","Besalampy","Mahabe","Marovoay Sud","Soanenga"],
+    "Maintirano": ["Andabotoka","Andranovao","Ankisatra","Antsahidoha Bebao","Antsondrodava","Bebakony Sud",
+      "Berevo-Ranobe","Betanatanana","Mafaijijo","Maintirano","Marohazo","Maromavo","Tambohorano","Veromanga"],
+    "Morafenobe": ["Andramy","Beravina","Morafenobe"]
+  },
+  "Alaotra-Mangoro": {
+    "Ambatondrazaka": ["Ambandrika","Banlieue d'Ambatondrazaka","Ambatondrazaka","Ambatosoratra","Ambohitsilaozana",
+      "Amparihitsokatra","Ampitatsimo","Andilanatoby","Andromba","Antanandava","Antsangasanga","Bejofo","Didy",
+      "Feramanga Avaratra","Ilafy","Imerimandroso","Manakambahiny Est","Manakambahiny Ouest","Soalazaina",
+      "Tanambao Besakay"],
+    "Amparafaravola": ["Ambatomainty","Amboavory","Ambohijanahary","Ambohitrarivo","Amparafaravola","Andrebakely Est"
+    ,"Beanana","Bedidy","Morarano Chrome","Ranomainty","Tanambe","Vohimena","Vohitsara"],
+    "Andilamena": ["Andilamena","Antanimenabaka","Bemaitso","Maintsokely","Maroadabo","Marovato","Miarinarivo",
+      "Tanananifololahy"],
+    "Anosibe An'ala": ["Ambalaomby","Ambatoharanana","Ampandoantraka","Ampasimaneva","Anosibe An'ala","Antandrokomby",
+      "Longozabe","Niarovana Marosampanana","Tratramarina"],
+    "Moramanga": ["Ambatovola","Amboasary","Ambohidronono","Ampasipotsy Gare","Ampasipotsy Mandialaza","Andaingo",
+      "Andasibe","Anosibe Ifody","Antanandava","Antaniditra","Beforona","Belavabary","Beparasy","Fierenana","Lakato",
+      "Mandialaza","Moramanga","Moramanga Suburbaine","Morarano Gare","Sabotsy Anjiro","Vodiriana"]
+  },
+  "Atsinanana": {
+    "Antanambao Manampotsy": ["Antanambao Manampotsy","Antanandehibe","Mahela","Manakana","Saivaza"],
+    "Brickaville": ["Ambalarondra","Ambinaninony","Ambohimanana","Ampasimbe","Andekaleka","Andevoranto","Anivorano Est",
+      "Anjahamana","Vohibinany -Brickaville","Fanasana","Fetraomby","Lohariandava","Mahatsara","Maroseranana",
+      "Ranomafana Est","Razanaka","Vohitranivona"],
+    "Mahanoro": ["Ambinanidilana","Ambinanindrano","Ambodibonara","Ambodiharina","Ankazotsifantatra","Befotaka",
+      "Betsizaraina","Mahanoro","Manjakandriana","Masomeloka","Tsaravinany"],
+    "Marolambo": ["Ambalapaiso II","Amboasary","Ambodinonoka","Ambohimilanja","Anbatofisaka II","Andonabe Sud",
+      "Androrangavola","Anosiarivo","Betampona","Lohavanana","Marolambo","Sahakevo"],
+    "Tamatave": ["Ambodimanga","Ankirihiry","Firaisana Anjoma","Morarano","Tanambao V"],
+    "Tamatave II": ["Ambodilazana","Ambodiriana","Amboditandroho","Ampasibe Onibe","Ampasimadinika","Andondabe",
+      "Andranobolaha","Antenina","Antetezambaro","Fanandrana","Foulpointe","Ifito","Mangabe","Sahambala",
+      "Toamasina suburbaine"],
+    "Vatomandry": ["Ambalabe","Ambalavolo","Amboditavolo","Ambodivoananto","Ampasimadinika","Ampasimazava",
+      "Antanambao Mahatsara","Ifasina I","Ifasina II","Ilaka Est","Maintinandry","Nierenana","Sahamatevina",
+      "Tanambao Vahatrakaka","Tsivangiana","Vatomandry"]
+  },
+  "Analanjirofo": {
+    "Fenoarivo Atsinanana": ["Ambatoharanana","Ambodimanga II","Ampasimbe Manantsatrana","Ampasina Maningory",
+      "Antsiatsiaka","Fenoarivo Atsinanana","Mahambo","Miorimivalana","Saranambana","Vohilengo","Vohipeno"],
+    "Mananara Nord": ["Ambatoharanana","Ambodiampana","Ambodivoanio","Antanambaobe","Antanambe","Manambolosy",
+      "Mananara Nord","Sandrakatsy","Saromaona","Tanibe","Vanono"],
+    "Maroantsetra": ["Ambinanitelo","Andranofotsy","Androndrono","Anjanazana","Ankofa","Antakotako","Antsahana",
+      "Antsirabe Sahatany","Manambolo","Maroantsetra","Rantabe","Voloina"],
+    "Nosy Boraha": ["Sainte-Marie/Nosy Boraha"],
+    "Soanierana Ivongo": ["Ambahoabe","Ambodiampana","Andapafito","Antanifotsy","Antenina","Fotsialanana","Manompana",
+      "Soanierana Ivongo"],
+    "Vavatenina": ["Ambatoharanana","Ambodimangavalo","Ambohibe","Ampasimazava","Andasibe","Anjahambe","Maromitety",
+      "Miarinarivo","Sahatavy","Vavatenina"]
+  },
+  "Amoron'i Mania": {
+    "Ambatofinandrahana": ["Ambatofinandrahana","Ambatomifanongoa","Ambondromisotra","Amborompotsy","Fenoarivo","Itremo"
+    ,"Mandrosonoro","Mangataboahangy","Soavina"],
+    "Ambositra": ["Alakamisy Ambohijato","Ambalamanakana","Ambatofitorahana","Ambinanindrano","Ambohimitombo"
+    ,"Ambositra","Ambositra II","Andina","Ankazoambo","Antoetra","Fahizay Ambatolahimasina","Ihadilanana","Ilaka Centre"
+    ,"Imerina Imady","Ivato","Ivony Miaramiasa","Kianjandrakefina","Mahazina Ambohipierenana","Marosoa",
+      "Sahatsiho Ambohimanjaka","Tsarasaotra"],
+    "Fandriana": ["Alakamisy Ambohimahazo","Ankarinoro","Betsimisotra","Fandriana","Fiadanana","Imito","Mahazoarivo"
+    ,"Miarinavaratra","Milamaina","Sahamadio","Sandrandahy","Tatamalaza","Tsarazaza"],
+    "Manandriana": ["Ambatomarina","Ambohimahazo","Ambohimilanja","Ambohipo","Ambovombe Afovoany","Andakatanikely",
+      "Andakatany","Anjoma Nandihizana","Anjoman'ankona","Talata Vohimena"]
+  },
+  "Haute Matsiatra": {
+    "Ambalavao": ["Ambalavao","Ambinanindovoka","Ambinanindroa","Ambohimahamasina","Ambohimandroso","Andrainjato",
+      "Anjoma","Ankaramena","Besoa","Fenoarivo","Iarintsena","Kirano","Mahazony","Manamisoa","Miarinarivo","Sendrisoa",
+      "Vohitsaoka"],
+    "Ambohimahasoa": ["Ambalakindresy","Ambatosoa","Ambohimahasoa","Ambohinamboarina","Ampitana","Ankafina-Tsarafidy",
+      "Ankerana","Befeta","Camp Robin","Fiadanana","Isaka","Kalalao","Manandroy","Morafeno","Sahatona","Sahave",
+      "Vohiposa"],
+    "Fianarantsoa": ["Fianarantsoa"],
+    "Ikalamavony": ["Ambatomainty","Fitampito","Ikalamavony","Mangidy","Sakay","Solila","Tanamarina","Tsitondroina"],
+    "Isandra": ["Ambalamidera II","Ambondrona","Andoharanomaintso","Anjoma Itsara","Ankarinarivo Manirisoa","Fanjakana",
+      "Iavinomby-Vohibola","Isorana","Mahazoarivo","Nasandratrony","Soatanana"],
+    "Lalangina": ["Alakamisy Ambohimaha","Alatsinainy Ialamarina","Ambalakely","Ambalamahasoa","Andrainjato Centre",
+      "Andrainjato Est","Androy","Fandrandava","Ialananindro","Ivoamba","Mahatsinjony","Sahambavy","Taindambo"],
+    "Vohibato": ["Alakamisy Itenina","Andranomiditra","Andranovorivato","Ankaromalaza Mifanasoa","Ihazoara","Mahaditra",
+      "Mahasoabe","Maneva","Soaindrana","Talata Ampano","Vinanitelo","Vohibato Ouest","Vohimarina Lamosina",
+      "Vohitrafeno"]
+  },
+  "Vatovavy-Fitovinany": {
+    "Ifanadiana": ["Ambohimanga Sud","Ambohimiera","Analampasina","Androrangavola","Antaretra","Antsindra","Fasintsara",
+      "Ifanadiana","Kelilalina","Maroharatra","Marotoko","Ranomafana","Tsaratanana"],
+    "Ikongo": ["Ambatofotsy","Ambohimisafy","Ambolomadinika","Ankarimbelo","Belemoka","Ifanirea","Ikongo","Kalafotsy",
+      "Manampatrana","Maromiandra","Sahalanona","Tanakambana","Tolongoina"],
+    "Manakara": ["Ambahatrazo","Ambahive","Ambalaroka","Ambalavero","Ambila","Amboanjo","Ambohitsara M","Amborondra",
+      "Ambotaka","Ampasimanjeva","Ampasimboraka","Ampasipotsy","Analavory","Anorombato","Anosiala","Anteza","Bekatra",
+      "Fenomby","Lokomby","Mahabako","Mahamaibe","Manakara","Mangatsiotra","Marofarihy","Mavorano","Mitanty",
+      "Mizilo Gara","Nihaonana","Onilahy","Sahanambohitra","Saharefo","Sahasinaka","Sakoana","Sorombo","Tataho","Vatana"
+    ,"Vinanitelo","Vohilava","Vohimanitra","Vohimasina Nord","Vohimasina Sud","Vohimasy"],
+    "Mananjary": ["Ambalahosy Nord","Ambodinonoka","Ambohimiarina II","Ambohinihaonana","Andonabe","Andranambolava",
+      "Anosimparihy","Antsenavolo","Kianjavato","Mahaela","Mahatsara Iefaka","Mahatsara Sud","Mahavoky Nord",
+      "Manakana Nord","Mananjary","Marofototra","Marokarima","Marosangy","Morafeno","Namorona","Sandrohy","Tsaravary",
+      "Tsiatosika","Vatohandrina","Vohilava"],
+    "Nosy Varika": ["Ambahy","Ambodilafa","Ampasinambo","Androrangovola","Befody","Fiadanana","Nosy Varika","Sahavato",
+      "Soavina Est","Vohilava","Vohindroa","Vohitrandriana"],
+    "Vohipeno": ["Andemaka","Ankarimbary","Ifatsy","Ilakatra","Ivato","Lanivo","Mahabo","Mahasoabe","Mahazoarivo","Nato"
+    ,"Onjatsy","Sahalava","Savana","Vohilany","Vohindava","Vohipeno","Vohitrindry"]
+  },
+  "Atsimo-Atsinanana": {
+    "Befotaka": ["Antaninarenina","Antondabe","Befotaka","Befotaka Sud","Beharena","Marovitsika","Ranotsara Sud"],
+    "Farafangana": ["Ambalatany","Ambalavato","Ambalavato Antevato","Ambohigogo","Ambohimandroso","Amporoforo",
+      "Ankarana Miraihina","Anosivelo","Anosy Tsararafa","Antsiranambe","Beretra Bevoay","Efatsy Anandroza",
+      "Etrotroka Sud","Evato","Farafangana","Fenoarivo","Iabohazo","Ihorombe","Ivandrika","Mahabo Mananivo",
+      "Mahafasa Centre","Mahavelo","Maheriraty","Manambotra Sud","Marovandrika","Namohora Iaborano","Sahamadio",
+      "Tangainony","Tovona","Vohilengo","Vohimasy","Vohitromby"],
+    "Midongy": ["Andranolalina","Ankazovelo","Irondro","Maliorano","Midongy","Soakibany"],
+    "Vangaindrano": ["Ambatolava","Ambongo","Amparihy Est","Ampasimalemy","Ampataka","Anilobe","Bekaraoka",
+      "Bema","Bevata","Fenoambany","Iara","Isahara","Karimbary","Lohafary","Lopary","Manambondro","Marokibo",
+      "Masianaka","Matanga","Ranomena","Sandravinany","Soamanova","Tsianofana","Tsiately","Vangaindrano","Vatanato",
+      "Vohimalaza","Vohipaho","Vohitrambo"],
+    "Vondrozo": ["Ambohimana","Anandravy","Andakana","Antokonala","Iamonta","Ivato","Karianga","Mahatsinjo",
+      "Mahavelo","Mahazoarivo","Manambidala","Manato","Maroteza","Vohiboreka","Vohimary","Vondrozo"]
+  },
+  "Ihorombe": {
+    "Iakora": ["Begogo","Iakora","Ranotsara Nord"],
+    "Ihosy": ["Ambatolahy","Ambia","Analaliry","Analavoka","Andiolava","Ankily","Ihosy","Ilakaka","Irina","Mahasoa",
+      "Menamaty Iloto","Ranohira","Sahambano","Sakalalina","Satrokala","Soamatasy","Zazafotsy"],
+    "Ivohibe": ["Antambohobe","Ivohibe","Ivongo","Maropaika"]
+  },
+  "Menabe": {
+    "Belo sur Tsiribihina": ["Ambiky","Amboalimena","Andimaky Manambolo","Ankalalobe","Ankiliroroka","Ankirondro",
+      "Antsoha","Belinta","Belon'i Tsiribihina","Berevo","Beroboka","Masoarivo","Tsaraotana","Tsimafana"],
+    "Mahabo": ["Ambia","Ampanihy","Analamitsivala","Ankilivalo","Ankilizato","Befotaka","Beronono","Mahabo",
+      "Malaimbandy","Mandabe","Tsimazava"],
+    "Manja": ["Andranopasy","Ankiliabo","Anontsibe Centre","Beharona","Manja","Soaserana"],
+    "Miandrivazo": ["Ambatolahy","Ampanihy","Ankavandra","Ankondromena","Ankotrofotsy","Anosimena","Bemahatazana",
+      "Betsipolitra","Dabolava","Isalo","Itondy","Manambina","Manandaza","Miandrivazo","Soaloka"],
+    "Morondava": ["Analaiva","Befasy","Belo sur Mer","Bemanonga","Morondava"]
+  },
+  "Atsimo-Andrefana": {
+    "Ampanihy": ["Amboropotsy","Ampanihy","Androka","Ankiliabo","Ankilimivory","Ankilizato","Antaly","Beahitse",
+      "Belafike","Beroy Sud","Ejeda","Fotadrevo","Gogogogo","Itampolo","Maniry","Vohitany"],
+    "Ankazoabo": ["Andranomafana","Ankazoabo","Berenty","Tandrano"],
+    "Benenitra": ["Benenitra","Ehara","Ianapera"],
+    "Beroroha": ["Behisatra","Beroroha","Bemavo","Fanjakana","Mandronarivo","Marerano","Sakena","Tanamary","Vondrove"],
+    "Betioky Sud": ["Andranomangatsiaka","Antohabato","Beantake","Beavoha","Belamoty","Betioky","Bezaha","Fenoandala",
+      "Lazarivo","Manalobe","Masiaboay","Montifeno","Salobe","Soamanonga","Soaserana","Tameantsoa","Tanambao Ambony",
+      "Tongobory","Vatolatsaka"],
+    "Morombe": ["Ambahikily","Antanimeva","Antongo Vaovao","Basibasy","Befandefa","Befandriana Sud","Morombe",
+      "Nosy Ambositra"],
+    "Sakaraha": ["Ambinany","Amboronabo","Andamasina Vineta","Andranolava","Bereketa","Mahaboboka","Miary Lamatihy"
+    ,"Miary Taheza","Mihavatsy","Mikoboka","Mitsinjo","Sakaraha"],
+    "Toliara": ["Toliara"],
+    "Toliara II": ["Ambohimahavelona","Ambolofoty","Analamisampy","Andranovory","Ankililoake","Ankilimalinike",
+      "Antanimena","Beheloke","Behompy","Belalanda","Mandrofify","Manombo Sud","Marofoty","Maromiandra","Miary",
+      "Milenaka","Saint Augustin","Soalara","Tsianisiha"]
+  },
+  "Androy": {
+    "Ambovombe": ["Ambanisarike","Ambazoa","Ambohimalaza","Ambonaivo","Ambondro","Ambovombe","Ampamata","Andalatanosy",
+      "Anjeky Ankilikira","Antanimora Sud","Imanombo","Erada","Jafaro","Maroalomainty","Maroalopoty","Marovato Befeno",
+      "Sihanamaro"],
+    "Bekily": ["Ambahita","Ambatosola","Anivorano Mitsinjo","Anja Nord","Ankaranabo Nord","Antsakoamaro","Bekitro",
+      "Belindo Mahasoa","Beraketa","Beteza","Bevitiky","Manakompy","Maroviro","Morafeno Bekily","Tanambao Tsirandrana",
+      "Tanandava","Tsikolaky","Vohimanga"],
+    "Beloha": ["Beloha","Kopoky","Marolinta","Tranoroa","Tranovaho"],
+    "Tsihombe": ["Antaritarika","Faux Cap","Imongy","Marovato","Tsihombe"]
+  },
+  "Anosy": {
+    "Amboasary-Atsimo": ["Amboasary-Atsimo","Behara","Ebelo","Elonty","Esira","Ifotaka","Mahaly","Manevy","Maromby",
+      "Marotsiraka","Sampona","Tanandava Sud","Tranomaro","Tsivory"],
+    "Betroka": ["Ambalasoa","Ambatomivary","Analamary","Andriandampy","Beapombo I","Beapombo II","Bekorobo",
+      "Benato-Toby","Betroka","Iaborotra","Ianabinda","Ianakafy","Isoanala","Ivahona","Jangany","Mahabo","Mahasoa Est",
+      "Nagnarena","Naninora","Tsaraitso"],
+    "Taolanaro": ["Ambatoabo","Ampasimena","Ampasy Nahampoa","Analamary","Analapatsy","Andranombory","Ankaramena",
+      "Bevoay","Enakara-Haut","Enaniliha","Fenoevo","Iabakoho","Ifarantsa","Isaka-Ivondro","Mahatalaky","Manambaro",
+      "Manantenina","Mandiso","Mandromodromotra","Ranomafana","Ranopiso","Sarasambo","Soanierana","Tôlanaro"]
+  }
+}

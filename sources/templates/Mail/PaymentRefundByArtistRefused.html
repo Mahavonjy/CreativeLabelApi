@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Creative Mail</title>
+    <link rel="stylesheet" type="text/css" href="EmailCss/style.css">
+</head>
+<body class="">
+<table role="presentation" class="body"
+       style="background-image: url('https://www.zupimages.net/up/19/49/nk2o.png');background-size: 100%;background-position: center;background-repeat: no-repeat;width: 100%;">
+    <tr>
+        <td class="container">
+            <div class="content">
+                <!-- START CENTERED WHITE CONTAINER -->
+                <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
+                    <tbody>
+                    <tr>
+                        <td align="center" valign="top">
+                            <table border="0" cellpadding="0" cellspacing="0" width="600" id="template_container"
+                                   style="background-color:#ffffff;border:1px solid #dedede;border-radius:3px">
+                                <tbody>
+                                <tr>
+                                    <td align="center" valign="top">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="600"
+                                               style="background-color:#ED1C24;color:#ffffff;border-bottom:0;font-weight:bold;line-height:100%;vertical-align:middle;border-radius:3px 3px 0 0">
+                                            <tbody>
+                                            <tr>
+                                                <td id="" style="padding:36px 48px;display:block">
+                                                    {% if user_type == 'customer' %}
+                                                        <h1 style="font-size:30px;font-weight:300;line-height:150%;margin:0;text-align:center;color:#ffffff">Remboursement après annulation aupres de l'artist</h1>
+                                                    {% elif user_type == 'artist' %}
+                                                        <h1 style="font-size:30px;font-weight:300;line-height:150%;margin:0;text-align:left;color:#ffffff">
+                                                            Annulation de la reservation Référencié&nbsp; {{ data.reference }}</h1>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" valign="top">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="600"
+                                               id="template_body">
+                                            <tbody>
+                                            <tr>
+                                                <td valign="top" id="body_content" style="background-color:#ffffff">
+                                                    <table border="0" cellpadding="20" cellspacing="0" width="100%">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td valign="top" style="padding:48px 48px 32px">
+                                                                <div id="body_content_inner"
+                                                                     style="color:#636363;font-size:14px;line-height:150%;text-align:left">
+                                                                    {% if user_type == 'customer' %}
+                                                                        <p style="margin:0 0 16px">
+                                                                            Bonjour {{ data.auditor.name }},
+                                                                            <br>Pour information – après acceptation de
+                                                                            la reservation, l'artist {{ data.artist_name }} a ensuite
+                                                                            refuser votre reservation </p>
+                                                                    {% elif user_type == 'artist' %}
+                                                                        <p style="margin:0 0 16px">Refus de la prestation et demande de remboursement </p>
+                                                                    {% endif %}
+                                                                    <h2 style="color:#ED1C24;display:block;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left">
+                                                                        <a href="#">[référence {{ data.reference }}] </a>
+                                                                        ({{ data.date }})
+                                                                    </h2>
+                                                                    <div style="margin-bottom:40px">
+                                                                        <table cellspacing="0" cellpadding="6"
+                                                                               border="1"
+                                                                               style="color:#636363;border:1px solid #e5e5e5;vertical-align:middle;width:100%;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif">
+                                                                            <thead>
+                                                                            <tr>
+                                                                                <th scope="row" colspan="2"
+                                                                                    style="color:#636363;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left">
+                                                                                    Politique de l'artiste
+                                                                                </th>
+                                                                                <th scope="row" colspan="2"
+                                                                                    style="color:#636363;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left">
+                                                                                    Prix TTC
+                                                                                </th>
+                                                                            </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                            <tr>
+                                                                                <td scope="row" colspan="2"
+                                                                                    style="color:#636363;border:1px solid #e5e5e5;padding:12px;text-align:left;vertical-align:middle;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;word-wrap:break-word">
+                                                                                    {{ data.reservation.refund_policy }}</td>
+                                                                                <td scope="row" colspan="2"
+                                                                                    style="color:#636363;border:1px solid #e5e5e5;padding:12px;text-align:left;vertical-align:middle;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif">
+                                                                                    <span>{{ data.reservation.total_amount }}&nbsp;<span>$</span></span>
+                                                                                </td>
+                                                                            </tr>
+                                                                            </tbody>
+                                                                            <tfoot>
+                                                                            <tr>
+                                                                                <th scope="row" colspan="2"
+                                                                                    style="color:#636363;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left">
+                                                                                    Moyen de paiement&nbsp;:
+                                                                                </th>
+                                                                                <td style="color:#636363;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left">
+                                                                                    Carte de paiement
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th scope="row" colspan="2"
+                                                                                    style="color:#636363;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left">
+                                                                                    Total à&nbsp;rembourser:
+                                                                                </th>
+                                                                                <td style="color:#636363;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left">
+                                                                                    <span>{{ data.refunded }}&nbsp;<span>$</span></span>
+                                                                                </td>
+                                                                            </tr>
+                                                                            </tfoot>
+                                                                        </table>
+                                                                    </div>
+                                                                    <table id="addresses" cellspacing="0"
+                                                                           cellpadding="0" border="0"
+                                                                           style="width:100%;vertical-align:top;margin-bottom:40px;padding:0">
+                                                                        <tbody>
+                                                                        <tr>
+                                                                            <td valign="top" width="50%"
+                                                                                style="text-align:left;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;border:0;padding:0">
+                                                                                <h2 style="color:#ED1C24;display:block;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left">
+                                                                                    Adresse de facturation</h2>
+                                                                                <address
+                                                                                        style="padding:12px;color:#636363;border:1px solid #e5e5e5">
+                                                                                    {{ data.invoicing_address.name }}&nbsp;{{ data.invoicing_address.lastname }}<br>
+                                                                                    {{ data.invoicing_address.address }}<br>
+                                                                                    {{ data.invoicing_address.city }}<br>
+                                                                                    {{ data.invoicing_address.postal_code }}<br>
+                                                                                    {{ data.invoicing_address.phone }}<br>
+                                                                                    <a href="mailto:{{ data.invoicing_address.email }}"
+                                                                                       target="_blank">{{ data.invoicing_address.email }}</a>
+                                                                                </address>
+                                                                            </td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    {% if user_type == 'Customer' %}
+                                                                        <p style="margin:0 0 16px">Toute nos regreêt. on espere vous revoir bientôt</p>
+                                                                    {% elif user_type == 'artist' %}
+                                                                        <p style="margin:0 0 16px">Dommage pour ce
+                                                                            remboursement.</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!-- END CENTERED WHITE CONTAINER -->
+
+                <!-- START FOOTER -->
+                {% include "Mail/footer.html" %}
+                <!-- END FOOTER -->
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

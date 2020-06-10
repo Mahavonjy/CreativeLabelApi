@@ -1,0 +1,39 @@
+.env
+*.pyc
+# Vi leaves some of those all over the place:
+*.swp
+# Emacs leaves some of those all over the place:
+*~
+# this is linked to the virtualenv
+wsgi/uwsgi
+# Zope config needs ploneweb to be like an egg, and ploneweb.egg-info
+# is created each time we run buildout. Alexandru says that people
+# usually have *egg-info in .gitignore for this kind of cases:
+*egg-info
+.sass-cache
+
+# unit Test
+coverage.xml
+nosetests.xml
+.cache
+.coverage
+
+# PyCharm creates this folder for metadata
+.idea
+.vscode
+
+# mac uses these files for folder indexing
+*.DS_Store
+
+# emacs etags and TRAMP-mode history files
+TAGS
+.tramp_history
+
+venv
+Pipfile
+migrations
+pipfile.lock
+sources/Playlists/*
+sources/Images/*.jpeg
+sources/AlbumZip/*.zip
+*/__pycache__/*
