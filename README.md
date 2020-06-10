@@ -18,6 +18,7 @@ run elasticsearch before with port 9200
     FLASK_APP=run.py
     
     # in this variable is located the file of Google credential for login
+    # Contact admin for this information
     GOOGLE_APPLICATION_CREDENTIALS=CreativeLabel.json
     
     # this is a secret key
