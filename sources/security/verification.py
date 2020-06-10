@@ -137,7 +137,7 @@ class Secure:
                     type_photo = photo_file.content_type
                     if type_photo.split('/', 1)[1] not in defaultDataConf.media_allowed_Photos_Extensions:
                         return custom_response("photo type is not supported", 400)
-                if data["title"] is "" or data["artist"] is "" or data["genre"] is "" or data["genre_musical"] is "":
+                if data["title"] == "" or data["artist"] == "" or data["genre"] == "" or data["genre_musical"] == "":
                     return custom_response("title, artist, genre and genre_musical cannot be null", 400)
                 if data["genre_musical"] != defaultDataConf.media_allowed_genre_musical[0] \
                         or data["genre"] not in defaultDataConf.media_allowed_Genres:

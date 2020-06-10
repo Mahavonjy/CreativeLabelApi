@@ -96,9 +96,9 @@ class Profiles(db.Model):
 
         if email:
             return Profiles.query.filter_by(email=email).first()
-        elif profile_id:
+        if profile_id:
             return Profiles.query.filter_by(id=profile_id).first()
-        elif social_id:
+        if social_id:
             return Profiles.query.filter_by(social_id=social_id).first()
 
 
