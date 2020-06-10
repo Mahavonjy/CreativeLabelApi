@@ -53,7 +53,7 @@ def update_doc(data, schema, index, doc_type):
     es.index(index=index, doc_type=doc_type, id=r['hits']['hits'][0]['_id'], body=sch)
 
 
-def document_delete(index, doc_type, first_=None, second_=None, ref=False):
+def document_delete(index, doc_type, first_, second_, ref=False):
     """
         Function to delete a specific document.
     """

@@ -264,7 +264,7 @@ def delete_album(album_id, user_connected_model, user_connected_schema):
         for blob in blobs:
             blob.delete()
         album_info.delete()
-        document_delete({"id": information['id']}, {"keys": information['keys']})
+        document_delete("albums_and_songs", "songs", {"id": information['id']}, {"keys": information['keys']})
         return custom_response("Deleted", 200)
     return custom_response("Unauthorized", 400)
 
