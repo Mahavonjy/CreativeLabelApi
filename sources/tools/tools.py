@@ -55,7 +55,9 @@ def by_user_genre_list(genre_list, type_):
         if len(index) == 1:
             albs_in_dict.append(schema.dump(index[0]))
             continue
-        [albs_in_dict.append(schema.dump(alb)) for alb in index]
+        for alb in index:
+            albs_in_dict.append(schema.dump(alb))
+    
     return albs_in_dict
 
 
