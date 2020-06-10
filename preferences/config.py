@@ -4,7 +4,7 @@
 import os
 
 
-class DevelopmentTest(object):
+class DevelopmentTest:
     """ Development environment configuration """
 
     DEBUG = True  # Auto refresh run
@@ -34,7 +34,7 @@ class DevelopmentTest(object):
     USER_INFO = os.getenv('GOOGLE_USER_INFO')
 
 
-class Development(object):
+class Development:
     """ Development environment configuration """
 
     DEBUG = True  # Auto refresh run
@@ -64,7 +64,7 @@ class Development(object):
     USER_INFO = os.getenv('GOOGLE_USER_INFO')
 
 
-class Production(object):
+class Production:
     """ Production environment configurations """
 
     DEBUG = True  # Auto refresh run

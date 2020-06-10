@@ -36,14 +36,17 @@ def check_price_details(price=None, ht_price=None):
     """ return artist_amount, tva, isl_amount """
 
     data = request.get_json()
+
     if not data.get("price") and not ht_price:
         return custom_response("need price", 400)
-    elif not ht_price:
+
+    if not ht_price:
         price = data.get("price")
 
     ht_price = ht_price or price
     tva = round(float(ht_price * (1 + percent_tva / 100.00)) - ht_price, 2)
     isl_amount = round(float(ht_price * (1 + percent_isl_creative / 100.00)) - ht_price, 2)
+
     if price:
         return custom_response({
             "tva": tva,

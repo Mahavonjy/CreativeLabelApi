@@ -6,12 +6,13 @@ from sqlalchemy import func
 from statistics import mean
 from flask import Blueprint, request
 
-from sources.models.users.user import User
-from sources.models import custom_response
 from auth.authentification import Auth
-from preferences.defaultDataConf import USER_AUDITOR_PRO
+from preferences import USER_AUDITOR_PRO
 from sources.tools.tools import validate_data
 from sources.controllers import convert_dict_to_sql_json
+
+from sources.models.users.user import User
+from sources.models import custom_response
 from sources.models.stars.noteStars import Stars, StarSchema
 
 user_stars = Blueprint('users_stars', __name__)
@@ -60,7 +61,8 @@ def update_note_by_service_id_or_user_id(user_connected_model, user_connected_sc
         stars_ = user_stars_schema.dump(stars_to_add_note)
         update_note(stars_to_add_note, stars_, data, user_connected_model)
         return custom_response("success", 200)
-    elif data.get('user_id'):
+
+    if data.get('user_id'):
         artist_to_note = User.get_one_user(data['user_id'])
         user_who_set_note = User.get_one_user(auth.user.get('id'))
         if not artist_to_note.user_type == user_who_set_note.user_type == USER_AUDITOR_PRO:
@@ -71,6 +73,7 @@ def update_note_by_service_id_or_user_id(user_connected_model, user_connected_sc
             update_note(stars_to_add_note, stars_, data, user_connected_model)
             return custom_response("success", 200)
         return custom_response("Unauthorized", 400)
+
     return custom_response("I need user_id or service_id", 400)
 
 
