@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """ shebang """
 
-from preferences.defaultDataConf import *
 from marshmallow import Schema, ValidationError, validates, fields, validates_schema
+
+from preferences.defaultDataConf import type_of_isl_artist, allowed_events, allowed_cirque_or_child_options, \
+    allowed_audio_visual_options, allowed_chant_and_music_options, allowed_beat_maker_options,\
+    allowed_magician_options, allowed_comedian_options, allowed_dance_options, allowed_dj_options
 
 
 class ValidateSchema(Schema):
-
     event = fields.Str()
     iban = fields.Str()
     swift = fields.Str()

@@ -150,10 +150,4 @@ def welcome(env_name):
             links[count], count = {"Method": method[0], "url": url_root[0] + str(rule)}, count + 1
         return custom_response(links, 200)
 
-    @app.route('/debug')
-    def trigger_error():
-        """ sentry """
-
-        division_by_zero = 1 / 0
-
     return app
