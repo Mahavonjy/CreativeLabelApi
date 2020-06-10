@@ -188,14 +188,18 @@ def update_album(album_id, user_connected_model, user_connected_schema):
         repository_albums = user_connected_schema.get('fileStorage_key') + '_' + str(information["keys"]) + '_' + str(
             id_user)
         all_songs_in_album, bucket_image = Media.get_all_song_by_album_id(album_id), bucket_images
+
         try:
             _, name = information.get('album_photo').rsplit('/', 1)
             tmp['bucket_name'] = bucket_image
             tmp['repository_name'], tmp['keys'] = repository_image, user_connected_schema.get('id')
             tmp['song_name'], tmp['file'], tmp['delete'], tmp['get'] = name, None, True, False
             up_ft(tmp)
-        except ValueError and AttributeError:
+        except ValueError:
             pass
+        except AttributeError:
+            pass
+
         storage_client = storage.Client()
         bucket = storage_client.get_bucket(bucket_albums)
         blobs = bucket.list_blobs(prefix=repository_albums)

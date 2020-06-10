@@ -26,10 +26,14 @@ def update_photo(logo_img, partner, ser_user, delete=False):
     bucket = storage_client.get_bucket(bucket_images)
     b_n = "/".join(partner['logo'].split('/')[-3:])
     blob = bucket.blob(b_n)
+
     try:
         blob.delete()
-    except TypeError or google.api_core.exceptions.NotFound:
+    except TypeError:
         pass
+    except google.api_core.exceptions.NotFound:
+        pass
+
     if delete:
         return
     return add_in_storage(bucket_images, ser_user, logo_img, "partners/")

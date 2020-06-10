@@ -169,7 +169,9 @@ def update_playlist(playlist_id, user_connected_model, user_connected_schema):
         blob = bucket.blob(b_n)
         try:
             blob.delete()
-        except TypeError or google.api_core.exceptions.NotFound:
+        except TypeError:
+            pass
+        except google.api_core.exceptions.NotFound:
             pass
         blob = bucket.blob("playlists/" + u_i['fileStorage_key'] + '_' + str(u_i['id']) + '/' + upload_photo.filename)
         blob.upload_from_string(upload_photo.read(), content_type=upload_photo.content_type)
