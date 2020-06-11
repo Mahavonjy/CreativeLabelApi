@@ -4,7 +4,7 @@
 from flask import g as auth
 from flask import Blueprint
 from sources.controllers import random_string
-from preferences import defaultDataConf
+from preferences import defaultDataConf, GOOGLE_BUCKET_BEATS, GOOGLE_BUCKET_IMAGES
 
 from auth.authentification import Auth
 from sources.models.users.user import User, UserSchema
@@ -19,8 +19,8 @@ from sources.controllers.medias.mediaControllers import get_media, stream_song_p
 beats_api = Blueprint('beats', __name__)
 media_schema = MediaSchema()
 profile_schema = ProfileSchema()
-bucket_images = defaultDataConf.GOOGLE_BUCKET_IMAGES
-bucket_beats = defaultDataConf.GOOGLE_BUCKET_BEATS
+bucket_images = GOOGLE_BUCKET_IMAGES
+bucket_beats = GOOGLE_BUCKET_BEATS
 user_schema = UserSchema()
 percent_isl_creative = 30
 percent_tva = 20

@@ -8,7 +8,7 @@ from sources.models.profiles.profile import ProfileSchema
 from sources.tools.tools import validate_data
 from sources.models.users.user import User, UserSchema
 from sources.models.medias.albums import AlbumSchema
-from preferences import defaultDataConf
+from preferences import defaultDataConf, GOOGLE_BUCKET_IMAGES
 from flask import request, Response
 from flask import g as auth
 import zipfile
@@ -193,7 +193,7 @@ class Secure:
                 _, file_type = type_photo.rsplit('/', 1)
                 if file_type not in defaultDataConf.media_allowed_Photos_Extensions:
                     return custom_response("photo type is not supported", 400)
-                link = add_in_storage(defaultDataConf.GOOGLE_BUCKET_IMAGES, ser_user, photo_file, 'albums/')
+                link = add_in_storage(GOOGLE_BUCKET_IMAGES, ser_user, photo_file, 'albums/')
             except KeyError:
                 link = user_profile_info["photo"] if user_profile_info["photo"] else 0
             if zipfile.is_zipfile(uploaded_file):

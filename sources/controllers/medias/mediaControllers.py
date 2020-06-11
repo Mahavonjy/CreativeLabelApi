@@ -7,6 +7,8 @@ from flask import Blueprint, request, json
 from google.cloud import storage
 
 from auth.authentification import Auth
+from preferences import GOOGLE_BUCKET_ALBUMS, GOOGLE_BUCKET_AUDIOS, GOOGLE_BUCKET_BEATS, GOOGLE_BUCKET_IMAGES
+from preferences.defaultDataConf import media_allowed_Genres, media_allowed_genre_musical
 from sources.controllers import update_medias_shared, update_file_storage, create_artist_new_story_dict
 from sources.controllers.medias.mediaBeatSuggestion import media_beat_suggestion
 from sources.security.verification import Secure
@@ -20,15 +22,14 @@ from sources.tools.tools import librosa_collect
 from sources.models.profiles.profile import ProfileSchema
 from sources.models.search.basicSearch import document_delete as d_delete
 from sources.models.users.user import User, UserSchema
-from preferences import defaultDataConf
 
 media_api = Blueprint('media', __name__)
-allowed_genre_musical = defaultDataConf.media_allowed_genre_musical
-allowed_genres = defaultDataConf.media_allowed_Genres
-bucket_audios = defaultDataConf.GOOGLE_BUCKET_AUDIOS
-bucket_albums = defaultDataConf.GOOGLE_BUCKET_ALBUMS
-bucket_images = defaultDataConf.GOOGLE_BUCKET_IMAGES
-bucket_beats = defaultDataConf.GOOGLE_BUCKET_BEATS
+allowed_genre_musical = media_allowed_genre_musical
+allowed_genres = media_allowed_Genres
+bucket_audios = GOOGLE_BUCKET_AUDIOS
+bucket_albums = GOOGLE_BUCKET_ALBUMS
+bucket_images = GOOGLE_BUCKET_IMAGES
+bucket_beats = GOOGLE_BUCKET_BEATS
 month_story_schema = ArtistHistorySchema()
 listened_schema = ListenedSchema()
 profile_schema = ProfileSchema()

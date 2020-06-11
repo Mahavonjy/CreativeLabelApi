@@ -14,11 +14,11 @@ from auth.authentification import Auth
 from sources.models.medias.media import Media, MediaSchema
 from sources.models.playlists.playlist import Playlists, PlaylistSchema
 from sources.models.users.user import User, UserSchema
-from preferences import defaultDataConf
+from preferences import defaultDataConf, GOOGLE_BUCKET_IMAGES
 
 playlist_api = Blueprint('playlist', __name__)
 secure_photo = defaultDataConf.media_allowed_Photos_Extensions
-bucket_images = defaultDataConf.GOOGLE_BUCKET_IMAGES
+bucket_images = GOOGLE_BUCKET_IMAGES
 playlist_schema = PlaylistSchema()
 user_schema = UserSchema()
 mediaSchema = MediaSchema()

@@ -2,7 +2,7 @@
 """ shebang """
 
 from statistics import mean
-from preferences import defaultDataConf
+from preferences import GOOGLE_BUCKET_IMAGES
 from google.cloud import storage
 
 from sources.models.artists.services.artistServices import Services
@@ -15,7 +15,7 @@ from sources.controllers.medias.mediaControllers import MediaSchema
 from sources.models.admirations.admirations import AdmireSchema
 from sources.models.profiles.profile import Profiles, ProfileSchema
 from sources.models.users.user import User, UserSocial
-from preferences.defaultDataConf import USER_AUDITOR_PRO
+from preferences import USER_AUDITOR_PRO
 from sources.models.bankingDetails.banking import BankingSchema
 from sources.models.artists.conditions.globals import ConditionGlobalSchema
 from sources.tools.tools import validate_data, check_user_options_and_services
@@ -39,7 +39,7 @@ def get_url(ser_user, u_file):
     """ Get url profile photo """
 
     storage_client = storage.Client()
-    bucket = storage_client.get_bucket(defaultDataConf.GOOGLE_BUCKET_IMAGES)
+    bucket = storage_client.get_bucket(GOOGLE_BUCKET_IMAGES)
     blob = bucket.blob('profiles/' + ser_user.get('fileStorage_key') + '_' + str(ser_user.get('id')) + u_file.filename)
     blob.upload_from_string(u_file.read(), content_type=u_file.content_type)
     blob.make_public()

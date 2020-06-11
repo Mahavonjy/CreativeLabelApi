@@ -5,7 +5,7 @@ from sources.models.partnership.partnership import Partner, PartnerSchema
 from sources.models.users.user import UserSchema
 from sources.tools.tools import validate_data
 from auth.authentification import Auth
-from preferences import defaultDataConf
+from preferences import defaultDataConf, GOOGLE_BUCKET_IMAGES
 from sources.models import custom_response
 from sources.models import add_in_storage
 from flask import Blueprint, request
@@ -14,7 +14,7 @@ import google
 
 partner_api = Blueprint('partners', __name__)
 secure_photo = defaultDataConf.media_allowed_Photos_Extensions
-bucket_images = defaultDataConf.GOOGLE_BUCKET_IMAGES
+bucket_images = GOOGLE_BUCKET_IMAGES
 partner_schema = PartnerSchema()
 user_schema = UserSchema()
 

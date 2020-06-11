@@ -57,7 +57,7 @@ def by_user_genre_list(genre_list, type_):
             continue
         for alb in index:
             albs_in_dict.append(schema.dump(alb))
-    
+
     return albs_in_dict
 
 

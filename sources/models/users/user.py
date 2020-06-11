@@ -13,7 +13,7 @@ from sources.models.medias.albums import Albums
 from dateutil.relativedelta import relativedelta
 from sources.models.stars.noteStars import Stars
 from sources.models.playlists.playlist import Playlists
-from preferences.defaultDataConf import USER_AUDITOR_PRO
+from preferences import USER_AUDITOR_PRO
 from sources.models.artists.options.artistOptions import Options
 from sources.models.artists.artistPayment.payment import Payment
 from sources.models.schemaValidators.validates import ValidateSchema

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ shebang """
 
+from preferences import GOOGLE_BUCKET_IMAGES, GOOGLE_BUCKET_ALBUMS
 from sources.controllers.medias.mediaControllers import stream_song_public_url, update_file_storage as up_ft
 from sources.controllers.medias.albumSuggestion import top_album_and_suggestion as top_suggestion
 from sources.models.admirations.admirations import AdmireSchema
@@ -12,7 +13,6 @@ from sources.models.profiles.profile import ProfileSchema
 from sources.models.search.basicSearch import document_delete
 from sources.models.users.user import User, UserSchema
 from auth.authentification import Auth
-from preferences import defaultDataConf
 from sources.controllers import random_string
 from sources.models import custom_response
 from flask import Blueprint, request
@@ -23,8 +23,8 @@ import random
 import os
 
 album_api = Blueprint('album', __name__)
-bucket_albums = defaultDataConf.GOOGLE_BUCKET_ALBUMS
-bucket_images = defaultDataConf.GOOGLE_BUCKET_IMAGES
+bucket_albums = GOOGLE_BUCKET_ALBUMS
+bucket_images = GOOGLE_BUCKET_IMAGES
 profile_schema = ProfileSchema()
 admire_schema = AdmireSchema()
 media_schema = MediaSchema()

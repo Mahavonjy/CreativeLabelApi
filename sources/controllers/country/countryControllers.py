@@ -19,17 +19,13 @@ def get_all_country_allowed():
         {
             "name": "Madagascar",
             "value": list(set(data['Madagascar']))
-        }
-        # , {
-        #     "name": "France",
-        #     "value": list(set(data['France']))
-        # }
-        ,
-        # {
-        #     "name": "Belgique",
-        #     "value": list(set(data['Belgium']))
-        # },
-        {
+        }, {
+            "name": "France",
+            "value": list(set(data['France']))
+        }, {
+            "name": "Belgique",
+            "value": list(set(data['Belgium']))
+        }, {
             "name": "Luxembourg",
             "value": list(set(data['Luxembourg']))
         }, {
@@ -38,9 +34,8 @@ def get_all_country_allowed():
         }, {
             "name": "Mayotte",
             "value": list(set(data['Mayotte']))
-        }
-        # , {
-        #     "name": "Allemagne",
-        #     "value":list(set(data['Germany']))
-        # },
+        }, {
+            "name": "Allemagne",
+            "value": list(set(data['Germany']))
+        },
     ], 200)
