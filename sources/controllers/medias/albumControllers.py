@@ -143,7 +143,6 @@ def update_album(album_id, user_connected_model, user_connected_schema):
         new_album_info = Albums.get_album_id(album_id)
         new_information = albumSchema.dump(album_info)
         new_information["album_name"] = data.get("album_name")
-        new_information["artist"] = data.get("artist")
         new_information["description"] = data.get("description")
         new_information["genre"] = data.get("genre")
         new_information["genre_musical"] = data.get("genre_musical")
@@ -155,7 +154,6 @@ def update_album(album_id, user_connected_model, user_connected_schema):
             temp["description"] = new_information["description"]
             temp["genre_musical"] = new_information["genre_musical"]
             temp["genre"] = new_information["genre"]
-            temp["artist"] = new_information["artist"]
             media.update(temp)
         new_album_info.update(new_information)
         return True

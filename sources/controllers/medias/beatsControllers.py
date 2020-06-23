@@ -12,7 +12,7 @@ from sources.models.medias.media import Media, MediaSchema
 from sources.security.verification import Secure
 from sources.models.profiles.profile import ProfileSchema
 from sources.tools.tools import librosa_collect
-from sources.controllers import update_medias_shared, update_file_storage
+from sources.controllers import update_file_storage
 from sources.models import custom_response, add_in_storage as add_s, Percent
 from sources.controllers.medias.mediaControllers import get_media, stream_song_public_url, get_all_song_by_beats_genre
 
@@ -68,7 +68,6 @@ def upload_beats(*args, **kwargs):
     kwargs['data']['beats_wave'] = kwargs['uploaded_file_wave'].filename
     kwargs['data']['stems'] = kwargs['uploaded_samples'].filename
     media = Media(kwargs['data'])
-    update_medias_shared(kwargs['data'], kwargs['user_connected_model'], kwargs['user_connected_schema'])
     media.save()
     beats = media_schema.dump(media)
     beats['link'] = beat_link

@@ -53,22 +53,20 @@ def first_service(template, email,  name, service_title):
     return send_message_to_user(msg)
 
 
-def payment_success(template, data, user):
+def payment_success(template, data, user_type, email):
     """ Send a email with command recap """
 
-    email = data['invoicing_address']['email']
     msg = Message('Récaputilatif de commande !', sender='mahavonjy.cynthion@gmail.com', recipients=[email])
-    html_context = r(template_mail + template, data=data, user_type=user)
+    html_context = r(template_mail + template, data=data, user_type=user_type)
     msg.html = html_context
     return send_message_with_attach(data['reference'], html_context, msg)
 
 
-def payment_refused(template, data, user):
+def payment_refused(template, data, user_type, email):
     """ Send a email with command recap """
 
-    email = data['invoicing_address']['email']
     msg = Message('Command réfusé !', sender='mahavonjy.cynthion@gmail.com', recipients=[email])
-    msg.html = r(template_mail + template, data=data, user_type=user)
+    msg.html = r(template_mail + template, data=data, user_type=user_type)
     return send_message_to_user(msg)
 
 

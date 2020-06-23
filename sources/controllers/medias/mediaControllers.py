@@ -9,7 +9,7 @@ from google.cloud import storage
 from auth.authentification import Auth
 from preferences import GOOGLE_BUCKET_ALBUMS, GOOGLE_BUCKET_AUDIOS, GOOGLE_BUCKET_BEATS, GOOGLE_BUCKET_IMAGES
 from preferences.defaultDataConf import media_allowed_Genres, media_allowed_genre_musical
-from sources.controllers import update_medias_shared, update_file_storage, create_artist_new_story_dict
+from sources.controllers import update_file_storage, create_artist_new_story_dict
 from sources.controllers.medias.mediaBeatSuggestion import media_beat_suggestion
 from sources.security.verification import Secure
 from sources.models import custom_response, add_in_storage
@@ -181,7 +181,6 @@ def upload_one_media(uploaded_file, photo_file, data, user_connected_model, user
         link = user_profile_info.get("photo") if user_profile_info.get("photo") else None
     data["storage_name"], data["user_id"], data["photo"] = uploaded_file.filename, user_connected_schema.get('id'), link
     media = Media(data)
-    update_medias_shared(data, user_connected_model, user_connected_schema)
     media.save()
     media = media_schema.dump(media)
     media['link'] = add_in_storage(bucket_audios, user_connected_schema, uploaded_file)

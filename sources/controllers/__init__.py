@@ -115,23 +115,6 @@ def update_file_storage(args: dict):
     return True
 
 
-def update_medias_shared(data, user, ser_user):
-    """ update number medias shared user """
-
-    if data["genre_musical"] == "music":
-        try:
-            ser_user["music_shared"] += 1
-        except TypeError:
-            ser_user["music_shared"] = 1
-        user.update(ser_user)
-        return
-    try:
-        ser_user["beats_shared"] += 1
-    except TypeError:
-        ser_user["beats_shared"] = 1
-    user.update(ser_user)
-
-
 def convert_dict_to_sql_json(data_dict=None, data_list=None):
     """
 

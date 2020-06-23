@@ -118,7 +118,7 @@ class Secure:
             """ Get music type or photo type and others """
 
             ser_user = user_schema.dump(User.get_one_user(auth.user.get('id')))
-            if ser_user['artist'] and ser_user['user_type'] == "artist_musician" or ser_user['right'] != 0:
+            if ser_user['user_type'] == "artist_musician" or ser_user['right'] != 0:
                 data, error = validate_data(media_schema, request, False)
                 if error:
                     if add_albums_media_in_storage(data):
@@ -177,7 +177,7 @@ class Secure:
             user = User.get_one_user(auth.user.get('id'))
             ser_user = user_schema.dump(user)
             user_profile_info = profile_schema.dump(user.profile)
-            if not ser_user['artist'] or ser_user['user_type'] != "artist_musician":
+            if ser_user['user_type'] != "artist_musician":
                 return custom_response("Unauthorized", 400)
             data, error = validate_data(albumSchema, request, False)
             if data.get('genre_musical') == "beats":

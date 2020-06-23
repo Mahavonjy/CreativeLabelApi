@@ -138,9 +138,11 @@ def payment_success_send_email(data, payment_reference, total_price, total_tva, 
 
     if command_information is None:
         command_information = {}
+
     day = str(datetime.date.today().day)
     year = str(datetime.date.today().year)
     month = translator.translate(datetime.datetime.now().strftime("%B"), dest='fr').text.title()
+
     command_information['reference'] = payment_reference
     command_information['date'] = month + " " + day + ", " + year
     command_information['type'] = KANTOBIZ
@@ -158,6 +160,11 @@ def payment_success_send_email(data, payment_reference, total_price, total_tva, 
         "city": data["user_data"]["city"],
         "postal_code": data["user_data"]["postal_code"],
         "phone": data["user_data"]["phone"]}
-    payment_success('PaymentSuccessfull.html', data=command_information, user="customer")
-    payment_success('PaymentSuccessfull.html', data=command_information, user="admin")
+
+    _data = data["user_data"]
+    auditor_email = _data.get("auditor_email")
+    if auditor_email:
+        payment_success('PaymentSuccessfull.html', data=command_information, user_type="customer", email=auditor_email)
+    payment_success('PaymentSuccessfull.html', data=command_information, user_type="customer", email=_data["email"])
+    payment_success('PaymentSuccessfull.html', data=command_information, user_type="admin", email=_data["artist_email"])
     return True
