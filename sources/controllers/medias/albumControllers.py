@@ -89,10 +89,6 @@ def upload_albums(user, ser_user, data, link, uploaded_file, f_type):
         album_info.update(album)
     except KeyError:
         temp, album_save = ser_user, Albums(album)
-        try:
-            temp['album_shared'] += 1
-        except TypeError:
-            temp['album_shared'] = 1
         user.update(temp)
         album_save.save()
     album_info, h = Albums.get_album_info(keys), {"Isl-Token": request.headers.get('Isl_Token')}

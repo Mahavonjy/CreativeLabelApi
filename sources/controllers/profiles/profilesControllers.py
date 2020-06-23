@@ -87,7 +87,6 @@ def show_profile(user_connected_model, user_connected_schema):
     if user_banking:
         user_banking = banking_schema.dump(user_banking[0])
 
-
     return custom_response({
         "notes": notes,
         "role": user_connected_schema['user_type'],
@@ -122,11 +121,11 @@ def check_special_profile(profile_id):
         **check_user_options_and_services(user_),
         "user_id": user_.id,
         "role": user_.user_type,
-        "music_shared": user_.music_shared,
-        "beats_shared": user_.beats_shared,
-        "album_shared": user_.album_shared,
-        "followings": len(user_.user.all()),
-        "followers": len(user_.admire.all())
+        "music_shared": user_.medias.filter_by(album_id=None, genre_musical='music').count(),
+        "beats_shared": user_.medias.filter_by(album_id=None, genre_musical='beats').count(),
+        "album_shared": user_.albums.count(),
+        "followings": user_.user.count(),
+        "followers": user_.admire.count()
     }
     user_beats = user_.medias.filter_by(album_id=None, genre_musical='beats').all()
     return custom_response({

@@ -167,8 +167,7 @@ class User(db.Model):
 
         last_6_month = datetime.datetime.now() + relativedelta(months=-6)
         return User.query.filter_by(artist=1) \
-            .filter(User.created_at > last_6_month, User.beats_shared >= 1) \
-            .order_by(asc(User.beats_shared)) \
+            .filter(User.created_at > last_6_month) \
             .limit(10) \
             .all()
 

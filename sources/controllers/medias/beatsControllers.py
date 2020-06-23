@@ -245,7 +245,8 @@ def get_top_beat_maker_beats(json_response=False):
     beat_artist = []
     for beat in Media.top_beats_3_last_month():
         artist_profile = profile_schema.dump(User.get_one_user(beat.user_id).profile)
-        artist_profile['number_of_beats'] = User.get_one_user(beat.user_id).beats_shared
+        artist_profile['number_of_beats'] = User.get_one_user(beat.user_id)\
+                                                .medias.filter_by(album_id=None, genre_musical='beats').count(),
         if artist_profile not in beat_artist:
             beat_artist.append(artist_profile)
     if json_response:

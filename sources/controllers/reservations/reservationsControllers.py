@@ -180,10 +180,13 @@ def artist_accept_reservation(reservation_id, user_connected_model, user_connect
     user_reservation = user_connected_model.reservation_list.filter_by(id=reservation_id).first()
     if user_reservation:
         reservation_s = reservation_basic_schema.dump(user_reservation)
+
         if reservation_s["status"] == DECLINED:
             return custom_response("already declined", 400)
+
         if reservation_s["status"] == ACCEPTED:
             return custom_response("already accepted", 400)
+
         # refund
         service_s = service_schema.dump(user_reservation.service)
         payment_history_0bj = payment_history_schema.dump(user_reservation.payment_history)
@@ -199,7 +202,7 @@ def artist_accept_reservation(reservation_id, user_connected_model, user_connect
             "invoicing_address": payment_history_0bj
         }
 
-        invoice = accepted_reservation_by_artist(
+        reservation_s["invoice"] = accepted_reservation_by_artist(
             "ArtistAcceptReservation.html", data=data, reference=reference,
             user_type="customer", email=payment_history_0bj["email"], user_connected=user_connected_schema)
 
@@ -208,7 +211,6 @@ def artist_accept_reservation(reservation_id, user_connected_model, user_connect
             user_type="artist", email=user_connected_model.email)
 
         reservation_s["status"] = ACCEPTED
-        reservation_s["invoice"] = invoice
         user_reservation.update(reservation_s)
         payment_history_0bj["service_fee"] = True
         user_reservation.payment_history.update(payment_history_0bj)
@@ -223,8 +225,10 @@ def auditor_decline_reservation(reservation_id, user_connected_model, user_conne
 
     if user_reservation:
         reservation_s = reservation_basic_schema.dump(user_reservation)
+
         if reservation_s["status"] == DECLINED:
             return custom_response("already declined", 400)
+
         if reservation_s["status"] == ACCEPTED:
             service_s = service_schema.dump(user_reservation.service)
             artist = User.get_one_user(service_s["user_id"])
@@ -241,7 +245,7 @@ def auditor_decline_reservation(reservation_id, user_connected_model, user_conne
             data["invoicing_address"] = payment_history_0bj
 
             # do not forget refund
-            invoice = canceled_by_auditor_after_accept(
+            reservation_s["invoice"] = canceled_by_auditor_after_accept(
                 "CanceledByAuditorAfterAccept.html", data=data, reference=reference,
                 user_type="customer", email=payment_history_0bj["email"], user_connected=user_connected_schema)
 
@@ -251,7 +255,6 @@ def auditor_decline_reservation(reservation_id, user_connected_model, user_conne
 
             reservation_s["status"] = DECLINED
             payment_history_0bj["refund"] = True
-            reservation_s["invoice"] = invoice
             user_reservation.payment_history.update(payment_history_0bj)
             user_reservation.update(reservation_s)
             return custom_response_after_update(user_connected_model, user_reservation)
