@@ -234,15 +234,17 @@ def auditor_decline_reservation(reservation_id, user_connected_model, user_conne
             artist = User.get_one_user(service_s["user_id"])
             payment_history_0bj = payment_history_schema.dump(user_reservation.payment_history)
             reference = payment_history_0bj["reference"]
-            data = {}
-            data["service"] = service_s
-            data["refunded"] = 0.00
-            data["date"] = month + " " + day + ", " + year
-            data["auditor"] = user_connected_schema
-            data["reservation"] = reservation_s
-            data["artist_name"] = artist.name
-            data["artist_email"] = artist.email
-            data["invoicing_address"] = payment_history_0bj
+
+            data = {
+                "service": service_s,
+                "refunded": 0.00,
+                "date": month + " " + day + ", " + year,
+                "auditor": user_connected_schema,
+                "reservation": reservation_s,
+                "artist_name": artist.name,
+                "artist_email": artist.email,
+                "invoicing_address": payment_history_0bj
+            }
 
             # do not forget refund
             reservation_s["invoice"] = canceled_by_auditor_after_accept(

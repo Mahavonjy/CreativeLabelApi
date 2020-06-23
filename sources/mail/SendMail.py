@@ -25,14 +25,17 @@ def convert_html_to_pdf(html_source, output_filename):
     :return: return True on success and False on errors
     """
     # open output file for writing (truncated binary)
-    result_file = open(os.path.join(flask.current_app.root_path, reference_path_in_sources + output_filename), "wb")
+    try:
+        result_file = open(os.path.join(flask.current_app.root_path, reference_path_in_sources + output_filename), "wb")
 
-    # convert HTML to PDF
-    pisa_status = pisa.CreatePDF(html_source, dest=result_file)
+        # convert HTML to PDF
+        pisa_status = pisa.CreatePDF(html_source, dest=result_file)
 
-    # close output file
-    result_file.close()
-    return pisa_status.err
+        # close output file
+        result_file.close()
+        return pisa_status.err
+    except FileNotFoundError:
+        pass
 
 
 def send_message_to_user(message_context):
