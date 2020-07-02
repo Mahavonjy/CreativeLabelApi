@@ -4,11 +4,12 @@
 from sources.controllers import convert_dict_to_sql_json
 from sources.controllers.artists.materials.materialsControllers import create_new_materials_for_new_services, \
     delete_material_technical_sheet
-from sources.controllers.stars.starsControllers import generate_basic_stars
+from sources.controllers.stars.starsControllers import check_service_stars, generate_basic_stars
 from sources.mail.SendMail import first_service
 from sources.models.artists.options.artistOptions import OptionsSchema
 from sources.models.artists.services.artistServices import ServiceSchema, Services
-from sources.models.artists.materials.artistMaterials import MaterialsSchema
+from sources.models.artists.materials.artistMaterials import Materials, MaterialsSchema
+from sources.models.users.user import User
 from sources.tools.tools import validate_data, check_user_options_and_services
 from preferences import GOOGLE_BUCKET_IMAGES
 from auth.authentification import Auth
@@ -122,6 +123,15 @@ def search_user_service_by_id(service_id):
     if not service_checked:
         return custom_response("service not found", 400)
 
-    return custom_response({
-        "service": service_schema.dump(service_checked)
-    }, 200)
+    service_checked = service_schema.dump(service_checked)
+    material_id = service_checked["materials_id"]
+    service_checked["materials"] = material_schema.dump(Materials.get_by_materials_id(material_id))
+    service_checked["artist_name"] = User.get_one_user(service_checked["user_id"]).name
+    service_checked["notes"] = check_service_stars(service_checked["id"])
+    _options = User.get_one_user(service_checked["user_id"]).options.all()
+    service_checked["options"] = []
+    for option in _options:
+        if service_checked["id"] in option.services_id_list:
+            service_checked["options"].append(option_schema.dump(option))
+
+    return custom_response({"service": service_checked}, 200)

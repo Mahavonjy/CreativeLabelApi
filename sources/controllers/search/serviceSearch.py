@@ -15,7 +15,6 @@ search_service_schema = ServiceSearchSchema()
 
 
 def indexation(options, query_string):
-
     return es.search(
         index="services",
         body={"from": 0, "size": 10, "query": {"bool": {"must": options, "filter": query_string}}}
@@ -23,7 +22,6 @@ def indexation(options, query_string):
 
 
 def indexation_with_city(options, city, thematics):
-
     indexed = []
     query_string = {"query_string": {"fields": ["thematics", "others_city"], "query": city + "AND" + thematics}}
     indexed.append(indexation(options, query_string))
@@ -33,7 +31,6 @@ def indexation_with_city(options, city, thematics):
 
 
 def indexation_with_event(options, event, thematics):
-
     indexed = []
     query_string = {"query_string": {"fields": ["thematics", "events"], "query": event + "AND" + thematics}}
     indexed.append(indexation(options, query_string))
@@ -41,7 +38,6 @@ def indexation_with_event(options, event, thematics):
 
 
 def indexation_with_event_and_city(options, event, city, thematics):
-
     indexed = []
     query_string = {
         "query_string": {
@@ -55,16 +51,14 @@ def indexation_with_event_and_city(options, event, city, thematics):
 
 
 def filter_indexed_list(indexed_data, all_indexed_data):
-
     for indexed in indexed_data:
-        for l in indexed['hits']['hits']:
-            if l["_source"] not in all_indexed_data:
-                all_indexed_data.append(l["_source"])
+        for _l in indexed['hits']['hits']:
+            if _l["_source"] not in all_indexed_data:
+                all_indexed_data.append(_l["_source"])
     return all_indexed_data
 
 
 def add_others_information_to_list_of_service(all_indexed_data):
-
     new_list_of_all_indexed_data = []
     for service in all_indexed_data:
         material = es.search(
@@ -111,7 +105,6 @@ def search_services_enable_in_this_date():
 
 @api_service_search.route('/moment/events/<string:event>', methods=['GET'])
 def search_all_services_with_specific_event(event):
-
     indexed_data = es.search(
         index="services",
         body={"from": 0, "size": 50,
@@ -124,7 +117,6 @@ def search_all_services_with_specific_event(event):
 
 @api_service_search.route('/moment/thematics/<string:thematic>', methods=['GET'])
 def search_all_services_with_specific_thematic(thematic):
-
     all_indexed_data = []
     list_of_thematics_genre = all_genre_of_different_artist[thematic]
     for thematics_genre in list_of_thematics_genre:

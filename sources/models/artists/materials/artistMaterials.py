@@ -51,10 +51,10 @@ class Materials(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_by_materials_id(materials_id=None):
+    def get_by_materials_id(materials_id):
         """ get one artist service """
 
-        return Materials.query.filter_by(service_id=materials_id).first()
+        return Materials.query.filter_by(id=materials_id).first()
 
 
 class MaterialsSchema(ValidateSchema):

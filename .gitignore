@@ -34,7 +34,10 @@ Pipfile
 migrations
 pipfile.lock
 sources/Playlists/*
+
+# Json for google authentification
 CreativeLabel.json
+
 sources/Images/*.jpeg
 sources/AlbumZip/*.zip
 */__pycache__/*
