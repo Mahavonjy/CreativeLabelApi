@@ -2,7 +2,10 @@
 """ shebang """
 
 from flask import Blueprint, request
+from sqlalchemy import func
+
 from preferences.defaultDataConf import refund_allowed_type
+from sources.controllers import convert_dict_to_sql_json
 
 from sources.tools.tools import validate_data
 from sources.models.users.user import User
@@ -23,6 +26,9 @@ def update_my_global_function(user_connected_model, user_connected_schema):
 
     if data['refund_policy'] not in refund_allowed_type:
         return custom_response("refund not support", 400)
+
+    if data['travel_expenses']:
+        data['travel_expenses'] = func.json_build_object(*convert_dict_to_sql_json(data['travel_expenses']))
 
     user_condition_globals = user_connected_model.condition_globals[0]
     user_condition_globals.update(data)

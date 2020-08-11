@@ -16,6 +16,7 @@ class ValidateSchema(Schema):
     note = fields.List(fields.Int())
     user_type = fields.List(fields.Int())
     events = fields.List(fields.Str())
+    travel_expenses = fields.Dict()
 
     @validates('rules')
     def validate_rules(self, value):
@@ -47,6 +48,19 @@ class ValidateSchema(Schema):
         for event in values:
             if event not in allowed_events:
                 raise ValidationError("event " + event + " not allowed")
+
+    @validates('travel_expenses')
+    def validate_travel_expenses(self, values):
+        try:
+            type_allowed = [int, float]
+            if type(values['from']) not in type_allowed:
+                raise ValidationError("type not allowed for the values of key 'from'")
+            if type(values['to']) not in type_allowed:
+                raise ValidationError("type not allowed for the values of key 'to'")
+            if values['to'] != 0 and values['to'] < values['from']:
+                raise ValidationError("Value not accepted")
+        except KeyError:
+            raise ValidationError("need key from and to")
 
     @validates_schema
     def validate_all(self, data, **kwargs):

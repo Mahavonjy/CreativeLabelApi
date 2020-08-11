@@ -6,8 +6,10 @@ import re
 import time
 import json
 import librosa
+import calendar
 import itertools
 import marshmallow
+from datetime import datetime
 
 from sources.controllers import random_string
 from sources.models.admirations.admirations import AdmireSchema
@@ -118,8 +120,8 @@ def librosa_collect(file):
     os.remove(dirname)
     return bpm, tm
 
-def check_validations_errors(resp, key):
 
+def check_validations_errors(resp, key):
     new_resp = resp[key]
     new_key = list(new_resp)[0]
     tmp = new_resp[new_key][0].replace('Field', key)
@@ -138,39 +140,76 @@ def validate_data(_schema, requested, return_dict=True):
     @param return_dict: if the data is a form or Json
     :return: json or error message
     """
+    global data
     try:
         if return_dict:
             return _schema.load(requested.get_json()), False
+
         data = requested.form.to_dict(flat=True)
         if data.get("services") and data.get("password"):
             data['services'] = json.loads(data['services'])
             return _schema.load(data), False
+
         if data.get('services_id_list') and len(data.get('services_id_list')) != 0:
             data['services_id_list'] = re.sub(r'\"', '',
-                                             data['services_id_list'][2:len(data['services_id_list']) - 2]).split(",")
+                                              data['services_id_list'][2:len(data['services_id_list']) - 2]).split(",")
         if data.get('list_of_materials'):
             tmp_list = re.sub(r'\"', '', data['list_of_materials'][2:len(data['list_of_materials']) - 2]).split(",")
             data['list_of_materials'] = tmp_list
+
         if data.get('events') and data.get('others_city') and data.get('thematics') and data.get('special_dates'):
             data['events'] = re.sub(r'\"', '', data['events'][2:len(data['events']) - 2]).split(",")
             data['thematics'] = re.sub(r'\"', '', data['thematics'][2:len(data['thematics']) - 2]).split(",")
             data['others_city'] = re.sub(r'\"', '', data['others_city'][2:len(data['others_city']) - 2]).split(",")
+
             if data.get('galleries'):
                 data['galleries'] = re.sub(r'\"', '', data['galleries'][2:len(data['galleries']) - 2]).split(",")
             data['special_dates'] = json.loads(data['special_dates'])
+
+        if data.get("travel_expenses"):
+            data['travel_expenses'] = json.loads(data['travel_expenses'])
+
         return _schema.load(data), False
+
     except marshmallow.exceptions.ValidationError as resp:
         resp = resp.messages
         key = list(resp)[0]
         try:
             if type(resp[key][0]) is list:
                 resp[key][0] = resp[key][0][0]
+
             if not bool(resp[key][0].find('Field')):
                 return resp[key][0].replace('Field', key), True
-            return resp[key][0].replace('field', key), True
+            elif not bool(resp[key][0].find('field')):
+                return resp[key][0].replace('field', key), True
+
+            return key + ': ' + resp[key][0], True
+
         except KeyError:
             return check_validations_errors(resp, key)
+
         except AttributeError:
             return check_validations_errors(resp, key)
 
 
+def remove_in_indexed_list_by_event_date(obj, event_dt):
+    event_dt = datetime.fromtimestamp(calendar.timegm(event_dt.timetuple()))
+    event_dt = event_dt.replace(hour=0, minute=0, second=0, microsecond=0)
+    list_of_dt = list(obj["special_dates"])
+    ifBreak = False
+    for _dt in list_of_dt:
+        if bool(_dt.find('-')):
+            str_start, str_end = _dt.split("-")
+            dt_start = datetime.strptime(str_start, '%m/%d/%Y')
+            dt_end = datetime.strptime(str_end, '%m/%d/%Y')
+            if dt_start <= event_dt <= dt_end and obj["special_dates"][_dt]["hidden"]:
+                ifBreak = True
+                break
+            continue
+
+        dt_start = datetime.strptime(_dt, '%m/%d/%Y')
+        if dt_start == event_dt and obj["special_dates"][_dt]["hidden"]:
+            ifBreak = True
+            break
+
+    return ifBreak

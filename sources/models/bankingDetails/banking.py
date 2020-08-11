@@ -14,7 +14,6 @@ class BankingDetails(db.Model):
 
     id = db.Column(db.BIGINT, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
-    rules = db.Column(db.BOOLEAN, nullable=False)
     lastname = db.Column(db.String(200))
     country = db.Column(db.String(200), nullable=False)
     phone = db.Column(db.String(125), nullable=True)
@@ -30,7 +29,6 @@ class BankingDetails(db.Model):
         """ Class constructor """
 
         self.name = data.get('name')
-        self.rules = data.get('rules')
         self.country = data.get('country')
         self.phone = data.get('phone')
         self.lastname = data.get('lastname')
@@ -51,7 +49,6 @@ class BankingDetails(db.Model):
         """ update a Materials """
 
         self.name = data.get('name')
-        self.rules = data.get('rules')
         self.country = data.get('country')
         self.phone = data.get('phone')
         self.lastname = data.get('lastname')
@@ -81,6 +78,5 @@ class BankingSchema(ValidateSchema):
     email = fields.Email(required=True)
     phone = fields.String(nullable=True)
     lastname = fields.Str(required=False)
-    rules = fields.Boolean(required=True)
     created_at = fields.DateTime(dump_only=True)  # created date for service
     modified_at = fields.DateTime(dump_only=True)  # date who modified this service

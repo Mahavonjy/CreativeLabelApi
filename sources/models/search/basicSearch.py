@@ -33,24 +33,24 @@ def update_doc(data, schema, index, doc_type):
         Function to edit a document either updating existing fields or adding a new field.
     """
 
-    sch, second_ = schema.dump(data), {}
-    first_ = {"id": sch['id']}
+    data, second_ = schema.dump(data), {}
+    first_ = {"id": data['id']}
     if doc_type == "songs":
-        second_ = {"storage_name": sch['storage_name']}
+        second_ = {"storage_name": data['storage_name']}
     elif doc_type == "albums":
-        second_ = {"keys": sch['keys']}
+        second_ = {"keys": data['keys']}
     elif doc_type == "prestations":
-        second_ = {"title": sch['title']}
+        second_ = {"title": data['title']}
     elif doc_type == "material":
-        second_ = {"technical_sheet": sch['technical_sheet']}
+        second_ = {"technical_sheet": data['technical_sheet']}
     elif doc_type == "option":
-        second_ = {"name": sch['name']}
+        second_ = {"name": data['name']}
 
-    r = document_delete(index, doc_type, first_, second_, True)
-    if not r['hits']['hits']:
-        es.index(index=index, doc_type=doc_type, body=sch)
+    doc_deleted = document_delete(index, doc_type, first_, second_, True)
+    if not doc_deleted['hits']['hits']:
+        es.index(index=index, doc_type=doc_type, body=data)
         return
-    es.index(index=index, doc_type=doc_type, id=r['hits']['hits'][0]['_id'], body=sch)
+    es.index(index=index, doc_type=doc_type, id=doc_deleted['hits']['hits'][0]['_id'], body=data)
 
 
 def document_delete(index, doc_type, first_, second_, ref=False):

@@ -4,7 +4,7 @@ from operator import itemgetter
 
 from preferences.defaultDataConf import all_genre_of_different_artist
 from sources.controllers.stars.starsControllers import check_service_stars
-from sources.tools.tools import validate_data
+from sources.tools.tools import remove_in_indexed_list_by_event_date, validate_data
 from sources.models.search.basicSearch import ServiceSearchSchema
 from sources.models import custom_response, es
 from flask import Blueprint, request
@@ -50,10 +50,14 @@ def indexation_with_event_and_city(options, event, city, thematics):
     return indexed
 
 
-def filter_indexed_list(indexed_data, all_indexed_data):
+def filter_indexed_list(indexed_data, all_indexed_data, event_dt):
     for indexed in indexed_data:
         for _l in indexed['hits']['hits']:
             if _l["_source"] not in all_indexed_data:
+                if event_dt:
+                    if not remove_in_indexed_list_by_event_date(_l["_source"], event_dt):
+                        all_indexed_data.append(_l["_source"])
+                    continue
                 all_indexed_data.append(_l["_source"])
     return all_indexed_data
 
@@ -98,7 +102,7 @@ def search_services_enable_in_this_date():
             if data.get("event") and data.get("city"):
                 indexed_data += indexation_with_event_and_city(options, data["event"], data["city"], thematics_genre)
             indexed_data += [indexation(options, {"query_string": {"fields": ["thematics"], "query": thematics_genre}})]
-            all_indexed_data = filter_indexed_list(indexed_data, all_indexed_data)
+            all_indexed_data = filter_indexed_list(indexed_data, all_indexed_data, data['event_date'])
 
     return custom_response(add_others_information_to_list_of_service(all_indexed_data), 200)
 

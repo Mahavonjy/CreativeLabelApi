@@ -5,6 +5,7 @@ import datetime
 from sources.models import db
 from sources.models.schemaValidators.validates import ValidateSchema
 from marshmallow import fields
+from sqlalchemy.dialects.postgresql import JSON
 
 
 class ConditionGlobals(db.Model):
@@ -16,7 +17,7 @@ class ConditionGlobals(db.Model):
     __tablename__ = 'condition_globals'
 
     id = db.Column(db.Integer, primary_key=True)
-    travel_expenses = db.Column(db.Float, default=0.00)
+    travel_expenses = db.Column(JSON, default={})
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True)
     refund_policy = db.Column(db.String(45), default='flexible')
     monday = db.Column(db.Boolean, default=True)
@@ -42,7 +43,7 @@ class ConditionGlobals(db.Model):
         self.saturday = data.get('saturday')
         self.sunday = data.get('sunday')
         self.refund_policy = data.get('refund_policy')
-        self.travel_expenses = data.get('travel_expenses')
+        self.travel_expenses = data.get('travel_expenses', {"from": 0, "to": 0})
         self.created_at = datetime.datetime.utcnow()
         self.modified_at = datetime.datetime.utcnow()
 
@@ -96,6 +97,6 @@ class ConditionGlobalSchema(ValidateSchema):
     saturday = fields.Boolean(required=True)
     sunday = fields.Boolean(required=True)
     refund_policy = fields.Str(nullable=True)
-    travel_expenses = fields.Float(nullable=True)
+    travel_expenses = fields.Dict(nullable=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)

@@ -129,7 +129,9 @@ def convert_dict_to_sql_json(data_dict=None, data_list=None):
     for index, value in enumerate(data_list):
         if isinstance(value, dict):
             data_list[index] = func.json_build_object(
-                *convert_dict_to_sql_json(None, list(reduce(lambda x, y: x + y, value.items())))
+                *convert_dict_to_sql_json(
+                    None, list(reduce(lambda x, y: x + y, value.items()))
+                )
             )
 
     return data_list

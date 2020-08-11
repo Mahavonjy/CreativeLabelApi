@@ -9,6 +9,7 @@ from sources.mail.SendMail import first_service
 from sources.models.artists.options.artistOptions import OptionsSchema
 from sources.models.artists.services.artistServices import ServiceSchema, Services
 from sources.models.artists.materials.artistMaterials import Materials, MaterialsSchema
+from sources.models.search.basicSearch import document_delete
 from sources.models.users.user import User
 from sources.tools.tools import validate_data, check_user_options_and_services
 from preferences import GOOGLE_BUCKET_IMAGES
@@ -60,20 +61,26 @@ def create_new_service(user_connected_model, user_connected_schema):
     data, error = validate_data(service_schema, request, return_dict=False)
     if error:
         return custom_response(data, 400)
+
     all_user_services = user_connected_model.services.all()
     for service in all_user_services:
         if service.title == data['title'] and service.reference_city == data['reference_city'] \
                 or service.title == data['title'] and service.events == data['events']:
             return custom_response("same title and reference_city", 400)
+
     data['galleries'] = list(set(data.get("galleries", []) + check_galleries_files(request, user_connected_schema)))
     if len(data['galleries']) == 0:
         return custom_response("i need galleries", 400)
+
     if not data.get("travel_expenses"):
         data["travel_expenses"] = user_connected_model.condition_globals[0].travel_expenses
+    else: data['travel_expenses'] = func.json_build_object(*convert_dict_to_sql_json(data['travel_expenses']))
+
     data['user_id'] = user_connected_schema["id"]
     data['materials_id'] = create_new_materials_for_new_services()
     if len(all_user_services) == 0:
         first_service('FirstService.html', user_connected_schema["email"], user_connected_schema["name"], data["title"])
+
     new_service = Services(data)
     new_service.save()
     generate_basic_stars(service_id=new_service.id)
@@ -105,12 +112,13 @@ def update_service(services_id, user_connected_model, user_connected_schema):
 def display_one_artist_services(services_id, user_connected_model, user_connected_schema):
     """ Delete one user services """
 
-    user_service_to_delete = user_connected_model.services.filter_by(id=services_id).first()
-    if user_service_to_delete:
-        delete_material_technical_sheet(user_service_to_delete.material)
-        stars = Stars.get_stars_by_service_id(user_service_to_delete.id)
+    s_to_delete = user_connected_model.services.filter_by(id=services_id).first()
+    if s_to_delete:
+        delete_material_technical_sheet(s_to_delete.material)
+        stars = Stars.get_stars_by_service_id(s_to_delete.id)
         stars.delete()
-        user_service_to_delete.delete()
+        s_to_delete.delete()
+        document_delete("services", "prestations", {"id": s_to_delete.id}, {"title": s_to_delete.title})
         return custom_response("deleted", 200)
     return custom_response("service not found", 200)
 
