@@ -12,6 +12,8 @@ run elasticsearch before with port 9200
 
 4)`pip install -r requirements.txt`
 
+5)`create CreativeLabel.json and requests the content from the administrator`
+
 **** _create file_ `.env` _and put it_ ****
 
     # this is a file run.py who run the flask app
