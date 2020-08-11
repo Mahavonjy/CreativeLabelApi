@@ -4,6 +4,8 @@ install run elasticsearch before with port 9200
  
 you should also install python3-venv and pip
 
+__copy and run the following code from step 0 to 4 on your terminal___
+
 0)`git clone this project`
 
 1)`python3 -m venv venv`
