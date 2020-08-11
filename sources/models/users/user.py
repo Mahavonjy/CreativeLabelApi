@@ -2,8 +2,6 @@
 """ shebang """
 
 import datetime
-
-from sqlalchemy import asc
 from sources.models import db
 from sources.app import bcrypt
 from marshmallow import fields
