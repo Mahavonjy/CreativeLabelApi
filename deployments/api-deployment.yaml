@@ -43,10 +43,9 @@ spec:
     - name: "80"
       port: 80
       targetPort: 80
+      protocol: TCP
   selector:
     io.kompose.service: api
-  type: LoadBalancer
+  type: NodePort
 status:
-  loadBalancer:
-    ingress:
-      - ip: 34.71.222.142
+  loadBalancer: {}

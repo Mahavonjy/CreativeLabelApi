@@ -84,7 +84,7 @@ class ContractBeatMakingSchema(ValidateSchema):
     """ ContractBeatMaking Schema """
 
     id = fields.Int(dump_only=True)
-    user_id = fields.Int(nullable=True)
+    user_id = fields.Int(allow_none=True)
     price = fields.Float(required=True)
     mp3 = fields.Boolean(required=True)
     wave = fields.Boolean(required=True)

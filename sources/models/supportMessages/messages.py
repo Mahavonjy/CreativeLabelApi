@@ -78,6 +78,6 @@ class SupportMessagesSchema(ValidateSchema):
     title = fields.Str(required=True)
     user_email = fields.Str(required=True)
     message = fields.Str(required=True)
-    resolved = fields.Boolean(nullable=True)
+    resolved = fields.Boolean(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)

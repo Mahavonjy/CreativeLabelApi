@@ -140,7 +140,7 @@ def validate_data(_schema, requested, return_dict=True):
     @param return_dict: if the data is a form or Json
     :return: json or error message
     """
-    global data
+
     try:
         if return_dict:
             return _schema.load(requested.get_json()), False

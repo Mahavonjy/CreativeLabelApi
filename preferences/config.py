@@ -13,7 +13,7 @@ class DevelopmentTest:
     SQLALCHEMY_MAX_OVERFLOW = 15
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = 'postgresql://cynthionmahavonjy:2245@localhost:5432/creative'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://cynthionmahavonjy:2245@localhost:5432/creative_test'
     ES_HOST = {"host": "localhost", "port": 9200}
     ES_INDEX = ["albums_and_songs"]
 

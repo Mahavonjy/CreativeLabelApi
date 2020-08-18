@@ -81,8 +81,8 @@ class StarSchema(ValidateSchema):
 
     id = fields.Int(dump_only=True)
     note = fields.List(fields.Int(), required=True)
-    user_id = fields.Int(nullable=True)
-    service_id = fields.Int(nullable=True)
-    users_who_rated = fields.Dict(nullable=True)
+    user_id = fields.Int(allow_none=True)
+    service_id = fields.Int(allow_none=True)
+    users_who_rated = fields.Dict(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)

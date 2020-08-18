@@ -1,0 +1,11 @@
+ * Serving Flask app "run.py" (lazy loading)
+ * Environment: development
+ * Debug mode: on
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 273-670-416
+/Users/cynthionmahavonjy/Desktop/CreativeLabelAPI/venv/lib/python3.7/site-packages/elasticsearch/connection/base.py:177: ElasticsearchDeprecationWarning: [types removal] The parameter include_type_name should be explicitly specified in get indices requests to prepare for 7.0. In 7.0 include_type_name will default to 'false', which means responses will omit the type name in mapping definitions.
+  warnings.warn(message, category=ElasticsearchDeprecationWarning)
+/Users/cynthionmahavonjy/Desktop/CreativeLabelAPI/venv/lib/python3.7/site-packages/elasticsearch/connection/base.py:177: ElasticsearchDeprecationWarning: [types removal] The parameter include_type_name should be explicitly specified in get indices requests to prepare for 7.0. In 7.0 include_type_name will default to 'false', which means responses will omit the type name in mapping definitions.
+  warnings.warn(message, category=ElasticsearchDeprecationWarning)

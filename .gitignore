@@ -41,3 +41,4 @@ CreativeLabel.json
 sources/Images/*.jpeg
 sources/AlbumZip/*.zip
 */__pycache__/*
+*/.pytest_cache/*

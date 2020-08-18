@@ -53,8 +53,8 @@ class ResetPassword(ValidateSchema):
 
     id = fields.Int(dump_only=True)
     keys = fields.Int(required=True)
-    password_reset = fields.Int(nullable=True)
-    user_id = fields.Int(nullable=True)
+    password_reset = fields.Int(allow_none=True)
+    user_id = fields.Int(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
 

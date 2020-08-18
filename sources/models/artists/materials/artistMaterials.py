@@ -61,7 +61,7 @@ class MaterialsSchema(ValidateSchema):
     """ Materials Schema """
 
     id = fields.Int(dump_only=True)
-    technical_sheet = fields.Str(nullable=True)
+    technical_sheet = fields.Str(allow_none=True)
     list_of_materials = fields.List(fields.Str(), required=True)
     created_at = fields.DateTime(dump_only=True)  # created date for service
     modified_at = fields.DateTime(dump_only=True)  # date who modified this service

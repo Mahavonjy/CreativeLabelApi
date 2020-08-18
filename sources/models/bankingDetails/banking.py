@@ -76,7 +76,7 @@ class BankingSchema(ValidateSchema):
     country = fields.Str(required=True)
     user_id = fields.Int(required=False)
     email = fields.Email(required=True)
-    phone = fields.String(nullable=True)
+    phone = fields.String(allow_none=True)
     lastname = fields.Str(required=False)
     created_at = fields.DateTime(dump_only=True)  # created date for service
     modified_at = fields.DateTime(dump_only=True)  # date who modified this service

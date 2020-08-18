@@ -2,18 +2,6 @@
 """ shebang """
 
 from sources.models import es
-from marshmallow import fields
-from sources.models.schemaValidators.validates import ValidateSchema
-
-
-class ServiceSearchSchema(ValidateSchema):
-    """ Profile Schema """
-
-    country = fields.Str(required=True)
-    city = fields.Str(nullable=True)
-    event_date = fields.DateTime(required=True)
-    event = fields.Str(nullable=True)
-    thematics = fields.List(fields.Str(), required=True)
 
 
 def add_new_doc(data, schema, index, doc_type):

@@ -46,7 +46,7 @@ class User(db.Model):
     social_id = db.Column(db.String(128), unique=True, nullable=True)
     fileStorage_key = db.Column(db.String(100), unique=True)
     user_type = db.Column(db.String(50), default=USER_AUDITOR_PRO)
-    artist = db.Column(db.Integer, default=0)  # a enleverv
+    artist = db.Column(db.Integer, default=0)  # a enlever
     password = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
@@ -178,17 +178,17 @@ class UserSchema(ValidateSchema):
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     email = fields.Email(required=True)
-    right = fields.Int(nullable=True)
-    if_choice = fields.Int(nullable=True)
+    right = fields.Int(allow_none=True)
+    if_choice = fields.Int(allow_none=True)
     password = fields.Str(required=True)
-    artist = fields.Int(nullable=True)
-    user_type = fields.Str(nullable=True)
+    artist = fields.Int(allow_none=True)
+    user_type = fields.Str(allow_none=True)
     services = fields.Nested(ServiceSchema)
-    fileStorage_key = fields.Str(nullable=True)
+    fileStorage_key = fields.Str(allow_none=True)
+    user_genre_list = fields.List(fields.Str(), allow_none=True)
+    music_genres_love_list_id = fields.Str(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
-    user_genre_list = fields.List(fields.Str(), nullable=True)
-    music_genres_love_list_id = fields.Str(nullable=True)
 
 
 class UserSocial(ValidateSchema):
@@ -196,11 +196,11 @@ class UserSocial(ValidateSchema):
 
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
-    email = fields.Email(nullable=True)
-    right = fields.Int(nullable=True)
+    email = fields.Email(allow_none=True)
+    right = fields.Int(allow_none=True)
     social = fields.Str(required=True)
     social_id = fields.Str(required=True)
-    fileStorage_key = fields.Str(nullable=True)
+    fileStorage_key = fields.Str(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
 

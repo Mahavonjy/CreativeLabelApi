@@ -48,3 +48,8 @@ run elasticsearch before with port 9200
     FLASK_ENV="development"
 
 ###### run this command for start `flask run`
+
+
+```UNITTESTING PROJECT``
+
+use ```pytest```

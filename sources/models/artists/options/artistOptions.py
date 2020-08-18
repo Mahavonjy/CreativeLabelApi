@@ -86,12 +86,12 @@ class OptionsSchema(ValidateSchema):
 
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
-    user_id = fields.Int(nullable=True)
+    user_id = fields.Int(allow_none=True)
     price = fields.Float(required=True)
     description = fields.Str(required=False)
-    materials_id = fields.Int(nullable=True)
-    artist_tagged = fields.Str(nullable=False)
+    materials_id = fields.Int(allow_none=True)
+    artist_tagged = fields.Str(allow_none=False)
     special_dates = fields.Dict(required=True)
-    services_id_list = fields.List(fields.Int(), nullable=True)
+    services_id_list = fields.List(fields.Int(), allow_none=True)
     created_at = fields.DateTime(dump_only=True)  # created date for service
     modified_at = fields.DateTime(dump_only=True)  # date who modified this service

@@ -52,8 +52,8 @@ class AdmireSchema(ValidateSchema):
     """ AdmireSchema """
 
     id = fields.Int(dump_only=True)
-    admire_id = fields.Int(nullable=True)
+    admire_id = fields.Int(allow_none=True)
     user_id = fields.Int(required=True)
-    song_id = fields.Int(nullable=True)
+    song_id = fields.Int(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)

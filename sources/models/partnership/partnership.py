@@ -78,7 +78,7 @@ class PartnerSchema(ValidateSchema):
     active = fields.Boolean()
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
-    logo = fields.Str(nullable=True)
+    logo = fields.Str(allow_none=True)
     partnership_desc = fields.Str(required=True)
     contract_type = fields.Int(required=True)
     created_at = fields.DateTime(dump_only=True)

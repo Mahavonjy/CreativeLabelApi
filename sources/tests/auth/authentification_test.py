@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """ shebang """
 
-from sources.tests.testParent.testParent import ParentTest
+from sources.tests.testParent.testParent import Test
+from requests_toolbelt import MultipartEncoder
 from sources.models.keyResetPassword.keyResetPasswords import KeyResetPassword
 from sources.models.users.user import User
 import json
 
 
-class TestAuthentification(ParentTest):
+class TestAuthentification(Test):
 
     def test_register(self):
         """ Test my function register.
@@ -17,37 +18,41 @@ class TestAuthentification(ParentTest):
 
         # Check if name is out of data and return error name
         data = {"email": "testing@gmail.com", "password": "qwerty"}
+        data_form_type = MultipartEncoder(fields=data)
         response = self.app.post(
-            'api/users/register', data=json.dumps(data), content_type='application/json'
+            'api/users/register', data=data_form_type, content_type=data_form_type.content_type
         )
         self.assertEqual(response.status_code, 400)
         json_returned = json.loads(response.get_data(as_text=True))
-        self.assertEqual(json_returned['name'][0], 'Missing data for required field.')
+        self.assertEqual(json_returned, 'name: Missing data for required field.')
 
         # Check if email is out of data and return error for email
         del data['email']
         data['name'] = 'testing'
+        data_form_type = MultipartEncoder(fields=data)
         response = self.app.post(
-            'api/users/register', data=json.dumps(data), content_type='application/json'
+            'api/users/register', data=data_form_type, content_type=data_form_type.content_type
         )
         self.assertEqual(response.status_code, 400)
         json_returned = json.loads(response.get_data(as_text=True))
-        self.assertEqual(json_returned['email'][0], 'Missing data for required field.')
+        self.assertEqual(json_returned, 'email: Missing data for required field.')
 
         # Check if password is out of data and return error for password
         del data['password']
         data['email'] = 'testing@gmail.com'
+        data_form_type = MultipartEncoder(fields=data)
         response = self.app.post(
-            'api/users/register', data=json.dumps(data), content_type='application/json'
+            'api/users/register', data=data_form_type, content_type=data_form_type.content_type
         )
         self.assertEqual(response.status_code, 400)
         json_returned = json.loads(response.get_data(as_text=True))
-        self.assertEqual(json_returned['password'][0], 'Missing data for required field.')
+        self.assertEqual(json_returned, 'password: Missing data for required field.')
 
-        # Now i test register with success and return 200 in status
+        # Now we test register with success and return 200 in status
         data['password'] = "qwerty"
+        data_form_type = MultipartEncoder(fields=data)
         response = self.app.post(
-            'api/users/register', data=json.dumps(data), content_type='application/json'
+            'api/users/register', data=data_form_type, content_type=data_form_type.content_type
         )
         self.assertEqual(response.status_code, 200)
         json_returned = json.loads(response.get_data(as_text=True))
@@ -72,7 +77,7 @@ class TestAuthentification(ParentTest):
         )
         self.assertEqual(response.status_code, 400)
         json_returned = json.loads(response.get_data(as_text=True))
-        self.assertEqual(json_returned['keys'][0], 'Missing data for required field.')
+        self.assertEqual(json_returned, 'keys: Missing data for required field.')
 
         # Check if email is out of data and return error for email
         new_data = {"keys": key}
@@ -81,7 +86,7 @@ class TestAuthentification(ParentTest):
         )
         self.assertEqual(response.status_code, 400)
         json_returned = json.loads(response.get_data(as_text=True))
-        self.assertEqual(json_returned['email'][0], 'Missing data for required field.')
+        self.assertEqual(json_returned, 'email: Missing data for required field.')
 
         # Check if key no validate
         new_data = {"keys": 00000, "email": data["email"]}
@@ -112,5 +117,7 @@ class TestAuthentification(ParentTest):
     def test_login(self):
         """ Test my function login.
         """
+
+        Test.createTestAccount(self)
 
 

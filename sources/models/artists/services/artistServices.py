@@ -118,28 +118,38 @@ class Services(db.Model):
         return Services.query.filter_by(id=service_id).first()
 
 
+class ServiceSearchSchema(ValidateSchema):
+    """ service search Schema """
+
+    country = fields.Str(required=True)
+    city = fields.Str(required=True, allow_none=True)
+    event_date = fields.DateTime(required=True, allow_none=True)
+    event = fields.Str(required=True, allow_none=True)
+    thematics = fields.List(fields.Str(), required=True, allow_none=True)
+
+
 class ServiceSchema(ValidateSchema):
     """ Profile Schema """
 
     id = fields.Int(dump_only=True)
     title = fields.Str(required=True)
     country = fields.Str(required=True)
-    user_id = fields.Int(nullable=True)
+    user_id = fields.Int(allow_none=True)
     price = fields.Float(required=True)
-    hidden = fields.Boolean(nullable=True)
-    description = fields.Str(nullable=True)
-    materials_id = fields.Int(nullable=True)
+    hidden = fields.Boolean(allow_none=True)
+    description = fields.Str(allow_none=True)
+    materials_id = fields.Int(allow_none=True)
     reference_city = fields.Str(required=True)
-    special_dates = fields.Dict(nullable=True)
+    special_dates = fields.Dict(allow_none=True)
     refund_policy = fields.Str(required=True)
     travel_expenses = fields.Dict(nullable=False)
     number_of_artists = fields.Int(required=True)
-    preparation_time = fields.Float(nullable=True)
+    preparation_time = fields.Float(allow_none=True)
     events = fields.List(fields.Str(), required=True)
-    galleries = fields.List(fields.Str(), nullable=True)
+    galleries = fields.List(fields.Str(), allow_none=True)
     thematics = fields.List(fields.Str(), required=True)
-    others_city = fields.List(fields.Str(), nullable=True)
-    duration_of_the_service = fields.Float(nullable=True)
+    others_city = fields.List(fields.Str(), allow_none=True)
+    duration_of_the_service = fields.Float(allow_none=True)
     unit_duration_of_the_service = fields.Str(required=True)
     unit_of_the_preparation_time = fields.Str(required=True)
     created_at = fields.DateTime(dump_only=True)  # created date for service

@@ -90,7 +90,7 @@ class ArtistHistorySchema(ValidateSchema):
     """
 
     id = fields.Int(dump_only=True)
-    months_story = fields.Dict(nullable=True)
+    months_story = fields.Dict(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
 

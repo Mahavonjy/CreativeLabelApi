@@ -74,7 +74,8 @@ def create_new_service(user_connected_model, user_connected_schema):
 
     if not data.get("travel_expenses"):
         data["travel_expenses"] = user_connected_model.condition_globals[0].travel_expenses
-    else: data['travel_expenses'] = func.json_build_object(*convert_dict_to_sql_json(data['travel_expenses']))
+    else:
+        data['travel_expenses'] = func.json_build_object(*convert_dict_to_sql_json(data['travel_expenses']))
 
     data['user_id'] = user_connected_schema["id"]
     data['materials_id'] = create_new_materials_for_new_services()

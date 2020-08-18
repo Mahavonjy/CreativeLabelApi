@@ -176,6 +176,8 @@ def reset_password_after_validate_keys():
     data, error = validate_data(user_password, request)
     if error:
         return custom_response(data, 400)
+    if not data.get('password'):
+        return custom_response("Password could not be null", 400)
     user_in_db = User.get_user_by_email(data.get('email'))
     if user_in_db:
         user_in_db.update_password(data.get('password'))
@@ -214,8 +216,10 @@ def register():
     data, error = validate_data(user_schema, request, return_dict=False)
     if error:
         return custom_response(data, 400)
+
     if User.get_user_by_email(data.get('email')):
         return custom_response("Email already exist", 400)
+
     create_profile(data)
     profile_id = profile_schema.dump(Profiles.get_profile(data.get('email')))['id']
     data['fileStorage_key'], data['profile_id'], keys = random_string(10), profile_id, random.randint(1111, 9999) * 9999
