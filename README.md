@@ -1,6 +1,10 @@
-All Installation
+All Installation (#Python3)
 
-run elasticsearch before with port 9200
+install run elasticsearch before with port 9200
+ 
+you should also install python3-venv and pip
+
+__copy and run the following command from step 0 to 4 and 7 on your terminal___
 
 0)`git clone this project`
 
@@ -12,7 +16,9 @@ run elasticsearch before with port 9200
 
 4)`pip install -r requirements.txt`
 
-**** _create file_ `.env` _and put it_ ****
+5)`create CreativeLabel.json and requests the content from the administrator`
+
+6)**** _create file_ `.env` _and put it_ ****
 
     # this is a file run.py who run the flask app
     FLASK_APP=run.py
@@ -46,6 +52,10 @@ run elasticsearch before with port 9200
     
     # Here is my environemnt name
     FLASK_ENV="development"
+
+___Ask the administrator for certain information in the .env file___
+    
+7)```./migrate.sh```
 
 ###### run this command for start `flask run`
 
