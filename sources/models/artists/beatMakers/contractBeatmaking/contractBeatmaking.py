@@ -74,9 +74,13 @@ class ContractBeatMaking(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_contract_name_by_user_id(contract_name, user_id):
+    def get_contract_name_by_user_id(contract_name=None, user_id=None):
         """ get one contract name by user id """
 
+        if contract_name and not user_id:
+            return ContractBeatMaking.query.filter_by(contract_name=contract_name).all()
+        if not contract_name and user_id:
+            return ContractBeatMaking.query.filter_by(user_id=user_id).all()
         return ContractBeatMaking.query.filter_by(contract_name=contract_name, user_id=user_id).first()
 
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd ../
+
 pwd=`pwd`'/migrations'
 
 sleep 1

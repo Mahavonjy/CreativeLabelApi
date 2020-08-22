@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd ../
+
 pwd=2245
 user="cynthionmahavonjy"
 index_name_of_all_options="options"
@@ -41,4 +43,5 @@ curl -XPUT "http://localhost:9200/${index_name_of_all_services}"
 curl -XPUT "http://localhost:9200/${index_name_of_all_options}"
 
 # create all table in db postgres
+cd scripts
 source migrate.sh

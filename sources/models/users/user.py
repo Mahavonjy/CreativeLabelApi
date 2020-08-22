@@ -3,23 +3,23 @@
 
 import datetime
 
-from sqlalchemy import asc
-from sources.models import db
-from sources.app import bcrypt
-from marshmallow import fields
-from sources.models.carts.cart import Carts
-from sources.models.medias.media import Media
-from sources.models.medias.albums import Albums
 from dateutil.relativedelta import relativedelta
-from sources.models.stars.noteStars import Stars
-from sources.models.playlists.playlist import Playlists
-from preferences import USER_AUDITOR_PRO
-from sources.models.artists.options.artistOptions import Options
+from marshmallow import fields
+
+from preferences import USER_AUDITOR_PRO, USER_ARTIST_BEATMAKER
+from sources.app import bcrypt
+from sources.models import db
 from sources.models.artists.artistPayment.payment import Payment
-from sources.models.schemaValidators.validates import ValidateSchema
-from sources.models.artists.history.paymentHistory import PaymentHistory
-from sources.models.artists.services.artistServices import Services, ServiceSchema
 from sources.models.artists.beatMakers.contractBeatmaking.contractBeatmaking import ContractBeatMaking
+from sources.models.artists.history.paymentHistory import PaymentHistory
+from sources.models.artists.options.artistOptions import Options
+from sources.models.artists.services.artistServices import Services, ServiceSchema
+from sources.models.carts.cart import Carts
+from sources.models.medias.albums import Albums
+from sources.models.medias.media import Media
+from sources.models.playlists.playlist import Playlists
+from sources.models.schemaValidators.validates import ValidateSchema
+from sources.models.stars.noteStars import Stars
 
 _f = "Reservations.artist_owner_id"
 a_f = "Admiration.admire_id"
@@ -46,7 +46,6 @@ class User(db.Model):
     social_id = db.Column(db.String(128), unique=True, nullable=True)
     fileStorage_key = db.Column(db.String(100), unique=True)
     user_type = db.Column(db.String(50), default=USER_AUDITOR_PRO)
-    artist = db.Column(db.Integer, default=0)  # a enlever
     password = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
@@ -86,7 +85,6 @@ class User(db.Model):
         self.social = data.get('social')
         self.user_type = data.get('user_type')
         self.social_id = data.get('social_id')
-        self.artist = data.get('artist', 0)
         self.password = None if data.get('social', None) else self.generate_hash(data.get('password'))
         self.music_genres_love_list_id = None or data.get("music_genres_love_list_id")
         self.fileStorage_key = data.get('fileStorage_key')
@@ -113,7 +111,6 @@ class User(db.Model):
         self.email = data.get('email')
         self.right = data.get('right')
         self.user_type = data.get('user_type')
-        self.artist = data.get('artist')
         self.if_choice = data.get('if_choice')
         self.user_genre_list = data.get('user_genre_list')
         self.music_genres_love_list_id = data.get("music_genres_love_list_id")
@@ -159,15 +156,15 @@ class User(db.Model):
     def get_len_artist():
         """ get length of artist """
 
-        return User.query.filter_by(artist=1).count(), User.query.filter_by(artist=1).all()
+        script = User.query.filter(User.user_type != USER_AUDITOR_PRO)
+        return script.count(), script.all()
 
     @staticmethod
     def all_beat_maker_in_three_last_month():
         """ get all BeatMaker at the six last month """
 
         last_6_month = datetime.datetime.now() + relativedelta(months=-6)
-        return User.query.filter_by(artist=1) \
-            .filter(User.created_at > last_6_month) \
+        return User.query.filter(User.created_at > last_6_month, User.user_type == USER_ARTIST_BEATMAKER) \
             .limit(10) \
             .all()
 
@@ -181,7 +178,6 @@ class UserSchema(ValidateSchema):
     right = fields.Int(allow_none=True)
     if_choice = fields.Int(allow_none=True)
     password = fields.Str(required=True)
-    artist = fields.Int(allow_none=True)
     user_type = fields.Str(allow_none=True)
     services = fields.Nested(ServiceSchema)
     fileStorage_key = fields.Str(allow_none=True)

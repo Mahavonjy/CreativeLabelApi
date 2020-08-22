@@ -1,22 +1,33 @@
 #!/usr/bin/env python3
 """ shebang """
 
-from marshmallow import Schema, ValidationError, validates, fields, validates_schema
-
-from preferences.defaultDataConf import type_of_isl_artist, allowed_events, allowed_cirque_or_child_options, \
-    allowed_audio_visual_options, allowed_chant_and_music_options, allowed_beat_maker_options,\
-    allowed_magician_options, allowed_comedian_options, allowed_dance_options, allowed_dj_options
+from marshmallow import Schema, ValidationError, validates, fields
+from preferences.defaultDataConf import type_of_isl_artist, allowed_events
 
 
 class ValidateSchema(Schema):
     event = fields.Str()
     iban = fields.Str()
     swift = fields.Str()
+    country = fields.Str()
+    services = fields.Dict()
     rules = fields.Boolean()
+    user_type = fields.Str()
     note = fields.List(fields.Int())
-    user_type = fields.List(fields.Int())
     events = fields.List(fields.Str())
     travel_expenses = fields.Dict()
+    unit_of_the_preparation_time = fields.Str()
+    unit_duration_of_the_service = fields.Str()
+
+    @validates('unit_of_the_preparation_time')
+    def validate_unit_of_the_preparation_time(self, value):
+        if value not in ["day", "hours", "min", "sec"]:
+            raise ValidationError("unit_of_the_preparation_time not allowed")
+
+    @validates('unit_duration_of_the_service')
+    def validate_unit_duration_of_the_service(self, value):
+        if value not in ["day", "hours", "min", "sec"]:
+            raise ValidationError("unit_duration_of_the_service not allowed")
 
     @validates('rules')
     def validate_rules(self, value):
@@ -62,25 +73,24 @@ class ValidateSchema(Schema):
         except KeyError:
             raise ValidationError("need key from and to")
 
-    @validates_schema
-    def validate_all(self, data, **kwargs):
+    @validates('country')
+    def validate_country(self, values):
 
-        if data.get('user_type') and data.get('services').get('thematics'):
-            user_type_ = data.get('user_type')
-            thematics = data.get('services').get('thematics')
-            for thematic in thematics:
-                if user_type_ == "dj" and thematic not in allowed_dj_options or \
-                        user_type_ == "dancers" and thematic not in allowed_dance_options or \
-                        user_type_ == "comedian" and thematic not in allowed_comedian_options or \
-                        user_type_ == "magician" and thematic not in allowed_magician_options or \
-                        user_type_ == "beatmaker" and thematic not in allowed_beat_maker_options or \
-                        user_type_ == "artist_musician" and thematic not in allowed_chant_and_music_options or \
-                        user_type_ == "audiovisual_specialist" and thematic not in allowed_audio_visual_options or \
-                        user_type_ == "street_artists" and thematic not in allowed_cirque_or_child_options:
-                    raise ValidationError(user_type_ + " type don't match with thematics")
+        countries = ["Madagascar", "France", "Belgique", "Luxembourg", "Mauritius", "Mayotte", "Allemagne"]
+        if values not in countries:
+            raise ValidationError("country not allowed")
 
-        if data.get('user_type') and not data.get('services'):
+    @validates('services')
+    def validate_services(self, values):
+
+        if values.get('unit_of_the_preparation_time') not in ["day", "hours", "min", "sec"]:
+            raise ValidationError("not allowed")
+
+        if values.get('unit_duration_of_the_service') not in ["day", "hours", "min", "sec"]:
+            raise ValidationError("not allowed")
+
+        if values.get('event') and values.get('event') not in allowed_events:
+            raise ValidationError("event " + values.get('event') + " not allowed")
+
+        if values.get('user_type') and not values.get('services'):
             raise ValidationError("I need the first service details")
-
-        if data.get('event') and data.get('event') not in allowed_events:
-            raise ValidationError("event " + data.get('event') + " not allowed")

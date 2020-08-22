@@ -16,7 +16,7 @@ from sources.controllers.profiles.profilesControllers import create_profile
 from preferences.defaultDataConf import type_of_isl_artist
 from sources.tools.tools import validate_data
 from sources.controllers import create_artist_story
-from preferences import USER_ARTIST_BEATMAKER
+from preferences import USER_ARTIST_BEATMAKER, USER_AUDITOR_PRO
 from auth.authentification import Auth
 from sources.controllers import random_string
 from sources.models import custom_response
@@ -70,8 +70,7 @@ def update_user_to_artist_or_manager(type_name, user_connected_model, user_conne
     if type_name not in [k.get('name') for k in type_of_isl_artist]:
         return custom_response("artist type not Allowed", 400)
 
-    if not user_connected_schema['artist']:
-        user_connected_schema['artist'] = 1
+    if user_connected_schema['user_type'] == USER_AUDITOR_PRO:
         user_connected_schema['user_type'] = type_name
         user_connected_schema["if_choice"] = 1
         user_connected_model.update(user_connected_schema)
@@ -143,8 +142,6 @@ def facebook_authorized():
     create_profile(data)
     profile_info = profile_schema.dump(Profiles.get_profile(data.get('social_id')))
     data['fileStorage_key'], data['profile_id'] = random_string(10), profile_info.get('id')
-    # the user is artist
-    data['artist'] = 1
     user = User(data)
     user.save()
     create_artist_story(user.id)
@@ -182,7 +179,7 @@ def reset_password_after_validate_keys():
     if user_in_db:
         user_in_db.update_password(data.get('password'))
         password_updated('PasswordUpdated.html', email=data.get('email'), name=user_in_db.name)
-        return login(connect=data)
+        return custom_response("password changed", 200)
     return custom_response("Unauthorized", 400)
 
 
@@ -232,7 +229,6 @@ def register():
         generate_condition_globals(user.get('id'))
         if data.get('user_type') == USER_ARTIST_BEATMAKER:
             create_all_default_contract(user.get('id'))
-        data['artist'] = 1
         data['services']['user_id'] = user.get('id')
         data['services']['galleries'] = check_galleries_files(request, user)
         data['services']['materials_id'] = create_new_materials_for_new_services()
@@ -259,24 +255,8 @@ def check_user_password(user_connected_model, user_connected_schema):
 
 
 @user_api.route('/login', methods=['POST'])
-def login(connect=None):
+def login():
     """ function for login in api """
-
-    if connect:
-        if not isinstance(connect, dict):
-            return custom_response('argument type not supportable', 400)
-        if 'email' not in connect or 'password' not in connect:
-            return custom_response('i need email an password keys', 400)
-        user = User.get_user_by_email(connect.get('email'))
-        if not user.check_hash(connect.get('password')):
-            return custom_response('invalid password', 400)
-        ser_user = user_schema.dump(user)
-        token = Auth.generate_token(ser_user.get('id'))
-        if ser_user.get('email'):
-            u_profile = profile_schema.dump(Profiles.get_profile(ser_user.get('email')))
-            if u_profile['photo']:
-                return token_return(token, ser_user['name'], connect['email'], u_profile['photo'])
-        return token_return(token, ser_user['name'], connect['email'])
 
     data, error = validate_data(user_password, request)
     if error:

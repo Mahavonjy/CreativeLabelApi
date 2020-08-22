@@ -10,6 +10,7 @@ import calendar
 import itertools
 import marshmallow
 from datetime import datetime
+from marshmallow import ValidationError
 
 from sources.controllers import random_string
 from sources.models.admirations.admirations import AdmireSchema
@@ -20,6 +21,10 @@ from sources.models.medias.albums import Albums, AlbumSchema
 from sources.models.medias.media import Media, MediaSchema
 from sources.models.users.user import User
 from sqlalchemy import desc
+
+from preferences.defaultDataConf import allowed_cirque_or_child_options, \
+    allowed_audio_visual_options, allowed_chant_and_music_options, allowed_beat_maker_options, \
+    allowed_magician_options, allowed_comedian_options, allowed_dance_options, allowed_dj_options
 
 albumSchema = AlbumSchema()
 media_schema = MediaSchema()
@@ -128,7 +133,12 @@ def check_validations_errors(resp, key):
     if not bool(new_resp[new_key][0].find('Field')):
         tmp = tmp.replace('Field', key)
         return tmp.replace('data', new_key), True
-    tmp = tmp.replace('data', new_key) if not bool(tmp.find('data')) else new_key + " " + tmp
+    if not bool(tmp.find('data')):
+        tmp = tmp.replace('data', new_key)
+    if not bool(tmp.find(new_key)):
+        pass
+    else:
+        tmp = new_key + " " + tmp
     return tmp.replace('field', key), True
 
 
@@ -147,7 +157,22 @@ def validate_data(_schema, requested, return_dict=True):
 
         data = requested.form.to_dict(flat=True)
         if data.get("services") and data.get("password"):
+            if not data.get("user_type"):
+                return "I need user_type", True
             data['services'] = json.loads(data['services'])
+            user_type_ = data.get('user_type')
+            thematics = data.get('services').get('thematics')
+            if thematics:
+                for thematic in thematics:
+                    if user_type_ == "dj" and thematic not in allowed_dj_options or \
+                            user_type_ == "dancers" and thematic not in allowed_dance_options or \
+                            user_type_ == "comedian" and thematic not in allowed_comedian_options or \
+                            user_type_ == "magician" and thematic not in allowed_magician_options or \
+                            user_type_ == "beatmaker" and thematic not in allowed_beat_maker_options or \
+                            user_type_ == "artist_musician" and thematic not in allowed_chant_and_music_options or \
+                            user_type_ == "audiovisual_specialist" and thematic not in allowed_audio_visual_options or \
+                            user_type_ == "street_artists" and thematic not in allowed_cirque_or_child_options:
+                        return user_type_ + " type don't match with thematics", True
             return _schema.load(data), False
 
         if data.get('services_id_list') and len(data.get('services_id_list')) != 0:

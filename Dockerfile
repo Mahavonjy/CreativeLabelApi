@@ -16,4 +16,4 @@ RUN apt-get update && \
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 80
-CMD ["/bin/bash", "entrypoint.sh"]
+CMD ["/bin/bash", "scripts/entrypoint.sh"]

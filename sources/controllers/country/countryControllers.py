@@ -15,6 +15,7 @@ def get_all_country_allowed():
     with open('country/Countries.json') as f:
         data = json.load(f)
 
+    # change validates.py file if change it
     return custom_response([
         {
             "name": "Madagascar",
@@ -29,7 +30,7 @@ def get_all_country_allowed():
             "name": "Luxembourg",
             "value": list(set(data['Luxembourg']))
         }, {
-            "name": "Maurice",
+            "name": "Mauritius",
             "value": list(set(data['Mauritius']))
         }, {
             "name": "Mayotte",
