@@ -55,11 +55,11 @@ __copy and run the following command from step 0 to 4 and 7 on your terminal___
 
 ___Ask the administrator for certain information in the .env file___
     
-7)```./migrate.sh```
+7)```(cd scripts && ./migrate.sh)```
 
 ###### run this command for start `flask run`
 
 
 ```UNITTESTING PROJECT``
 
-use ```pytest```
+use ```(cd scripts && ./run_tests.s)```

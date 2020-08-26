@@ -80,8 +80,8 @@ class Production:
     # Email Config
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
-    MAIL_USERNAME = 'mahavonjy.cynthion@gmail.com'
-    MAIL_PASSWORD = 'Damoiseau2245!'
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME_API')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD_API')
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
 

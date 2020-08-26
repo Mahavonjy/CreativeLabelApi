@@ -9,6 +9,7 @@ import os
 app = welcome(os.getenv('FLASK_ENV'))
 
 for index in Prod.ES_INDEX:
+    # warnings
     if not es.indices.exists(index=index):
         es.indices.create(index=index)
 
