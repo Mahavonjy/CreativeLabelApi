@@ -27,6 +27,14 @@ __copy and run the following command from step 0 to 4 and 7 on your terminal___
     # Contact admin for this information
     GOOGLE_APPLICATION_CREDENTIALS=CreativeLabel.json
     
+    # sentry credentials
+    SENTRY_SDK_DSN=your_sentry_key"
+    
+    # cloudinary credentials
+    CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+    CLOUDINARY_API_KEY=your_cloudinary_key
+    CLOUDINARY_API_SECRET=your_cloudinary_secret
+    
     # this is a secret key
     # this is a key for encode or decode token JWT
     JWT_SECRET_KEY="qwerty"
@@ -62,4 +70,4 @@ ___Ask the administrator for certain information in the .env file___
 
 ```UNITTESTING PROJECT``
 
-use ```(cd scripts && ./run_tests.s)```
+use ```./scripts/run_tests.sh .env```

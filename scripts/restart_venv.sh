@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-cd ../
+current_path=`pwd`
+arr=(`echo ${current_path} | tr "/" "\n"`)
+if [[ ${arr[@]:(-1)} == "scripts" ]]
+then
+	cd ../
+fi
 
 pwd=`pwd`'/venv'
 

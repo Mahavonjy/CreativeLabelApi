@@ -10,6 +10,8 @@ from sources.models import db
 
 class Test(unittest.TestCase):
 
+    _app = None
+    basic_env = None
     name = "clientTest"
     email = "client.test@gmail.com"
     password = "qwerty"
@@ -55,9 +57,9 @@ class Test(unittest.TestCase):
 
     # code that is executed before each test
     def setUp(self):
+
         app = welcome("development_test")
         self.app = app.test_client()
-
         with app.app_context():
             db.init_app(app)
             db.create_all()
@@ -66,6 +68,7 @@ class Test(unittest.TestCase):
 
     # code that is executed after each test
     def tearDown(self):
+
         with self._app.app_context():
             db.drop_all()
 

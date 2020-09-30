@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 """ shebang """
-
+import cloudinary.uploader
 from flask import Blueprint, request
 
 from auth.authentification import Auth
-from preferences import GOOGLE_BUCKET_TECHNICAL_SHEET
-from sources.controllers import update_file_storage
 from sources.tools.tools import validate_data
-from sources.models import custom_response, add_in_storage
+from sources.models import custom_response
+from preferences import CLOUD_TECHNICAL_SHEET as CTS
 from sources.models.artists.materials.artistMaterials import Materials, MaterialsSchema
 
 materials_api = Blueprint('materials', __name__)
 materials_schema = MaterialsSchema()
-bucket_name = GOOGLE_BUCKET_TECHNICAL_SHEET
 
 
 def create_new_materials_for_new_services():
@@ -23,10 +21,16 @@ def create_new_materials_for_new_services():
     return new_material.id
 
 
-def update_material(user_connected_schema, user_material_to_update, requested, data):
+def update_material(_u_schema, user_material_to_update, requested, data):
     technical_sheet = requested.files.get('technical_sheet')
     if technical_sheet:
-        data["technical_sheet"] = add_in_storage(bucket_name, user_connected_schema, technical_sheet, req=True)
+        fileStorage_key = _u_schema['fileStorage_key']
+        user_id = _u_schema['id']
+        data["technical_sheet"] = cloudinary.uploader.upload(
+            technical_sheet,
+            public_id=fileStorage_key + str(user_id) + technical_sheet.filename.split(".")[0],
+            folder=CTS + "/" + fileStorage_key + str(user_id)
+        )['secure_url']
     user_material_to_update_dumped = materials_schema.dump(user_material_to_update)
     user_material_to_update_dumped.update(data)
     user_material_to_update.update(user_material_to_update_dumped)
@@ -36,7 +40,6 @@ def update_material(user_connected_schema, user_material_to_update, requested, d
 @materials_api.route('/update_option_material/<int:option_id>', methods=['PUT'])
 @Auth.auth_required
 def update_material_by_option_id(option_id, user_connected_model, user_connected_schema):
-
     data, error = validate_data(materials_schema, request, return_dict=False)
     if error:
         return custom_response(data, 400)
@@ -55,7 +58,6 @@ def update_material_by_option_id(option_id, user_connected_model, user_connected
 @materials_api.route('/update_service_material/<int:service_id>', methods=['PUT'])
 @Auth.auth_required
 def update_material_by_service_id(service_id, user_connected_model, user_connected_schema):
-
     data, error = validate_data(materials_schema, request, return_dict=False)
     if error:
         return custom_response(data, 400)
@@ -71,13 +73,10 @@ def update_material_by_service_id(service_id, user_connected_model, user_connect
     return custom_response("material not found", 404)
 
 
-def delete_material_technical_sheet(material):
-
-    material_selected_schema = materials_schema.dump(material)
-    technical_sheet = material_selected_schema['technical_sheet']
+def delete_material_technical_sheet(material, _u_model):
+    user_id = _u_model.user_id
+    fileStorage_key = _u_model.fileStorage_key
+    technical_sheet = materials_schema.dump(material).get('technical_sheet', None)
     if technical_sheet:
-        technical_sheet_link_split_list = technical_sheet.split("/", 3)
-        bucket_n, user_repo, filename = technical_sheet_link_split_list[3].split("/", 4)
-        repository_name, keys = user_repo.split("_")
-        kwargs = dict(bucket_name=bucket_n, repository_name=repository_name, delete=True, keys=keys, filename=filename)
-        update_file_storage(kwargs)
+        file_named = technical_sheet.split("/")[-1].split('.')[0]
+        cloudinary.uploader.destroy(public_id=CTS + "/" + fileStorage_key + str(user_id) + "/" + file_named)

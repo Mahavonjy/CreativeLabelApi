@@ -8,7 +8,7 @@ from marshmallow import fields
 
 
 class Profiles(db.Model):
-    """ Albums Model """
+    """ Profile Model """
 
     # table name
     __tablename__ = 'profiles'

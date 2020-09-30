@@ -2,15 +2,12 @@
 """ shebang """
 
 import os
-import sentry_sdk
 from flask_cors import CORS
 from flask import Flask, request
 from sources.models import custom_response
-from preferences.config import app_config
+from preferences.env import app_config
 from .models import db, bcrypt, mail, migrate
 from flask_swagger_ui import get_swaggerui_blueprint
-from sentry_sdk.integrations.flask import FlaskIntegration
-from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from .routes import routing
 
 
@@ -22,10 +19,6 @@ def welcome(env_name):
     CORS(app)
     app.config.from_object(app_config[env_name])
     app.secret_key = os.getenv('FN_FLASK_SECRET_KEY')
-    # sentry_sdk.init(
-    #     dsn="https://8ca78b489b6e4cc6b1a26ffd5852a8e8@sentry.io/1814450",
-    #     integrations=[FlaskIntegration(), SqlalchemyIntegration()]
-    # )
 
     # initializing bcrypt, db, mail and migration
     bcrypt.init_app(app)
@@ -47,6 +40,7 @@ def welcome(env_name):
 
     # ------------------------------------routes-----------------------------------#
     routing(app)
+
     # ------------------------------------routes-----------------------------------#
 
     @app.route('/', methods=['GET'])
@@ -67,8 +61,7 @@ def welcome(env_name):
 
         links, count = {}, 0
         for rule in app.url_map.iter_rules():
-            temp = request.url_root
-            new, url_root = list(rule.methods), temp.rsplit('/', 1)
+            new, url_root = list(rule.methods), request.url_root.rsplit('/', 1)
             method = [x for x in new if x not in ('OPTIONS', 'HEAD')]
             links[count], count = {"Method": method[0], "url": url_root[0] + str(rule)}, count + 1
         return custom_response(links, 200)

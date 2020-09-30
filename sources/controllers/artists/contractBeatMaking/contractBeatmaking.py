@@ -4,7 +4,7 @@
 from flask import request
 from flask import Blueprint
 from sources.models import custom_response
-from preferences import defaultDataConf
+from preferences import defaultData
 from auth.authentification import Auth
 from sources.tools.tools import validate_data
 from sources.models.artists.beatMakers.contractBeatmaking.contractBeatmaking import ContractBeatMaking, \
@@ -20,7 +20,7 @@ def create_all_default_contract(user_id):
     data_basic_lease = {
         "mp3": True,
         "contract_name": "basic_lease",
-        "price": defaultDataConf.beats_pricing['basic'],
+        "price": defaultData.beats_pricing['basic'],
         "number_audio_stream": 10000,
         "user_id": user_id
     }
@@ -29,7 +29,7 @@ def create_all_default_contract(user_id):
         "mp3": True,
         "wave": True,
         "contract_name": "silver_lease",
-        "price": defaultDataConf.beats_pricing['silver'],
+        "price": defaultData.beats_pricing['silver'],
         "number_of_distribution_copies": 10000,
         "number_audio_stream": 100000,
         "number_music_video": 3000,
@@ -42,7 +42,7 @@ def create_all_default_contract(user_id):
         "wave": True,
         "stems": True,
         "contract_name": "gold_lease",
-        "price": defaultDataConf.beats_pricing['gold'],
+        "price": defaultData.beats_pricing['gold'],
         "number_of_distribution_copies": 20000,
         "number_audio_stream": 200000,
         "number_music_video": 20000,
@@ -55,7 +55,7 @@ def create_all_default_contract(user_id):
         "wave": True,
         "stems": True,
         "contract_name": "platinum_lease",
-        "price": defaultDataConf.beats_pricing['platinum'],
+        "price": defaultData.beats_pricing['platinum'],
         "number_of_distribution_copies": 999999,
         "number_audio_stream": 999999,
         "number_music_video": 999999,

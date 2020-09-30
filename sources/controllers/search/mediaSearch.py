@@ -15,7 +15,7 @@ def search_song_in_db(text_, ref=None):
     """ search matching with text_ in table medias """
 
     resp = es.search(
-        index="albums_and_songs",
+        index="beats",
         body={"from": 0, "size": 10,
               "query": {"bool": {"must": [{"wildcard": {"title": "*" + text_ + "*"}}]}},
               "sort": [{"number_play": {"order": "asc", "mode": "min"}}]}
@@ -26,28 +26,12 @@ def search_song_in_db(text_, ref=None):
     return custom_response({"songs": songs}, 200)
 
 
-@api_medias_search.route('/albums/<string:text_>', methods=['GET'])
-def search_album_in_db(text_, ref=None):
-    """ search matching with text_ in table medias """
-
-    resp = es.search(
-        index="albums_and_songs",
-        body={"from": 0, "size": 10,
-              "query": {"bool": {"must": [{"wildcard": {"album_name": "*" + text_ + "*"}}]}},
-              "sort": [{"number_play": {"order": "asc", "mode": "min"}}]}
-    )
-    albums = [r['_source'] for r in resp['hits']['hits']]
-    if ref:
-        return albums
-    return custom_response({"albums": albums}, 200)
-
-
 @api_medias_search.route('/artists/<string:text_>', methods=['GET'])
 def search_artist(text_, ref=None):
     """ search matching with text_ in table medias """
 
     resp, l_, artists = es.search(
-        index="albums_and_songs",
+        index="beats",
         body={"from": 0, "size": 10, "_source": ["user_id"],
               "query": {"bool": {"must": [{"wildcard": {"artist": "*" + text_ + "*"}}]}}}
     ), [], []
@@ -62,10 +46,9 @@ def search_artist(text_, ref=None):
 
 @api_medias_search.route('/all/<string:text_>', methods=['GET'])
 def search_all_in_db(text_):
-    """ search matching with text_ in table album&media """
+    """ search matching with text_ in table media """
 
     return custom_response({
-        "songs": search_song_in_db(text_, True),
-        "albums": search_album_in_db(text_, True),
+        "beats": search_song_in_db(text_, True),
         "artists": search_artist(text_, True)}
         , 200)

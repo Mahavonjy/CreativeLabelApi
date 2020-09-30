@@ -5,28 +5,33 @@ import os
 import re
 import time
 import json
+
+import string
+import random
+import stripe
 import librosa
 import calendar
 import itertools
 import marshmallow
-from datetime import datetime
-from marshmallow import ValidationError
+import cloudinary.uploader
 
-from sources.controllers import random_string
+from datetime import datetime
+from functools import reduce
+from sqlalchemy import func
+
+from werkzeug.utils import secure_filename
+
+from preferences import CLOUD_BEAT_STEMS, CLOUD_BEATS, CLOUD_IMAGES_FOLDERS
+
 from sources.models.admirations.admirations import AdmireSchema
 from sources.models.artists.materials.artistMaterials import MaterialsSchema
 from sources.models.artists.options.artistOptions import OptionsSchema
 from sources.models.artists.services.artistServices import ServiceSchema
-from sources.models.medias.albums import Albums, AlbumSchema
-from sources.models.medias.media import Media, MediaSchema
-from sources.models.users.user import User
-from sqlalchemy import desc
-
-from preferences.defaultDataConf import allowed_cirque_or_child_options, \
+from sources.models.medias.media import MediaSchema
+from preferences.defaultData import allowed_cirque_or_child_options, \
     allowed_audio_visual_options, allowed_chant_and_music_options, allowed_beat_maker_options, \
     allowed_magician_options, allowed_comedian_options, allowed_dance_options, allowed_dj_options
 
-albumSchema = AlbumSchema()
 media_schema = MediaSchema()
 material_schema = MaterialsSchema()
 service_schema = ServiceSchema()
@@ -34,38 +39,62 @@ option_schema = OptionsSchema()
 admire_schema = AdmireSchema()
 
 
+def upload_image(image_to_upload, cloud_folder, fileStorage_key, user_id):
+    """ function who upload images to cloudinary """
+
+    if cloud_folder not in CLOUD_IMAGES_FOLDERS:
+        return None
+
+    return cloudinary.uploader.upload(
+        image_to_upload,
+        public_id=fileStorage_key + str(user_id) + image_to_upload.filename.split(".")[0],
+        folder=cloud_folder + "/" + fileStorage_key + str(user_id),
+        resource_type='image'
+    )['secure_url']
+
+
+def upload_beats(file_to_upload, fileStorage_key, user_id, stems=False):
+    """ function who upload beats to cloudinary """
+
+    folder = CLOUD_BEATS
+    if stems:
+        folder = CLOUD_BEAT_STEMS
+
+    return cloudinary.uploader.upload(
+        file_to_upload,
+        public_id=fileStorage_key + str(user_id) + file_to_upload.filename.split(".")[0],
+        folder=folder + "/" + fileStorage_key + str(user_id),
+        resource_type='auto'
+    )['secure_url']
+
+
+def destroy_beats(image_link, fileStorage_key, user_id):
+    """ function who destroy images to cloudinary """
+
+    file_named = image_link.split("/")[-1].split('.')[0]
+    return cloudinary.uploader.destroy(
+        public_id=CLOUD_BEATS + "/" + fileStorage_key + str(user_id) + "/" + file_named,
+        resource_type='auto'
+    )
+
+
+def destroy_image(image_link, cloud_folder, fileStorage_key, user_id):
+    """ function who destroy images to cloudinary """
+
+    file_named = image_link.split("/")[-1].split('.')[0]
+    return cloudinary.uploader.destroy(
+        public_id=cloud_folder + "/" + fileStorage_key + str(user_id) + "/" + file_named,
+        resource_type='image'
+    )
+
+
 def merge_suggestion(new_list):
     """
 
     :param new_list:
-    :return: dict merged with suggestion album for the user
+    :return: dict merged with suggestion alb for the user
     """
     return [dict(t) for t in {tuple(d.items()) for d in new_list}]
-
-
-def by_user_genre_list(genre_list, type_):
-    """
-
-    :param genre_list:
-    :param type_:
-    :return: album tried by user admiration
-    """
-    schema = albumSchema if type_ == "album" else media_schema
-    query_ = Albums.get_album_genre if type_ == "album" else Media.get_song_by_genre
-    user_list_genre, albs_in_dict = genre_list, []
-    try:
-        all_ = [query_(genre) for genre in user_list_genre]
-    except TypeError:
-        all_ = [query_(type_, genre) for genre in user_list_genre]
-
-    for index in all_:
-        if len(index) == 1:
-            albs_in_dict.append(schema.dump(index[0]))
-            continue
-        for alb in index:
-            albs_in_dict.append(schema.dump(alb))
-
-    return albs_in_dict
 
 
 def check_user_options_and_services(user):
@@ -84,27 +113,6 @@ def check_user_options_and_services(user):
     return {"user_services": list_of_services, "user_options": list_of_options}
 
 
-def by_all_user_admire(user_id, type_):
-    """
-
-    :param user_id:
-    :param type_:
-    :return: return the album tried
-    """
-    schema, result = albumSchema if type_ == "album" else media_schema, []
-    data_classed, all_user_admire = [], User.get_one_user(user_id).user.all()
-    for a_u in all_user_admire:
-        if type_ == "album" and admire_schema.dump(a_u)['admire_id']:
-            result = User.get_one_user(admire_schema.dump(a_u)['admire_id']) \
-                .albums.order_by(desc(Albums.created_at)).limit(1).all()
-        elif type_ == "medias" and admire_schema.dump(a_u)['admire_id']:
-            result = User.get_one_user(admire_schema.dump(a_u)['admire_id']) \
-                .medias.filter_by(album_song=False, genre_musical="music") \
-                .order_by(desc(Media.created_at)).limit(1).all()
-        data_classed += [schema.dump(row) for row in result]
-    return data_classed
-
-
 def librosa_collect(file):
     """
 
@@ -113,8 +121,8 @@ def librosa_collect(file):
     """
 
     dirname = random_string()
-    file.save(dirname)
-    y, sr = librosa.load(dirname)
+    file.save(secure_filename(dirname + file.filename))
+    y, sr = librosa.load(dirname + file.filename)
     bpm, beats_frames = librosa.beat.beat_track(y=y, sr=sr)
     beats_times = librosa.frames_to_time(beats_frames, sr=sr)
     time_ = time.strftime('%H:%M:%S', time.gmtime(int(round(beats_times[-1]))))
@@ -122,8 +130,62 @@ def librosa_collect(file):
         tm = time_[3:] if time_.split(":")[0] == "00" else time_
     except TypeError:
         tm = None
-    os.remove(dirname)
+    os.remove(dirname + file.filename)
     return bpm, tm
+
+
+# calculate the percent value
+class Percent:
+    """ calc percent """
+
+    def __init__(self, base=None, percentage=None):
+        self.result = float(base) * float(percentage) / float(100)
+
+
+def check_reservation_info_with_service_info(reservation_basic_schema, Services, User, data_to_dump, req=None):
+    tmp = reservation_basic_schema.dump(data_to_dump)
+    tmp["title"] = Services.get_by_service_id(tmp["services_id"]).title
+    tmp["artist_name"] = User.get_one_user(tmp["artist_owner_id"]).name
+    tmp["auditor_name"] = User.get_one_user(tmp["auditor_who_reserve_id"]).name
+    if req:
+        return {"reservations": tmp}
+    return tmp
+
+
+def check_all_user_payment_history(user_connected_model, p_h_schema, User, Reservations):
+    payment_history_obj = []
+    payment_list = user_connected_model.purchased_history.all() + user_connected_model.purchase_history.all()
+    if payment_list:
+        for p in payment_list:
+            p_h_obj = p_h_schema.dump(p)
+            p_h_obj["buyer_name"] = User.get_one_user(p_h_obj["buyer_id"]).name
+            p_h_obj["artist_name"] = User.get_one_user(p_h_obj["artist_id"]).name
+            try:
+                reservation_tmp = Reservations.get_reservation_by_payment_history_id(p_h_obj["id"])
+                p_h_obj["event"] = reservation_tmp.event
+                p_h_obj["invoice"] = reservation_tmp.invoice
+                p_h_obj["services_id"] = reservation_tmp.services_id
+            except AttributeError:
+                p_h_obj["event"] = ""
+            payment_history_obj.append(p_h_obj)
+    return payment_history_obj
+
+
+def payment_stripe(total_price, stripe_token_id, description):
+    """
+
+    :param total_price: this is a amount for user paid
+    :param stripe_token_id: token for payment stripe
+    :param description: some description payment
+    :return: return result off creating stripe charge
+    """
+
+    return stripe.Charge.create(
+        amount=int(total_price * 100),
+        currency="eur",
+        description=description,
+        source=stripe_token_id
+    )
 
 
 def check_validations_errors(resp, key):
@@ -140,6 +202,52 @@ def check_validations_errors(resp, key):
     else:
         tmp = new_key + " " + tmp
     return tmp.replace('field', key), True
+
+
+def random_int():
+    return random.randint(1111, 9999) * 9999
+
+
+def random_string(string_length=100):
+    """Generate a random string of fixed length """
+
+    return ''.join(random.choice(string.ascii_lowercase) for i in range(string_length))
+
+
+def convert_dict_to_sql_json(data_dict=None, data_list=None):
+    """
+
+    @param data_list: dict to transform
+    @param data_dict: list to transform
+    @return: tuple of key and value
+    """
+
+    if data_dict:
+        data_list = list(reduce(lambda x, y: x + y, data_dict.items()))
+
+    for index, value in enumerate(data_list):
+        if isinstance(value, dict):
+            data_list[index] = func.json_build_object(
+                *convert_dict_to_sql_json(
+                    None, list(reduce(lambda x, y: x + y, value.items()))
+                )
+            )
+
+    return data_list
+
+
+# compare time created_at with now time
+def get_time(created_at, min_value: int) -> bool:
+    """ compare created time and now """
+
+    now_time = datetime.datetime.now()
+    date, rest = created_at.split('T')
+    hour, _ = rest.split('.')
+    hours, min_, sec = hour.split(":")
+    year, month, day = date.split('-', 3)
+    date_for_created_cart = datetime.datetime(int(year), int(month), int(day), int(hours), int(min_), int(sec))
+    x = now_time - date_for_created_cart
+    return divmod(x.days * 86400 + x.seconds, 60)[0] <= min_value
 
 
 def validate_data(_schema, requested, return_dict=True):

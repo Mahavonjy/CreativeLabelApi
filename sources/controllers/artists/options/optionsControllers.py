@@ -5,10 +5,9 @@ from sqlalchemy import func
 
 from sources.controllers.artists.materials.materialsControllers import create_new_materials_for_new_services, \
     delete_material_technical_sheet
-from sources.controllers import convert_dict_to_sql_json
 from sources.models.artists.options.artistOptions import Options, OptionsSchema
 from auth.authentification import Auth
-from sources.tools.tools import validate_data
+from sources.tools.tools import convert_dict_to_sql_json, validate_data
 from sources.models import custom_response
 from flask import Blueprint, request
 
@@ -65,7 +64,7 @@ def delete_one_option(option_id, user_connected_model, user_connected_schema):
 
     option_selected = user_connected_model.options.filter_by(id=option_id).first()
     if option_selected:
-        delete_material_technical_sheet(option_selected.material)
+        delete_material_technical_sheet(option_selected.material, user_connected_model)
         option_selected.delete()
         return custom_response("deleted", 200)
 

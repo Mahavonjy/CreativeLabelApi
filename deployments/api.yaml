@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: api
+  name: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: creative-api
+  template:
+    metadata:
+      labels:
+        type: creative-api
+    spec:
+      containers:
+      - image: mahavonjy11/creative-api:latest
+        name: creative-api
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}

@@ -49,7 +49,7 @@ class KeyResetPassword(db.Model):
 
 
 class ResetPassword(ValidateSchema):
-    """ KeyResetPassword schema"""
+    """ KeyReset Password schema"""
 
     id = fields.Int(dump_only=True)
     keys = fields.Int(required=True)

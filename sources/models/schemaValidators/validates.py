@@ -2,7 +2,7 @@
 """ shebang """
 
 from marshmallow import Schema, ValidationError, validates, fields
-from preferences.defaultDataConf import type_of_isl_artist, allowed_events
+from preferences.defaultData import type_of_isl_artist, allowed_events
 
 
 class ValidateSchema(Schema):

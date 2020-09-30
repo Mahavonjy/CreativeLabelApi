@@ -54,7 +54,7 @@ class Reservations(db.Model):
         self.modified_at = datetime.datetime.utcnow()
 
     def save(self):
-        """save a new media """
+        """save a new reservation """
 
         db.session.add(self)
         db.session.commit()

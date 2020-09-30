@@ -3,15 +3,11 @@
 
 from sources.controllers.carts.cartsControllers import cart_api
 from sources.controllers.users.userControllers import user_api as user_blueprint
-from sources.controllers import refresh_all_api as refresh_all_blueprint
-from sources.controllers.medias.albumControllers import album_api as album_blueprint
-from sources.controllers.medias.mediaControllers import media_api as media_blueprint
 from sources.controllers.medias.beatsControllers import beats_api as beats_blueprint
 from sources.controllers.stars.starsControllers import user_stars as stars_blueprint
 from sources.controllers.profiles.profilesControllers import profile_api as profile_blueprint
 from sources.controllers.country.countryControllers import flags_api as flags_api_blueprint
 from sources.controllers.banking.bankingControllers import banking_api as banking_blueprint
-from sources.controllers.playlists.playlistControllers import playlist_api as playlist_blueprint
 from sources.controllers.partnership.partnershipControllers import partner_api as partner_blueprint
 from sources.controllers.artists.payments.paymentsControllers import payment_api as payment_blueprint
 from sources.controllers.artists.condtitions.conditionsControllers import artist_condition
@@ -38,10 +34,6 @@ def routing(app):
     app.register_blueprint(beats_blueprint, url_prefix='/api/beats')
     # Route Prefix for user stars
     app.register_blueprint(stars_blueprint, url_prefix='/api/stars')
-    # Route Prefix Albums
-    app.register_blueprint(album_blueprint, url_prefix='/api/albums')
-    # Route Prefix Audios
-    app.register_blueprint(media_blueprint, url_prefix='/api/medias')
     # Route Prefix Banking details
     app.register_blueprint(banking_blueprint, url_prefix='/api/banking')
     # Route Prefix Options
@@ -54,12 +46,8 @@ def routing(app):
     app.register_blueprint(profile_blueprint, url_prefix='/api/profiles')
     # Route Prefix Prestige
     app.register_blueprint(prestige_blueprint, url_prefix='/api/prestige')
-    # Route Prefix Playlists
-    app.register_blueprint(playlist_blueprint, url_prefix='/api/playlists')
     # Route Prefix Materials
     app.register_blueprint(materials_blueprint, url_prefix='/api/materials')
-    # Route Prefix Refresh all
-    app.register_blueprint(refresh_all_blueprint, url_prefix='/api/refresh')
     # Route Prefix Admiration
     app.register_blueprint(admiration_blueprint, url_prefix='/api/admiration')
     # Payment routes

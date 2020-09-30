@@ -3,6 +3,7 @@
 
 from sources.controllers.artists.materials.materialsControllers import create_new_materials_for_new_services
 from sources.controllers.artists.services.servicesControllers import check_galleries_files
+from sources.controllers.users import token_return
 from sources.models.users.user import User, UserSchema, GetMail, GetPassword, UserSocial
 from sources.models.keyResetPassword.keyResetPasswords import KeyResetPassword, ResetPassword, GetKeys
 from sources.controllers.artists.contractBeatMaking.contractBeatmaking import create_all_default_contract
@@ -13,20 +14,17 @@ from sources.models.profiles.profile import Profiles, ProfileSchema
 from sources.models.artists.services.artistServices import Services
 from sources.models.revokeToken.tokenRevoke import RevokedTokenModel
 from sources.controllers.profiles.profilesControllers import create_profile
-from preferences.defaultDataConf import type_of_isl_artist
-from sources.tools.tools import validate_data
-from sources.controllers import create_artist_story
+from preferences.defaultData import type_of_isl_artist
+from sources.tools.tools import random_int, random_string, validate_data
 from preferences import USER_ARTIST_BEATMAKER, USER_AUDITOR_PRO
 from auth.authentification import Auth
-from sources.controllers import random_string
 from sources.models import custom_response
-from preferences.config import Production
+from preferences.env import Production
 
 from requests_oauthlib import OAuth2Session
 from flask import request, Blueprint
 from flask import session
 import facebook as f
-import random
 
 user_api = Blueprint('users', __name__)
 reset_pass_schema = ResetPassword()
@@ -38,10 +36,36 @@ user_social = UserSocial()
 user_email = GetMail()
 
 
-def token_return(token=None, name=None, email=None, photo=None):
-    """ token return for my all register or login """
+@user_api.route('/register', methods=['POST'])
+def register():
+    """ Create User Function """
 
-    return custom_response({'token': token, 'name': name, 'email': email, 'photo': photo}, 200)
+    data, error = validate_data(user_schema, request, return_dict=False)
+    if error:
+        return custom_response(data, 400)
+
+    if User.get_user_by_email(data.get('email')):
+        return custom_response("Email already exist", 400)
+
+    data.update({'fileStorage_key': random_string(10), 'profile_id': create_profile(data)})
+    new_user = User(data)
+    new_user.save()
+    keys = random_int()
+    KeyResetPassword(dict(keys=keys, user_id=new_user.id)).save()
+    generate_basic_stars(user_id=new_user.id)
+    if data.get('services'):
+        generate_condition_globals(new_user.id)
+        if data.get('user_type') == USER_ARTIST_BEATMAKER:
+            create_all_default_contract(new_user.id)
+        data['services']['user_id'] = new_user.id
+        data['services']['galleries'] = check_galleries_files(request, new_user)
+        data['services']['materials_id'] = create_new_materials_for_new_services()
+        new_service = Services(data['services'])
+        new_service.save()
+        generate_basic_stars(service_id=new_service.id)
+        first_service('FirstService.html', data["email"], data["name"], data['services']["title"])
+    login_success('LoginSuccess.html', data["email"], data["name"], keys)
+    return token_return(Auth.generate_token(new_user.id), data.get('name'), data.get('email'))
 
 
 @user_api.route('/if_token_valide', methods=['GET'])
@@ -74,7 +98,6 @@ def update_user_to_artist_or_manager(type_name, user_connected_model, user_conne
         user_connected_schema['user_type'] = type_name
         user_connected_schema["if_choice"] = 1
         user_connected_model.update(user_connected_schema)
-        create_artist_story(user_connected_model.id)
         if type_name == USER_ARTIST_BEATMAKER:
             create_all_default_contract(user_connected_model.id)
         generate_condition_globals(user_connected_model.id)
@@ -100,16 +123,17 @@ def callback():
         if User.get_user_by_email(user_data['email']):
             return custom_response("Email already exist", 400)
 
-        data["social"] = "google"
-        data["fileStorage_key"] = random_string(10)
-        data["name"] = user_data['family_name']
-        data["social_id"] = user_data['id']
-        data["email"] = user_data['email']
-        data["photo"] = user_data['picture']
+        data.update({
+            'social': "google",
+            'name': user_data['family_name'],
+            'social_id': user_data['id'],
+            'fileStorage_key': random_string(10),
+            'email': user_data['email'],
+            'photo': user_data['picture']
+        })
         user = User(data)
         create_profile(data)
         user.save()
-        create_artist_story(user.id)
         create_all_default_contract(user.id)
         token = Auth.generate_token(user.id)
         generate_basic_stars(user_id=user.id)
@@ -126,25 +150,30 @@ def facebook_authorized():
     data = request.get_json()
     session['facebook_token'] = {"Type": data['token_type'], "access_token": data['accessToken']}
     graph = f.GraphAPI(data['accessToken'])
-    args = {'fields': 'id, name, email, picture'}
-    profile = graph.get_object('me', **args)
+    profile = graph.get_object('me', **{'fields': 'id, name, email, picture'})
     data.clear()
-    data["photo"] = profile['picture']['data']['url']
-    data["name"], data["social_id"], data["social"] = profile['name'], profile['id'], "facebook"
-    data["fileStorage_key"] = random_string(10)
-    data["password"], data['email'] = None, profile.get('email')
+    data = dict(
+        photo=profile['picture']['data']['url'],
+        name=profile['name'],
+        social_id=profile['id'],
+        social="facebook",
+        password=None,
+        email=profile.get('email'),
+        fileStorage_key=random_string(10),
+    )
     user_in_db = User.get_user_by_social_id(profile['id'])
     if user_in_db:
         token = Auth.generate_token(user_social.dump(user_in_db)["id"])
         return token_return(token, data.get('name'), data.get('email'))
+
     if data['email']:
         login_success('LoginSuccess.html', email=data.get('email'), name=data.get('name'))
+
     create_profile(data)
     profile_info = profile_schema.dump(Profiles.get_profile(data.get('social_id')))
     data['fileStorage_key'], data['profile_id'] = random_string(10), profile_info.get('id')
     user = User(data)
     user.save()
-    create_artist_story(user.id)
     create_all_default_contract(user.id)
     return token_return(Auth.generate_token(user_schema.dump(user)['id']), data.get('name'), data.get('email'))
 
@@ -156,6 +185,7 @@ def validation_keys():
     data, error = validate_data(keys_validator_schema, request)
     if error:
         return custom_response(data, 400)
+
     reset_pass = User.get_user_by_email(data.get('email')).reset_password_key
     try:
         if reset_pass_schema.dump(reset_pass[0])["keys"] == int(data["keys"]):
@@ -173,13 +203,16 @@ def reset_password_after_validate_keys():
     data, error = validate_data(user_password, request)
     if error:
         return custom_response(data, 400)
+
     if not data.get('password'):
         return custom_response("Password could not be null", 400)
+
     user_in_db = User.get_user_by_email(data.get('email'))
     if user_in_db:
         user_in_db.update_password(data.get('password'))
         password_updated('PasswordUpdated.html', email=data.get('email'), name=user_in_db.name)
         return custom_response("password changed", 200)
+
     return custom_response("Unauthorized", 400)
 
 
@@ -190,10 +223,13 @@ def get_mail():
     data, error = validate_data(user_email, request)
     if error:
         return custom_response(data, 400)
+
     user = User.get_user_by_email(data.get('email'))
     if user:
+        keys = random_int()
+        reset_pass = user.reset_password_key
         user_id = user_schema.dump(User.get_user_by_email(data.get('email')))['id']
-        keys, reset_pass = random.randint(1111, 9999) * 9999, user.reset_password_key
+
         if reset_password('RequestPassword.html', keys, email=data.get('email'), name=user.name):
             if reset_pass:
                 data_user = reset_pass_schema.dump(reset_pass[0])
@@ -201,43 +237,12 @@ def get_mail():
                 reset_pass[0].update(data_user)
             else:
                 KeyResetPassword(dict(keys=keys, user_id=user_id, password_reset=1)).save()
+
             return custom_response('Email send', 200)
+
         return custom_response("Connexion Failed", 400)
+
     return custom_response("Email not Found", 400)
-
-
-@user_api.route('/register', methods=['POST'])
-def register():
-    """ Create User Function """
-
-    data, error = validate_data(user_schema, request, return_dict=False)
-    if error:
-        return custom_response(data, 400)
-
-    if User.get_user_by_email(data.get('email')):
-        return custom_response("Email already exist", 400)
-
-    create_profile(data)
-    profile_id = profile_schema.dump(Profiles.get_profile(data.get('email')))['id']
-    data['fileStorage_key'], data['profile_id'], keys = random_string(10), profile_id, random.randint(1111, 9999) * 9999
-    User(data).save()
-    user = user_schema.dump(User.get_user_by_email(data.get('email')))
-    KeyResetPassword(dict(keys=keys, user_id=user.get('id'))).save()
-    generate_basic_stars(user_id=user.get('id'))
-    if data.get('services'):
-        create_artist_story(user.get('id'))
-        generate_condition_globals(user.get('id'))
-        if data.get('user_type') == USER_ARTIST_BEATMAKER:
-            create_all_default_contract(user.get('id'))
-        data['services']['user_id'] = user.get('id')
-        data['services']['galleries'] = check_galleries_files(request, user)
-        data['services']['materials_id'] = create_new_materials_for_new_services()
-        new_service = Services(data['services'])
-        new_service.save()
-        generate_basic_stars(service_id=new_service.id)
-        first_service('FirstService.html', data["email"], data["name"], data['services']["title"])
-    login_success('LoginSuccess.html', data["email"], data["name"], keys)
-    return token_return(Auth.generate_token(user.get('id')), data.get('name'), data.get('email'))
 
 
 @user_api.route('/check_password', methods=['POST'])
@@ -292,51 +297,3 @@ def logout(user_connected_model, user_connected_schema):
 
     RevokedTokenModel(request.headers['Isl_Token']).save()
     return custom_response('logout', 200)
-
-
-# All admin function is here
-
-def up(val, user_connected_model, user_connected_schema):
-    user_connected_schema["right"] = val
-    user_connected_model.update(user_connected_schema)
-
-
-@user_api.route('/admin_users', methods=['GET'])
-@Auth.auth_required
-def get_all_users_admin(user_connected_model, user_connected_schema):
-    """ Get a all user """
-
-    if user_connected_model.right != 0:
-        users, count, one_dict = User.get_all_users(), int(), {}
-        for row in users:
-            ser_user = user_schema.dump(row)
-            if ser_user.get('right') == 1:
-                one_dict[count] = {
-                    "id": ser_user.get('id'),
-                    "name": ser_user.get('name'),
-                    "email": ser_user.get('email'),
-                    "right": ser_user.get('right'),
-                    "created_at": ser_user.get('created_at'),
-                    "modified_at": ser_user.get('modified_at')
-                }
-                count += 1
-        return custom_response(one_dict, 200)
-    return custom_response("Unauthorized", 400)
-
-
-@user_api.route('/admin_users_update/<int:user_id>', methods=['PUT'])
-@Auth.auth_required
-def update_admin(user_id, user_connected_model, user_connected_schema):
-    """ Update Admin users """
-
-    if user_connected_model.right == 2:
-        new_user = User.get_one_user(user_id)
-        ser_user = user_schema.dump(new_user)
-        if ser_user.get('right') == 0:
-            up(1, user_connected_model, user_connected_schema)
-        elif ser_user.get('right') == 1:
-            up(0, user_connected_model, user_connected_schema)
-        else:
-            return custom_response('Unauthorized', 400)
-        return custom_response("changed", 200)
-    return custom_response('Unauthorized', 404)

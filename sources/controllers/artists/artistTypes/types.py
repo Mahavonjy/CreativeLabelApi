@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ shebang """
 
-from preferences.defaultDataConf import type_of_isl_artist, allowed_lang, allowed_events
+from preferences.defaultData import type_of_isl_artist, allowed_lang, allowed_events
 from sources.models import custom_response
 from flask import Blueprint
 

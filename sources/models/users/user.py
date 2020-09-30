@@ -15,9 +15,7 @@ from sources.models.artists.history.paymentHistory import PaymentHistory
 from sources.models.artists.options.artistOptions import Options
 from sources.models.artists.services.artistServices import Services, ServiceSchema
 from sources.models.carts.cart import Carts
-from sources.models.medias.albums import Albums
 from sources.models.medias.media import Media
-from sources.models.playlists.playlist import Playlists
 from sources.models.schemaValidators.validates import ValidateSchema
 from sources.models.stars.noteStars import Stars
 
@@ -39,7 +37,8 @@ class User(db.Model):
     right = db.Column(db.Integer, default=0)
     name = db.Column(db.String(128))
     if_choice = db.Column(db.Integer, default=0)
-    user_genre_list = db.Column(db.ARRAY(db.String), default=[])
+    beats_id_liked_list = db.Column(db.ARRAY(db.Integer), default=[])
+    beats_id_listened_list = db.Column(db.ARRAY(db.Integer), default=[])
     email = db.Column(db.String(125), unique=True, nullable=True)
     profile_id = db.Column(db.Integer, db.ForeignKey('profiles.id'))
     social = db.Column(db.String(128), nullable=True)
@@ -51,9 +50,7 @@ class User(db.Model):
     modified_at = db.Column(db.DateTime)
 
     # All Users Relationship
-
     medias = db.relationship(Media, lazy='dynamic')
-    albums = db.relationship(Albums, lazy='dynamic')
     Carts = db.relationship(Carts, lazy='dynamic')
     services = db.relationship(Services, lazy='dynamic')
     options = db.relationship(Options, lazy='dynamic')
@@ -64,14 +61,12 @@ class User(db.Model):
     booking_list = db.relationship('Reservations', foreign_keys=booking_f, backref='sender_reservation', lazy='dynamic')
     reservation_list = db.relationship('Reservations', foreign_keys=_f, backref='recipient_reservation', lazy='dynamic')
     profile = db.relationship("Profiles", backref=db.backref("profiles", uselist=False))
-    history = db.relationship("ArtistHistory", backref=db.backref("artist_history", uselist=False))
     reset_password_key = db.relationship("KeyResetPassword", backref=db.backref("key_reset_passwords", uselist=False))
     banking = db.relationship("BankingDetails", backref=db.backref("banking_details", uselist=False))
     payment = db.relationship(Payment, backref=db.backref("payment", uselist=False))
     condition_globals = db.relationship("ConditionGlobals", backref=db.backref("condition_globals", uselist=False))
     stars = db.relationship(Stars, backref=db.backref("stars", uselist=False))
     ContractBeat = db.relationship(ContractBeatMaking, lazy='dynamic')
-    playlists = db.relationship(Playlists, lazy='dynamic')
     sender = db.relationship('Prestige', foreign_keys='Prestige.sender_id', backref='sender', lazy='dynamic')
     recipient = db.relationship('Prestige', foreign_keys='Prestige.recipient_id', backref='recipient', lazy='dynamic')
 
@@ -86,7 +81,8 @@ class User(db.Model):
         self.user_type = data.get('user_type')
         self.social_id = data.get('social_id')
         self.password = None if data.get('social', None) else self.generate_hash(data.get('password'))
-        self.music_genres_love_list_id = None or data.get("music_genres_love_list_id")
+        self.beats_id_liked_list = data.get("beats_id_liked_list", None)
+        self.beats_id_listened_list = data.get("beats_id_listened_list", None)
         self.fileStorage_key = data.get('fileStorage_key')
         self.created_at = datetime.datetime.utcnow()
         self.modified_at = datetime.datetime.utcnow()
@@ -112,8 +108,8 @@ class User(db.Model):
         self.right = data.get('right')
         self.user_type = data.get('user_type')
         self.if_choice = data.get('if_choice')
-        self.user_genre_list = data.get('user_genre_list')
-        self.music_genres_love_list_id = data.get("music_genres_love_list_id")
+        self.beats_id_liked_list = data.get("beats_id_liked_list")
+        self.beats_id_listened_list = data.get("beats_id_listened_list")
         self.modified_at = datetime.datetime.utcnow()
         db.session.commit()
 
@@ -181,8 +177,8 @@ class UserSchema(ValidateSchema):
     user_type = fields.Str(allow_none=True)
     services = fields.Nested(ServiceSchema)
     fileStorage_key = fields.Str(allow_none=True)
-    user_genre_list = fields.List(fields.Str(), allow_none=True)
-    music_genres_love_list_id = fields.Str(allow_none=True)
+    beats_id_liked_list = fields.List(fields.Int(), allow_none=True)
+    beats_id_listened_list = fields.List(fields.Int(), allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
 

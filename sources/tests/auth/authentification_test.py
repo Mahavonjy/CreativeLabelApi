@@ -4,7 +4,6 @@
 from preferences import USER_ARTIST_BEATMAKER
 from sources.models.artists.beatMakers.contractBeatmaking.contractBeatmaking import ContractBeatMaking
 from sources.models.artists.conditions.globals import ConditionGlobals
-from sources.models.artists.history.history import ArtistHistory
 from sources.tests.testParent.testParent import Test
 from requests_toolbelt import MultipartEncoder
 from sources.models.keyResetPassword.keyResetPasswords import KeyResetPassword
@@ -143,8 +142,6 @@ class TestAuthentification(Test):
         self.assertEqual(user.user_type, USER_ARTIST_BEATMAKER)
 
         with self._app.app_context():
-            # check artist story
-            self.assertIsNotNone(ArtistHistory.get_by_user_id(user.id))
             # check default contract
             self.assertIsNotNone(ContractBeatMaking.get_contract_name_by_user_id(user_id=user.id))
             # check condition globals

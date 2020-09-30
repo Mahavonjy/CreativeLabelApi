@@ -2,23 +2,22 @@
 """ shebang """
 
 from statistics import mean
-from preferences import GOOGLE_BUCKET_IMAGES
-from google.cloud import storage
 
 from sources.models.artists.services.artistServices import Services
 from sources.models.reservations.reservation import ReservationRSchema, Reservations
 from sources.models.users.user import UserSchema
 from flask import Blueprint, request, Response
-from sources.models import custom_response, check_reservation_info_with_service_info, check_all_user_payment_history
+from sources.models import custom_response
 from auth.authentification import Auth
-from sources.controllers.medias.mediaControllers import MediaSchema
 from sources.models.admirations.admirations import AdmireSchema
 from sources.models.profiles.profile import Profiles, ProfileSchema
 from sources.models.users.user import User, UserSocial
-from preferences import USER_AUDITOR_PRO
+from preferences import CLOUD_IMAGES_PROFILES_TYPE, USER_AUDITOR_PRO
 from sources.models.bankingDetails.banking import BankingSchema
 from sources.models.artists.conditions.globals import ConditionGlobalSchema
-from sources.tools.tools import validate_data, check_user_options_and_services
+from sources.tools.tools import check_all_user_payment_history, check_reservation_info_with_service_info, destroy_image, \
+    upload_image, validate_data, \
+    check_user_options_and_services
 from sources.models.keyResetPassword.keyResetPasswords import ResetPassword
 from sources.models.artists.history.paymentHistory import PaymentHistorySchema
 
@@ -28,22 +27,10 @@ payment_history_schema = PaymentHistorySchema()
 condition_globals_schema = ConditionGlobalSchema()
 admiration_schema = AdmireSchema()
 reset_password = ResetPassword()
-media_schema = MediaSchema()
 profile_schema = ProfileSchema()
 UserSocial_schema = UserSocial()
 banking_schema = BankingSchema()
 user_schema = UserSchema()
-
-
-def get_url(ser_user, u_file):
-    """ Get url profile photo """
-
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(GOOGLE_BUCKET_IMAGES)
-    blob = bucket.blob('profiles/' + ser_user.get('fileStorage_key') + '_' + str(ser_user.get('id')) + u_file.filename)
-    blob.upload_from_string(u_file.read(), content_type=u_file.content_type)
-    blob.make_public()
-    return blob.public_url
 
 
 def create_profile(data):
@@ -54,9 +41,10 @@ def create_profile(data):
         profile = Profiles.get_profile(social_id=data.get("social_id"))
     if profile:
         profile.update(data)
-        return Response(status=200)
-    Profiles(data).save()
-    return Response(status=200)
+        return profile.id
+    profile = Profiles(data)
+    profile.save()
+    return profile.id
 
 
 @profile_api.route('/my_profile', methods=['GET'])
@@ -121,17 +109,15 @@ def check_special_profile(profile_id):
         **check_user_options_and_services(user_),
         "user_id": user_.id,
         "role": user_.user_type,
-        "music_shared": user_.medias.filter_by(album_id=None, genre_musical='music').count(),
-        "beats_shared": user_.medias.filter_by(album_id=None, genre_musical='beats').count(),
-        "album_shared": user_.albums.count(),
+        "beats_shared": user_.medias.filter_by(genre_musical='beats').count(),
         "followings": user_.user.count(),
         "followers": user_.admire.count()
     }
-    user_beats = user_.medias.filter_by(album_id=None, genre_musical='beats').all()
+    user_beats = user_.medias.filter_by(genre_musical='beats').all()
     return custom_response({
         "profile_checked": user_profile,
         "user_data": user_data_needed,
-        "user_beats": [media_schema.dump(beat) for beat in user_beats]
+        # "user_beats": [media_schema.dump(beat) for beat in user_beats]
     }, 200)
 
 
@@ -149,14 +135,24 @@ def update_profile(user_connected_model, user_connected_schema):
 
     if data['email'] != user_connected_model.email and User.get_user_by_email(data['email']):
         return custom_response("email exist", 400)
+
     user_profile = user_connected_model.profile or Profiles.get_profile(social_id=user_connected_model.social_id)
-    data['photo'] = profile_schema.dump(user_profile).get('photo', "")
-    uploaded_photo = request.files.get('photo')
-    if uploaded_photo:
-        data['photo'] = get_url(user_connected_schema, uploaded_photo)
-    uploaded_cover_photo = request.files.get('cover_photo')
-    if uploaded_cover_photo:
-        data['cover_photo'] = get_url(user_connected_schema, uploaded_cover_photo)
+    p_dumped = profile_schema.dump(user_profile)
+
+    data.update(p_dumped)
+    _u_model = user_connected_model
+    p_photo = request.files.get('photo')
+    if p_photo:
+        if p_dumped["photo"]:
+            destroy_image(p_dumped["photo"], CLOUD_IMAGES_PROFILES_TYPE, _u_model.fileStorage_key, _u_model.id)
+        data['photo'] = upload_image(p_photo, CLOUD_IMAGES_PROFILES_TYPE, _u_model.fileStorage_key, _u_model.id)
+
+    c_photo = request.files.get('cover_photo')
+    if c_photo:
+        if p_dumped["cover_photo"]:
+            destroy_image(p_dumped["cover_photo"], CLOUD_IMAGES_PROFILES_TYPE, _u_model.fileStorage_key, _u_model.id)
+        data['cover_photo'] = upload_image(c_photo, CLOUD_IMAGES_PROFILES_TYPE, _u_model.fileStorage_key, _u_model.id)
+
     user_connected_schema["name"], user_connected_schema["email"] = data['name'], data['email']
     user_connected_model.update(user_connected_schema)
     user_profile.update(data)

@@ -2,7 +2,7 @@
 """ shebang """
 from operator import itemgetter
 
-from preferences.defaultDataConf import all_genre_of_different_artist
+from preferences.defaultData import all_genre_of_different_artist
 from sources.controllers.stars.starsControllers import check_service_stars
 from sources.models.artists.services.artistServices import ServiceSearchSchema
 from sources.tools.tools import remove_in_indexed_list_by_event_date, validate_data

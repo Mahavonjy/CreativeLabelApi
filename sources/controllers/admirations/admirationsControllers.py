@@ -2,8 +2,6 @@
 """ shebang """
 
 from sources.models.admirations.admirations import Admiration, AdmireSchema
-from sources.models.artists.history.history import ArtistHistory
-from sources.controllers import update_month_history
 from sources.models.profiles.profile import ProfileSchema
 from sources.models.users.user import User
 from auth.authentification import Auth
@@ -25,9 +23,6 @@ def add_new_admiration_user(admire_id, user_connected_model, user_connected_sche
 
         new_admiration = Admiration(dict(user_id=user_connected_model.id, admire_id=admire_id))
         new_admiration.save()
-        _artist_story = ArtistHistory.get_by_user_id(admire_id)
-        if _artist_story:
-            update_month_history(admire_id, month_admirers=True)
         return "added"
 
     if not User.get_one_user(admire_id):
@@ -48,9 +43,6 @@ def delete_admiration_user(admire_id, user_connected_model, user_connected_schem
     if not admire_info:
         return custom_response("user admire not found", 400)
     admire_info.delete()
-    _artist_story = ArtistHistory.get_by_user_id(admire_id)
-    if _artist_story:
-        update_month_history(admire_id, month_admirers=True, reverse=True)
     return custom_response("deleted", 200)
 
 

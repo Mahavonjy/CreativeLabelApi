@@ -3,13 +3,12 @@
 
 import requests
 from flask import g as auth
-from sources.models import get_time
 from flask import Blueprint, request
 from sources.models import custom_response
 from auth.authentification import Auth
 from sources.models.carts.cart import Carts, CartSchema
 from sources.models.users.user import User, UserSchema
-from sources.tools.tools import validate_data
+from sources.tools.tools import get_time, validate_data
 from sources.models.medias.media import Media, MediaSchema
 
 cart_api = Blueprint('carts', __name__)

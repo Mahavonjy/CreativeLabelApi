@@ -8,10 +8,10 @@ from flask import request, Blueprint
 from auth.authentification import Auth
 from preferences import BEATMAKING, KANTOBIZ
 from sources.mail.SendMail import payment_success, payment_refused
-from sources.models import custom_response, Percent, payment_stripe
-from sources.controllers import random_string
+from sources.models import custom_response
 from sources.models.medias.media import Media
 from sources.models.users.user import User
+from sources.tools.tools import payment_stripe, Percent, random_string
 
 payment_api = Blueprint('payment', __name__)
 translator = Translator()

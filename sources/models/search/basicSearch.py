@@ -25,8 +25,6 @@ def update_doc(data, schema, index, doc_type):
     first_ = {"id": data['id']}
     if doc_type == "songs":
         second_ = {"storage_name": data['storage_name']}
-    elif doc_type == "albums":
-        second_ = {"keys": data['keys']}
     elif doc_type == "prestations":
         second_ = {"title": data['title']}
     elif doc_type == "material":

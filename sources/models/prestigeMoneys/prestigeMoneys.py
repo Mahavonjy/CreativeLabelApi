@@ -19,7 +19,6 @@ class Prestige(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     media_id = db.Column(db.Integer, db.ForeignKey('medias.id'), nullable=True)
-    albums_id = db.Column(db.Integer, db.ForeignKey('albums.id'), nullable=True)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
 

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: creative-db
+  name: creative-db
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: creative-db
+      name: creative-db
+  template:
+    metadata:
+      labels:
+        type: creative-db
+        name: creative-db
+    spec:
+      containers:
+      - env:
+          - name: POSTGRES_DB
+            value: creative
+          - name: POSTGRES_PASSWORD
+            value: "2245"
+          - name: POSTGRES_USER
+            value: cynthionmahavonjy
+        image: postgres:12.2-alpine
+        name: creative-database
+        ports:
+          - containerPort: 5432
+            protocol: TCP
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: creative-db
+  name: creative-db
+spec:
+  ports:
+    - name: "5432"
+      port: 5432
+      targetPort: 5432
+  selector:
+    name: creative-db
+status:
+  loadBalancer: {}

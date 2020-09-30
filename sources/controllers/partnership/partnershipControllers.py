@@ -3,40 +3,16 @@
 
 from sources.models.partnership.partnership import Partner, PartnerSchema
 from sources.models.users.user import UserSchema
-from sources.tools.tools import validate_data
+from sources.tools.tools import destroy_image, upload_image, validate_data
 from auth.authentification import Auth
-from preferences import defaultDataConf, GOOGLE_BUCKET_IMAGES
+from preferences import CLOUD_IMAGES_PARTNERS_TYPE, defaultData
 from sources.models import custom_response
-from sources.models import add_in_storage
 from flask import Blueprint, request
-from google.cloud import storage
-import google
 
 partner_api = Blueprint('partners', __name__)
-secure_photo = defaultDataConf.media_allowed_Photos_Extensions
-bucket_images = GOOGLE_BUCKET_IMAGES
+secure_photo = defaultData.media_allowed_Photos_Extensions
 partner_schema = PartnerSchema()
 user_schema = UserSchema()
-
-
-def update_photo(logo_img, partner, ser_user, delete=False):
-    """ update photo in storage """
-
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(bucket_images)
-    b_n = "/".join(partner['logo'].split('/')[-3:])
-    blob = bucket.blob(b_n)
-
-    try:
-        blob.delete()
-    except TypeError:
-        pass
-    except google.api_core.exceptions.NotFound:
-        pass
-
-    if delete:
-        return
-    return add_in_storage(bucket_images, ser_user, logo_img, "partners/")
 
 
 @partner_api.route("/addNewPartner", methods=['POST'])
@@ -48,16 +24,19 @@ def add_new_partner(user_connected_model, user_connected_schema):
         data, error = validate_data(partner_schema, request, False)
         if error:
             return custom_response(data, 400)
+
         if Partner.partner_by_name(data['name']):
             return custom_response("partner existing", 400)
+
         logo_img = request.files.get("logo")
         if not logo_img:
             return custom_response("i need logo image", 400)
+
+        _u_model = user_connected_model
         type_photo = logo_img.content_type
-        file_type = type_photo.rsplit('/', 1)[1]
-        if file_type not in secure_photo:
+        if type_photo.rsplit('/', 1)[1] not in secure_photo:
             return custom_response("photo type is not supported", 400)
-        data['logo'] = add_in_storage(bucket_images, user_connected_schema, logo_img, "partners/")
+        data['logo'] = upload_image(logo_img, CLOUD_IMAGES_PARTNERS_TYPE, _u_model.fileStorage_key, _u_model.id)
         data['user_id'] = user_connected_model.id
         new_partners = Partner(data)
         new_partners.save()
@@ -86,11 +65,12 @@ def update_an_partner(partner_id, user_connected_model, user_connected_schema):
         partner = partner_schema.dump(query_)
         logo_img, data['logo'] = request.files.get("logo"), partner['logo']
         if logo_img:
+            _u_model = user_connected_model
             type_photo = logo_img.content_type
-            file_type = type_photo.rsplit('/', 1)[1]
-            if file_type not in secure_photo:
+            if type_photo.rsplit('/', 1)[1] not in secure_photo:
                 return custom_response("photo type is not supported", 400)
-            data['logo'] = update_photo(logo_img, partner, user_connected_schema)
+            destroy_image(partner['logo'], CLOUD_IMAGES_PARTNERS_TYPE, _u_model.fileStorage_key, _u_model.id)
+            data['logo'] = upload_image(logo_img, CLOUD_IMAGES_PARTNERS_TYPE, _u_model.fileStorage_key, _u_model.id)
         query_.update(data)
         return custom_response("updated", 200)
     return custom_response("Unauthorized", 400)
@@ -101,9 +81,10 @@ def update_an_partner(partner_id, user_connected_model, user_connected_schema):
 def delete_an_partner(partner_id, user_connected_model, user_connected_schema):
     """ delete a partner """
 
-    if user_connected_model.right == 2:
-        query_ = Partner.partner_by_id(partner_id)
-        update_photo(None, partner_schema.dump(query_), None, True)
-        query_.delete()
+    partner = Partner.partner_by_id(partner_id)
+    if user_connected_model.right == 2 and partner:
+        _u_model = user_connected_model
+        destroy_image(partner.logo, CLOUD_IMAGES_PARTNERS_TYPE, _u_model.fileStorage_key, _u_model.id)
+        partner.delete()
         return custom_response("deleted", 200)
     return custom_response("Unauthorized", 400)

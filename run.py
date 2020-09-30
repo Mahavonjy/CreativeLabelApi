@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ shebang """
 
-from preferences.config import Production as Prod
+from preferences.env import Production as Prod
 from sources.app import welcome
 from sources.models import es
 import os

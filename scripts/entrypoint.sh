@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-source migrate.sh
+source scripts/migrate.sh
 /usr/bin/supervisord

@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-cd ../
+current_path=`pwd`
+arr=(`echo ${current_path} | tr "/" "\n"`)
+if [[ ${arr[@]:(-1)} == "scripts" ]]
+then
+	cd ../
+fi
 
 pwd=`pwd`'/migrations'
 
@@ -18,5 +23,3 @@ if [[ $@ == -r ]]
 then
 	nohup flask run --host=0.0.0.0 --port=5000
 fi
-
-# pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U

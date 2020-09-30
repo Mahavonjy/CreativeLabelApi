@@ -8,8 +8,7 @@ from flask import Blueprint, request
 
 from auth.authentification import Auth
 from preferences import USER_AUDITOR_PRO
-from sources.tools.tools import validate_data
-from sources.controllers import convert_dict_to_sql_json
+from sources.tools.tools import convert_dict_to_sql_json, validate_data
 
 from sources.models.users.user import User
 from sources.models import custom_response
