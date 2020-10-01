@@ -33,6 +33,7 @@ class Media(db.Model):
     artist_tag = db.Column(db.String(255), nullable=True)
     stems = db.Column(db.String(255), nullable=True)
     wave = db.Column(db.String(255), nullable=True)
+    mp3 = db.Column(db.String(255), nullable=True)
     share = db.Column(db.Integer, default=0)
     time = db.Column(db.String(10))
     listened = db.Column(db.Integer, default=0)
@@ -50,11 +51,12 @@ class Media(db.Model):
         """ Class constructor """
 
         self.user_id = data.get('user_id')
-        self.title = data.get('title', data.get('Title'))
+        self.title = data.get('title')
         self.listened = 0
         self.photo = data.get('photo')
         self.bpm = data.get('bpm', 0)
         self.time = data.get('time')
+        self.mp3 = data.get('mp3')
         self.stems = data.get('stems')
         self.share = data.get('share')
         self.wave = data.get('wave')
@@ -91,6 +93,7 @@ class Media(db.Model):
         self.gold_price = data.get('gold_price')
         self.platinum_price = data.get('platinum_price')
         self.time = data.get('time')
+        self.mp3 = data.get('mp3')
         self.stems = data.get('stems')
         self.share = data.get('share')
         self.wave = data.get('wave')
@@ -206,6 +209,7 @@ class MediaSchema(ValidateSchema):
     artist_tag = fields.Str(allow_none=True)
     stems = fields.Str(allow_none=True)
     wave = fields.Str(allow_none=True)
+    mp3 = fields.Str(allow_none=True)
     genre = fields.Str(required=True)
     photo = fields.Str(allow_none=True)
     admire = fields.Int(allow_none=True)

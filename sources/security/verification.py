@@ -1,46 +1,65 @@
 #!/usr/bin/env python3
 """ shebang """
-from preferences.defaultData import media_allowed_Extensions, media_allowed_Genres, media_allowed_Photos_Extensions
+
+from flask import request
+from preferences.defaultData import allowed_beat_maker_options, media_allowed_Photos_Extensions
 from sources.models.medias.media import MediaSchema
 from sources.models import custom_response
 from sources.models.profiles.profile import ProfileSchema
-from sources.tools.tools import upload_beats, validate_data
-from sources.models.users.user import User, UserSchema
-from preferences import FILE_ZIPPED, MUSICAL_GENRE_BEATS, MUSICAL_GENRE_MUSIC, USER_ARTIST_BEATMAKER
-from flask import request, Response
-from flask import g as auth
+from sources.tools.tools import validate_data
+from sources.models.users.user import UserSchema
+from preferences import ALLOWED_MUSIC_MP3, ALLOWED_MUSIC_MPEG, ALLOWED_MUSIC_WAV, ALLOWED_MUSIC_WAVE, FILE_ZIPPED, \
+    USER_ARTIST_BEATMAKER
 
 profile_schema = ProfileSchema()
 media_schema = MediaSchema()
 user_schema = UserSchema()
 
 
-def _specific(photo, mp3, wave, stems, key=False):
+def extract_file(req):
+    return {
+        'photo': req.files.get('photo'),
+        'mp3': req.files.get("file"),
+        'stems': req.files.get('stems'),
+        'wave': req.files.get("beats_wave"),
+    }
+
+
+def _specific(photo=None, mp3=None, wave=None, stems=None, update=False):
     """ beats file verification """
 
-    if not photo:
+    if not photo and not update:
         return "photo required"
 
-    type_photo = photo.content_type
-    if type_photo.split('/', 1)[1].upper() not in media_allowed_Photos_Extensions:
-        return "photo type is not supported"
+    if photo:
+        type_photo = photo.content_type
+        if type_photo.split('/', 1)[1].upper() not in media_allowed_Photos_Extensions:
+            return "photo type is not supported"
 
-    if not mp3 and not key or not wave and not key:
+    if not mp3 and not update or not wave and not update:
         return "send me the beats song (.mp3) & (.wave) in field"
 
-    if not stems and not key:
+    if not stems and not update:
         return "stems required"
 
     try:
-        file_type_mp3 = mp3.content_type
-        if file_type_mp3.split('/', 1)[1] not in media_allowed_Extensions:
-            return "beats type is not a mp3 file or not a wave file"
+        if mp3:
+            file_type_mp3 = mp3.content_type
+            if file_type_mp3.split('/', 1)[1] not in [ALLOWED_MUSIC_MPEG, ALLOWED_MUSIC_MP3]:
+                return "mp3 file not allowed"
+
+        if wave:
+            file_type_wave = wave.content_type
+            if file_type_wave.split('/', 1)[1] not in [ALLOWED_MUSIC_WAVE, ALLOWED_MUSIC_WAV]:
+                return "wave file not allowed"
     except AttributeError:
         pass
+
     try:
-        file_type_samples = stems.content_type
-        if file_type_samples.split('/', 1)[1] != FILE_ZIPPED:
-            return "sample not supported"
+        if stems:
+            file_type_samples = stems.content_type
+            if file_type_samples.split('/', 1)[1] != FILE_ZIPPED:
+                return "stems not supported"
     except AttributeError:
         pass
 
@@ -66,21 +85,16 @@ class Secure:
                 if not (data.get("basic_price") and data.get("silver_price") and data.get("gold_price")):
                     return custom_response("i need basic, silver and gold price", 400)
 
-                if data["genre_musical"] != MUSICAL_GENRE_BEATS or data["genre"] not in media_allowed_Genres:
-                    return custom_response("genre or genre_musical not supported", 400)
+                if data["genre"] not in allowed_beat_maker_options:
+                    return custom_response("genre not supported", 400)
 
-                photo = request.files.get('photo')
-                mp3 = request.files.get("file")
-                wave = request.files.get("beats_wave")
-                response = _specific(photo, mp3, wave, request.files.get('stems'))
-                if isinstance(response, str):
-                    return custom_response(response, 400)
+                extracted_file = extract_file(request)
+                msg = _specific(**extracted_file)
+                if isinstance(msg, str):
+                    return custom_response(msg, 400)
 
-                f_storage_id = {'fileStorage_key': _u_schema['fileStorage_key'], 'user_id': _u_schema['id']}
-                data['link'] = upload_beats(request.files.get("file"), **f_storage_id)
-                # data['beats_wave'] = upload_beats(request.files.get("beats_wave"), **f_storage_id)
-                data['stems'] = upload_beats(request.files.get('stems'), **f_storage_id, stems=True)
-                kwargs.update({'data': data, 'mp3_filename': mp3.filename, 'wave': request.files.get("beats_wave"), 'photo': photo})
+                kwargs.update(extracted_file)
+                kwargs.update({'data': data})
                 return func(**kwargs)
 
             return custom_response("Unauthorized", 400)
@@ -94,23 +108,21 @@ class Secure:
         def beats_secure_before_update(*args, **kwargs):
             """ Get a beats type and other verification """
 
-            user = User.get_one_user(auth.user.get('id'))
-            beats = user.medias.filter_by(id=kwargs['song_id']).first()
+            beats = kwargs['user_connected_model'].medias.filter_by(id=kwargs['song_id']).first()
             if beats:
                 data, error = validate_data(media_schema, request, False)
                 if error:
                     return custom_response(data, 400)
-                photo_file = request.files.get('photo')
-                uploaded_samples = request.files.get('stems')
-                uploaded_file_mp3, uploaded_file_wave = request.files.get("file"), request.files.get("beats_wave")
-                response = _specific(photo_file, uploaded_file_mp3, uploaded_file_wave, uploaded_samples, key=True)
-                if isinstance(response, str):
-                    return custom_response(response, 400)
-                kwargs['beats'], kwargs['data'] = beats, data
-                kwargs['photo_file'], kwargs['uploaded_samples'], kwargs['up'] = photo_file, uploaded_samples, {}
-                kwargs['uploaded_file_mp3'], kwargs['uploaded_file_wave'] = uploaded_file_mp3, uploaded_file_wave
+
+                extracted_file = extract_file(request)
+                msg = _specific(**extracted_file, update=True)
+                if isinstance(msg, str):
+                    return custom_response(msg, 400)
+
+                kwargs.update(extracted_file)
+                kwargs.update({'beats': beats, 'data': data})
                 return func(*args, **kwargs)
-            return custom_response("beats not found", 400)
+            return custom_response("beat not found or deleted", 400)
 
         beats_secure_before_update.__name__ = func.__name__
         return beats_secure_before_update

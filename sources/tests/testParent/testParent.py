@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """ shebang """
-
+import os
 import unittest
+
+import cloudinary
 
 from preferences import ANIMATOR, USER_ARTIST_DJ
 from sources.app import welcome
@@ -61,6 +63,14 @@ class Test(unittest.TestCase):
         app = welcome("development_test")
         self.app = app.test_client()
         with app.app_context():
+            # app.config.MAIL_USERNAME = os.getenv('MAIL_DEV_USERNAME_API')
+            # app.config.MAIL_PASSWORD = os.getenv('MAIL_DEV_PASSWORD_API')
+            cloudinary.config(
+                cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+                api_key=os.getenv("CLOUDINARY_API_KEY"),
+                api_secret=os.getenv("CLOUDINARY_API_SECRET")
+            )
+            db.drop_all()
             db.init_app(app)
             db.create_all()
 

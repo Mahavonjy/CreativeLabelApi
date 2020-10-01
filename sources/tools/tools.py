@@ -45,6 +45,7 @@ def upload_image(image_to_upload, cloud_folder, fileStorage_key, user_id):
     if cloud_folder not in CLOUD_IMAGES_FOLDERS:
         return None
 
+    image_to_upload.seek(0)
     return cloudinary.uploader.upload(
         image_to_upload,
         public_id=fileStorage_key + str(user_id) + image_to_upload.filename.split(".")[0],
@@ -57,25 +58,28 @@ def upload_beats(file_to_upload, fileStorage_key, user_id, stems=False):
     """ function who upload beats to cloudinary """
 
     folder = CLOUD_BEATS
+    public_id = fileStorage_key + str(user_id) + file_to_upload.filename.split(".")[0]
     if stems:
+        public_id += '.zip'
         folder = CLOUD_BEAT_STEMS
 
     return cloudinary.uploader.upload(
         file_to_upload,
-        public_id=fileStorage_key + str(user_id) + file_to_upload.filename.split(".")[0],
+        public_id=public_id,
         folder=folder + "/" + fileStorage_key + str(user_id),
         resource_type='auto'
     )['secure_url']
 
 
-def destroy_beats(image_link, fileStorage_key, user_id):
-    """ function who destroy images to cloudinary """
+def destroy_beats(image_link, fileStorage_key, user_id, stems=False):
+    """ function who destroy beats to cloudinary """
+
+    folder = CLOUD_BEATS
+    if stems:
+        folder = CLOUD_BEAT_STEMS
 
     file_named = image_link.split("/")[-1].split('.')[0]
-    return cloudinary.uploader.destroy(
-        public_id=CLOUD_BEATS + "/" + fileStorage_key + str(user_id) + "/" + file_named,
-        resource_type='auto'
-    )
+    return cloudinary.uploader.destroy(public_id=CLOUD_BEATS + "/" + fileStorage_key + str(user_id) + "/" + file_named)
 
 
 def destroy_image(image_link, cloud_folder, fileStorage_key, user_id):
@@ -120,9 +124,10 @@ def librosa_collect(file):
     :return: dict of time and bpm
     """
 
-    dirname = random_string()
-    file.save(secure_filename(dirname + file.filename))
-    y, sr = librosa.load(dirname + file.filename)
+    dirname = random_string() + '.' + file.content_type.split('/')[1]
+    file.save(secure_filename(dirname))
+
+    y, sr = librosa.load(dirname)
     bpm, beats_frames = librosa.beat.beat_track(y=y, sr=sr)
     beats_times = librosa.frames_to_time(beats_frames, sr=sr)
     time_ = time.strftime('%H:%M:%S', time.gmtime(int(round(beats_times[-1]))))
@@ -130,7 +135,7 @@ def librosa_collect(file):
         tm = time_[3:] if time_.split(":")[0] == "00" else time_
     except TypeError:
         tm = None
-    os.remove(dirname + file.filename)
+    os.remove(dirname)
     return bpm, tm
 
 

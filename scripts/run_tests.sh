@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+green=`tput setaf 2`
 current_path=`pwd`
 arr=(`echo ${current_path} | tr "/" "\n"`)
 if [[ ${arr[@]:(-1)} == "scripts" ]]
@@ -20,8 +21,13 @@ rm .env-e
 
 sleep 1
 
-echo "-----run authentification test-----"
-pytest sources/tests/auth/authentification_test.py
+echo
+echo "${green}-----run authentification test-----"
+# pytest sources/tests/auth/authentification_test.py
+
+echo
+echo "${green}-----run media test-----"
+pytest sources/tests/medias/media_test.py::TestMedia::test_update_beat
 
 sleep 1
 

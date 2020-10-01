@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """ shebang """
 
+import os
+
+import cloudinary
+from flask import request
 from flask import g as auth
 from flask import Blueprint, json
 from preferences import CLOUD_IMAGES_BEATS_TYPE, defaultData, GOOGLE_BUCKET_BEATS
@@ -10,7 +14,8 @@ from sources.models.users.user import User, UserSchema
 from sources.models.medias.media import Media, MediaSchema
 from sources.security.verification import Secure
 from sources.models.profiles.profile import ProfileSchema
-from sources.tools.tools import destroy_image, librosa_collect, Percent, random_string, upload_beats, upload_image
+from sources.tools.tools import destroy_beats, destroy_image, librosa_collect, Percent, random_string, upload_beats, \
+    upload_image
 from sources.models import custom_response
 
 beats_api = Blueprint('beats', __name__)
@@ -33,10 +38,20 @@ def price_calculation(beat_maker_gain):
     return round(sum([gain_isl, tva, gain_beat_maker])) - 0.01
 
 
+def check_time_and_bpm(audio, data, update_bpm=False):
+
+    audio.seek(0)
+    bpm_, time_ = librosa_collect(audio)
+    if not data.get('bpm', 0) or update_bpm:
+        data['bpm'] = bpm_
+    data['time'] = time_
+    return data
+
+
 @beats_api.route('/uploadBeat', methods=['POST'])
 @Auth.auth_required
 @Secure.beats_verification_before_upload
-def upload_beat(user_connected_schema, user_connected_model, data, mp3_filename, wave, photo):
+def upload_beat(user_connected_schema, user_connected_model, data, mp3, wave, photo, stems):
     """ function who upload beats """
 
     _u_model = user_connected_model
@@ -46,65 +61,57 @@ def upload_beat(user_connected_schema, user_connected_model, data, mp3_filename,
     if data['platinum_price']:
         data['platinum_price'] = price_calculation(data['platinum_price'])
 
-    bpm_, time_ = librosa_collect(wave)
-    if not data['bpm']:
-        data['bpm'] = bpm_
-    data['time'] = time_
-
     photo.filename = random_string(string_length=10) + "." + photo.content_type.split('/')[1]
     link = _u_model.profile.photo
     if photo:
         link = upload_image(photo, CLOUD_IMAGES_BEATS_TYPE, _u_model.fileStorage_key, _u_model.id)
 
-    data.update({'photo': link, 'storage_name': mp3_filename, 'user_id': _u_model.id})
-    raise ValueError(data)
+    data = check_time_and_bpm(mp3, data)
+    mp3.seek(0)
+    f_storage_id = {'fileStorage_key': _u_model.fileStorage_key, 'user_id': _u_model.id}
+    data.update({
+        'photo': link,
+        'user_id': _u_model.id,
+        'mp3': upload_beats(mp3, **f_storage_id),
+        'stems': upload_beats(stems, **f_storage_id, stems=True),
+        'wave': upload_beats(wave, **f_storage_id)
+    })
     media = Media(data)
     media.save()
     return custom_response(media_schema.dump(media), 200)
 
 
-@beats_api.route('/update/<int:song_id>', methods=['PUT'])
+@beats_api.route('/updateBeat/<int:song_id>', methods=['PUT'])
 @Auth.auth_required
 @Secure.beats_verification_before_update
-def update_beats(song_id, **kwargs):
+def update_beats(song_id, user_connected_schema, user_connected_model, data, mp3, wave, photo, stems, beats):
     """ function who update a beats """
 
-    _u_model = kwargs['user_connected_model']
-    beats = media_schema.dump(kwargs['beats'])
-    file_storage_key = kwargs['user_connected_schema']['fileStorage_key']
-    kwargs['data']['photo'], beat_link = beats['photo'], ''
+    _u_model = user_connected_model
+    beats_to_update = media_schema.dump(beats)
+    params = {'fileStorage_key': _u_model.fileStorage_key, 'user_id': _u_model.id}
 
-    if kwargs['photo_file']:
-        destroy_image(beats["photo"], CLOUD_IMAGES_BEATS_TYPE, _u_model.fileStorage_key, _u_model.id)
-        img_link = upload_image(kwargs['photo_file'], CLOUD_IMAGES_BEATS_TYPE, _u_model.fileStorage_key, _u_model.id)
-        kwargs['data']['photo'] = img_link
+    if photo:
+        destroy_image(beats_to_update["photo"], CLOUD_IMAGES_BEATS_TYPE, **params)
+        beats_to_update["photo"] = upload_image(photo, CLOUD_IMAGES_BEATS_TYPE, **params)
 
-    if kwargs['uploaded_samples']:
-        # update_file_storage(dict(
-        #     bucket_name=bucket_beats, repository_name="stems_beats/" + file_storage_key,
-        #     delete=True, keys=kwargs['user_connected_schema']['id'], filename=beats['stems'], file=None
-        # ))
-        # add_s(bucket_beats, kwargs['user_connected_schema'], kwargs['uploaded_samples'], beats="stems_beats")
-        kwargs['data']['stems'] = kwargs['uploaded_samples'].filename
-    if kwargs['uploaded_file_mp3']:
-        # update_file_storage(dict(
-        #     bucket_name=bucket_beats, repository_name="mp3_beats/" + file_storage_key,
-        #     delete=True, keys=kwargs['user_connected_schema']['id'], filename=beats['storage_name'], file=None
-        # ))
-        # beat_link = add_s(bucket_beats, kwargs['user_connected_schema'], kwargs['uploaded_file_mp3'], beats="mp3_beats")
-        kwargs['data']['storage_name'] = kwargs['uploaded_file_mp3'].filename
-    if kwargs['uploaded_file_wave']:
-        # update_file_storage(dict(
-        #     bucket_name=bucket_beats, repository_name="wave_beats/" + file_storage_key,
-        #     delete=True, keys=kwargs['user_connected_schema']['id'], filename=beats['beats_wave'], file=None
-        # ))
-        # add_s(bucket_beats, kwargs['user_connected_schema'], kwargs['uploaded_file_wave'], beats="wave_beats")
-        kwargs['data']['beats_wave'] = kwargs['uploaded_file_wave'].filename
-    beats.update(kwargs['data'])
-    kwargs['beats'].update(beats)
-    beats['link'] = beat_link
+    if stems:
+        destroy_beats(beats_to_update["stems"], **params, stems=True)
+        beats_to_update["stems"] = upload_beats(stems, **params, stems=True)
 
-    return custom_response(beats, 200)
+    if mp3:
+        beats_to_update = check_time_and_bpm(mp3, beats_to_update, update_bpm=True)
+        mp3.seek(0)
+        destroy_beats(beats_to_update["mp3"], **params)
+        beats_to_update["mp3"] = upload_beats(mp3, **params)
+
+    if wave:
+        destroy_beats(beats_to_update["wave"], **params)
+        beats_to_update["wave"] = upload_beats(wave, **params)
+
+    beats_to_update.update(data)
+    beats.update(beats_to_update)
+    return custom_response(media_schema.dump(beats), 200)
 
 
 @beats_api.route('/delete/<int:song_id>', methods=['DELETE'])
@@ -112,33 +119,28 @@ def update_beats(song_id, **kwargs):
 def delete_beats(song_id, user_connected_model, user_connected_schema):
     """ delete a beats """
 
-    _u_model = user_connected_model
-    user_ = User.get_one_user(auth.user.get('id'))
-    media = user_.medias.filter_by(id=song_id).first()
+    user_ = user_connected_model
+    beat = user_.medias.filter_by(id=song_id).first()
 
-    if media:
-        ser_user = user_schema.dump(user_)
-        beats = media_schema.dump(media)
-        list_ = []
-        # delete a beats mp3
-        list_.extend([("bucket_name", bucket_beats), ("repository_name", "mp3_beats/" + ser_user['fileStorage_key'])])
-        list_.extend([("delete", True), ("keys", ser_user['id']), ("filename", beats['storage_name']), ("file", None)])
-        # update_file_storage(dict(list_))
-        # delete a beats photo
-        destroy_image(beats["photo"], CLOUD_IMAGES_BEATS_TYPE, _u_model.fileStorage_key, _u_model.id)
-        # delete a beats stems
-        # update_file_storage(dict(
-        #     bucket_name=bucket_beats, repository_name="stems_beats/" + ser_user['fileStorage_key'],
-        #     delete=True, keys=ser_user['id'], filename=beats['stems'], file=None
-        # ))
-        # delete a beats wave
-        # update_file_storage(dict(
-        #     bucket_name=bucket_beats, repository_name="wave_beats/" + ser_user['fileStorage_key'],
-        #     delete=True, keys=ser_user['id'], filename=beats['beats_wave'], file=None
-        # ))
-        media.delete()
-        return custom_response("delete", 200)
-    return custom_response("file not found or deleted", 400)
+    if beat:
+        params = {'fileStorage_key': user_.fileStorage_key, 'user_id': user_.id}
+        beat_to_delete = media_schema.dump(beat)
+
+        if beat_to_delete['photo']:
+            destroy_image(beat_to_delete["photo"], CLOUD_IMAGES_BEATS_TYPE, **params)
+
+        if beat_to_delete["stems"]:
+            destroy_beats(beat_to_delete["stems"], **params, stems=True)
+
+        if beat_to_delete["mp3"]:
+            destroy_beats(beat_to_delete["mp3"], **params)
+
+        if beat_to_delete["wave"]:
+            destroy_beats(beat_to_delete["wave"], **params)
+
+        beat.delete()
+        return custom_response("deleted", 200)
+    return custom_response("beat not found or deleted", 400)
 
 
 """
@@ -308,11 +310,11 @@ def all_beats_suggestion_tried():
 
     return custom_response(dict(
         random=get_random_beats(json_response=True),
-        top_beatmaker=get_top_beat_maker_beats(json_response=True),
-        latest_beats=get_top_latest_beats(json_response=True),
-        discovery_beats=african_discovery_beats(json_response=True),
-        new_beatMaker=all_new_beat_maker_in_the_six_last_month(json_response=True),
-        isl_playlist=isl_beats_playlist(json_response=True)
+        # top_beatmaker=get_top_beat_maker_beats(json_response=True),
+        # latest_beats=get_top_latest_beats(json_response=True),
+        # discovery_beats=african_discovery_beats(json_response=True),
+        # new_beatMaker=all_new_beat_maker_in_the_six_last_month(json_response=True),
+        # isl_playlist=isl_beats_playlist(json_response=True)
     ), 200)
 
 
