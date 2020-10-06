@@ -2,11 +2,8 @@
 """ shebang """
 
 from sources.models.prestigeMoneys.prestigeMoneys import Prestige
-from sources.models.search.basicSearch import add_new_doc, update_doc
+from sources.models.elastic.fillInElastic import add_new_doc, update_doc
 from sources.models.admirations.admirations import Admiration
-from dateutil.relativedelta import relativedelta
-from preferences import defaultData
-from sqlalchemy import desc, asc, func
 from sources.models.schemaValidators.validates import ValidateSchema
 from marshmallow import fields
 from sources.models import db
@@ -116,76 +113,6 @@ class Media(db.Model):
         return Media.query.filter_by(id=song_id).first()
 
     @staticmethod
-    def get_song_by_genre(genre_name):
-        """ get all song by genre """
-
-        last_3_month = datetime.datetime.now() + relativedelta(months=-3)
-        return Media.query.filter_by(genre=genre_name) \
-            .filter(Media.created_at > last_3_month) \
-            .order_by(desc(Media.listened)) \
-            .limit(10) \
-            .all()
-
-    @staticmethod
-    def randomize_beats():
-        """ get randomize 10 beats """
-
-        return Media.query \
-            .order_by(func.random()) \
-            .limit(10) \
-            .all()
-
-    @staticmethod
-    def increasing_beats():
-        """ get randomize 10 beats """
-
-        return Media.query \
-            .order_by(asc(Media.created_at)) \
-            .limit(10) \
-            .all()
-
-    @staticmethod
-    def descending_beats():
-        """ get randomize 10 beats """
-
-        return Media.query \
-            .order_by(desc(Media.created_at)) \
-            .limit(10) \
-            .all()
-
-    @staticmethod
-    def top_beats_3_last_month():
-        """ Return 20 of beats Ranking """
-
-        return Media.query \
-            .order_by(desc(Media.listened), desc(Media.admire), desc(Media.share)) \
-            .limit(50) \
-            .all()
-
-    @staticmethod
-    def african_discovery_beats():
-        """ Return 10 of beats discovery """
-
-        discovery_list = []
-        for genre in defaultData.discovery_allowed_genres:
-            discovery_list.append(Media.query
-                                  .filter(Media.genre == genre)
-                                  .limit(5)
-                                  .all())
-        return discovery_list
-
-    @staticmethod
-    def ten_last_beats():
-        """ Ten latest beats """
-
-        last_3_month = datetime.datetime.now() + relativedelta(months=-3)
-        return Media.query \
-            .filter(Media.created_at > last_3_month) \
-            .order_by(asc(Media.created_at)) \
-            .limit(10) \
-            .all()
-
-    @staticmethod
     def isl_playlist_beats():
         """ Return 10 of beats isl playlist """
 
@@ -209,6 +136,31 @@ class MediaSchema(ValidateSchema):
     artist_tag = fields.Str(allow_none=True)
     stems = fields.Str(allow_none=True)
     wave = fields.Str(allow_none=True)
+    mp3 = fields.Str(allow_none=True)
+    genre = fields.Str(required=True)
+    photo = fields.Str(allow_none=True)
+    admire = fields.Int(allow_none=True)
+    share = fields.Int(allow_none=True)
+    bpm = fields.Float(allow_none=True)
+    time = fields.Str(allow_none=True)
+    basic_price = fields.Float(allow_none=True)
+    silver_price = fields.Float(allow_none=True)
+    gold_price = fields.Float(allow_none=True)
+    platinum_price = fields.Float(allow_none=True)
+    listened = fields.Int(allow_none=True)
+    user_id = fields.Int(allow_none=True)
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)
+
+
+class MediaOnStreamSchema(ValidateSchema):
+    """ Media Stream Schema """
+
+    id = fields.Int(dump_only=True)
+    title = fields.Str(required=True)
+    description = fields.Str(allow_none=True)
+    artist = fields.Str(required=True)
+    artist_tag = fields.Str(allow_none=True)
     mp3 = fields.Str(allow_none=True)
     genre = fields.Str(required=True)
     photo = fields.Str(allow_none=True)

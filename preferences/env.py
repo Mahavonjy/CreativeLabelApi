@@ -52,7 +52,7 @@ class DevelopmentTest(Default):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'postgresql://cynthionmahavonjy:2245@localhost:5432/creative_test'
     ES_HOST = {"host": "localhost", "port": 9200}
-    ES_INDEX = ["beats"]
+    ES_INDEX = ["beats", "services", "options", "materials"]
     MAIL_USERNAME = 'mahavonjy.cynthion@gmail.com'
     MAIL_PASSWORD = 'Mallow11!'
 

@@ -20,7 +20,7 @@ from sources.controllers.artists.artistTypes.types import artist_type_api as art
 from sources.controllers.supportMessages.messages import support_message_api as messages_blueprint
 from sources.controllers.search.serviceSearch import api_service_search as service_search_blueprint
 from sources.controllers.artists.materials.materialsControllers import materials_api as materials_blueprint
-from sources.controllers.medias.artistSuggestion import artist_suggestion as artist_suggestion_blueprint
+from sources.controllers.medias.beatSuggestion import beats_suggestion as beats_suggestion_blueprint
 from sources.controllers.artists.services.servicesControllers import artist_services_api as artist_services_blueprint
 from sources.controllers.artists.contractBeatMaking.contractBeatmaking import contract_beat_api as beat_maker_contract
 
@@ -69,4 +69,4 @@ def routing(app):
     # Route Prefix artist services
     app.register_blueprint(artist_services_blueprint, url_prefix='/api/artist_services')
     # Route Prefix Artist suggestion
-    app.register_blueprint(artist_suggestion_blueprint, url_prefix='/api/artistSuggestion')
+    app.register_blueprint(beats_suggestion_blueprint, url_prefix='/api/beats_suggestions')

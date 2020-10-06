@@ -22,12 +22,22 @@ rm .env-e
 sleep 1
 
 echo
-echo "${green}-----run authentification test-----"
-# pytest sources/tests/auth/authentification_test.py
+echo "${green}----- AUTHENTIFICATION TEST -----"
+pytest -p no:warnings sources/tests/auth/authentification_test.py
 
 echo
-echo "${green}-----run media test-----"
-pytest sources/tests/medias/media_test.py::TestMedia::test_update_beat
+echo "${green}----- MEDIA UPLOAD TEST -----"
+pytest -p no:warnings sources/tests/medias/media_test.py::TestMedia::test_upload_beat
+echo
+echo "${green}----- MEDIA UPDATE TEST -----"
+pytest -p no:warnings sources/tests/medias/media_test.py::TestMedia::test_update_beat
+echo
+echo "${green}----- MEDIA DELETE BEAT TEST -----"
+pytest -p no:warnings sources/tests/medias/media_test.py::TestMedia::test_delete_beat
+
+echo
+echo "${green}----- CONTRACT BEAT TEST -----"
+pytest -p no:warnings sources/tests/beatContract/beat_contract_test.py
 
 sleep 1
 

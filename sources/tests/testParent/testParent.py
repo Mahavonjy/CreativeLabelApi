@@ -9,6 +9,12 @@ from preferences import ANIMATOR, USER_ARTIST_DJ
 from sources.app import welcome
 from sources.models import db
 
+from requests_toolbelt import MultipartEncoder
+import json
+from preferences import AFROBEAT_ALLOWED, USER_ARTIST_BEATMAKER
+from sources.models.keyResetPassword.keyResetPasswords import KeyResetPassword
+from sources.models.users.user import User
+
 
 class Test(unittest.TestCase):
 
@@ -56,6 +62,34 @@ class Test(unittest.TestCase):
         "unit_duration_of_the_service": service_unit_duration_of_the_service,
         "unit_of_the_preparation_time": service_unit_of_the_preparation_time,
     }
+
+    def check_beatMaker_token(self):
+        """ """
+
+        self.service_test['thematics'] = [AFROBEAT_ALLOWED]
+        data = {
+            "name": self.name,
+            "email": self.email,
+            "password": self.password,
+            "user_type": USER_ARTIST_BEATMAKER,
+            "services": json.dumps(self.service_test),
+        }
+        data_form_type = MultipartEncoder(fields=data)
+        resp = self.app.post('api/users/register', data=data_form_type, content_type=data_form_type.content_type)
+        token = json.loads(resp.get_data(as_text=True))['token']
+        self.assertEqual(resp.status_code, 200)
+        # Check my key in data
+        with self._app.app_context():
+            user = User.get_user_by_email(self.email)
+            self.assertTrue(user)
+            keys_obj = KeyResetPassword.get_by_user_id(user.id)
+            self.assertTrue(keys_obj)
+        new_data = {'email': self.email, 'keys': keys_obj.keys}
+        response = self.app.post(
+            'api/users/get_if_keys_validate', data=json.dumps(new_data), content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        return token
 
     # code that is executed before each test
     def setUp(self):

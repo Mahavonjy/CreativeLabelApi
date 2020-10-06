@@ -21,8 +21,8 @@ rm -rf migrations/
 PGPASSWORD=$pwd PGUSER=$user psql -c "DROP SCHEMA public CASCADE;" creative
 PGPASSWORD=$pwd PGUSER=$user psql -c "CREATE SCHEMA public;" creative
 
-#PGPASSWORD=$pwd PGUSER=$user psql -c "DROP SCHEMA public CASCADE;" creative_test
-#PGPASSWORD=$pwd PGUSER=$user psql -c "CREATE SCHEMA public;" creative_test
+# PGPASSWORD=$pwd PGUSER=$user psql -c "DROP SCHEMA public CASCADE;" creative_test
+# PGPASSWORD=$pwd PGUSER=$user psql -c "CREATE SCHEMA public;" creative_test
 
 # drop all index in elastic search
 curl -XDELETE "http://elasticsearch:9200/${index_name_of_all_beats}"

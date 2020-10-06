@@ -9,7 +9,7 @@ from sources.mail.SendMail import first_service
 from sources.models.artists.options.artistOptions import OptionsSchema
 from sources.models.artists.services.artistServices import ServiceSchema, Services
 from sources.models.artists.materials.artistMaterials import Materials, MaterialsSchema
-from sources.models.search.basicSearch import document_delete
+from sources.models.elastic.fillInElastic import document_delete
 from sources.models.users.user import User
 from sources.tools.tools import convert_dict_to_sql_json, destroy_image, upload_image, validate_data, \
     check_user_options_and_services
@@ -124,7 +124,7 @@ def delete_one_artist_services(services_id, user_connected_model, user_connected
         for link in s_to_delete.galleries:
             destroy_image(link, CLOUD_IMAGES_SERVICES_TYPE, _u_model.fileStorage_key, _u_model.id)
         s_to_delete.delete()
-        document_delete("services", "prestations", {"id": s_to_delete.id}, {"title": s_to_delete.title})
+        document_delete("services", "prestations", {"id": s_to_delete.id}, {"created_at": s_to_delete.created_at})
         return custom_response("deleted", 200)
     return custom_response("service not found", 200)
 

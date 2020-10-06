@@ -36,9 +36,9 @@ class ContractBeatMaking(db.Model):
         self.user_id = data.get('user_id')
         self.contract_name = data.get('contract_name')
         self.price = data.get('price')
-        self.mp3 = data.get('mp3') or False
-        self.wave = data.get('wave') or False
-        self.stems = data.get('stems') or False
+        self.mp3 = data.get('mp3', False)
+        self.wave = data.get('wave', False)
+        self.stems = data.get('stems', False)
         self.enabled = data.get('enabled')
         self.number_of_distribution_copies = data.get('number_of_distribution_copies')
         self.number_audio_stream = data.get('number_audio_stream')
@@ -79,8 +79,10 @@ class ContractBeatMaking(db.Model):
 
         if contract_name and not user_id:
             return ContractBeatMaking.query.filter_by(contract_name=contract_name).all()
+
         if not contract_name and user_id:
             return ContractBeatMaking.query.filter_by(user_id=user_id).all()
+
         return ContractBeatMaking.query.filter_by(contract_name=contract_name, user_id=user_id).first()
 
 

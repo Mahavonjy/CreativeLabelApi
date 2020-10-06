@@ -23,6 +23,7 @@ from werkzeug.utils import secure_filename
 
 from preferences import CLOUD_BEAT_STEMS, CLOUD_BEATS, CLOUD_IMAGES_FOLDERS
 
+from sources.models import es
 from sources.models.admirations.admirations import AdmireSchema
 from sources.models.artists.materials.artistMaterials import MaterialsSchema
 from sources.models.artists.options.artistOptions import OptionsSchema
@@ -37,6 +38,17 @@ material_schema = MaterialsSchema()
 service_schema = ServiceSchema()
 option_schema = OptionsSchema()
 admire_schema = AdmireSchema()
+
+
+def check_dict_keys(_dict, _keys, inverse=False):
+    """ """
+
+    new_data = {}
+    for k in list(_dict):
+        if k in _keys:
+            new_data[k] = _dict.pop(k)
+
+    return _dict if inverse else new_data
 
 
 def upload_image(image_to_upload, cloud_folder, fileStorage_key, user_id):
@@ -351,3 +363,28 @@ def remove_in_indexed_list_by_event_date(obj, event_dt):
             break
 
     return ifBreak
+
+
+def check_key_value_match(_query, index="beats"):
+    """
+    Function to find into elastic key value match
+    @param _query: dict type with {"match": {"column_name": value_name}} or list type
+    @param index: index for songs. default value is beats
+    """
+
+    return es.search(
+        index=index,
+        body={
+            "from": 0,
+            "size": 20,
+            "query": {
+                "bool": {
+                    "must": {
+                        "bool": {
+                            "should": _query
+                        }
+                    }
+                }
+            }
+        }
+    )

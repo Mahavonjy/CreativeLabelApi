@@ -21,5 +21,5 @@ python manage.py db upgrade
 
 if [[ $@ == -r ]]
 then
-	nohup flask run --host=0.0.0.0 --port=5000
+	nohup flask run
 fi

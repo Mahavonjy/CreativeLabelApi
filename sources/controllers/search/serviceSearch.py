@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """ shebang """
+
 from operator import itemgetter
 
 from preferences.defaultData import all_genre_of_different_artist
@@ -21,7 +22,13 @@ def indexation(options, query_string=None):
 
     return es.search(
         index="services",
-        body={"from": 0, "size": 50, "query": {"bool": args_to_search}}
+        body={
+            "from": 0,
+            "size": 50,
+            "query": {
+                "bool": args_to_search
+            }
+        }
     )
 
 
@@ -53,10 +60,21 @@ def indexation_with_city(options, city, thematics=None):
         indexed.append(indexation(options + [{"match": {"reference_city": city}}]))
         return indexed
 
-    query_string = {"query_string": {"fields": ["thematics", "others_city"], "query": city + "AND" + thematics}}
+    query_string = {
+        "query_string": {
+            "fields": ["thematics", "others_city"],
+            "query": city + "AND" + thematics
+        }
+    }
     indexed.append(indexation(options, query_string))
-    query_string = {"query_string": {"fields": ["thematics"], "query": thematics}}
+    query_string = {
+        "query_string": {
+            "fields": ["thematics"],
+            "query": thematics
+        }
+    }
     indexed.append(indexation(options + [{"match": {"reference_city": city}}], query_string))
+
     return indexed
 
 
@@ -90,11 +108,36 @@ def add_others_information_to_list_of_service(all_indexed_data):
     for service in all_indexed_data:
         material = es.search(
             index="materials",
-            body={"query": {"bool": {"must": [{"match": {"id": service["materials_id"]}}]}}})
+            body={
+                "query": {
+                    "bool": {
+                        "must": [{
+                            "match": {
+                                "id": service["materials_id"]
+                            }
+                        }]
+                    }
+                }}
+        )
         option = es.search(
             index="options",
-            body={"query": {"bool": {"must": [{"match": {"user_id": service["user_id"]}}], "filter":
-                {"query_string": {"fields": ["services_id_list"], "query": service["id"]}}}}})
+            body={
+                "query": {
+                    "bool": {
+                        "must": [{
+                            "match": {
+                                "user_id": service["user_id"]
+                            }
+                        }],
+                        "filter": {
+                            "query_string": {
+                                "fields": ["services_id_list"],
+                                "query": service["id"]
+                            }
+                        }}
+                }
+            }
+        )
 
         service["materials"] = material['hits']['hits'][0]["_source"]
         service["artist_name"] = User.get_one_user(service["user_id"]).name
@@ -152,8 +195,20 @@ def search_services_enable_in_this_date():
 def search_all_services_with_specific_event(event):
     indexed_data = es.search(
         index="services",
-        body={"from": 0, "size": 50,
-              "query": {"bool": {"filter": {"query_string": {"fields": ["events"], "query": event}}}}}
+        body={
+            "from": 0,
+            "size": 50,
+            "query": {
+                "bool": {
+                    "filter": {
+                        "query_string": {
+                            "fields": ["events"],
+                            "query": event
+                        }
+                    }
+                }
+            }
+        }
     )
 
     all_indexed_data = [d["_source"] for d in indexed_data['hits']['hits']]
@@ -166,8 +221,20 @@ def search_all_services_with_specific_thematic(thematic):
     for thematics_genre in all_genre_of_different_artist[thematic]:
         indexed_data = es.search(
             index="services",
-            body={"from": 0, "size": 50,
-                  "query": {"bool": {"filter": {"query_string": {"fields": ["thematics"], "query": thematics_genre}}}}}
+            body={
+                "from": 0,
+                "size": 50,
+                "query": {
+                    "bool": {
+                        "filter": {
+                            "query_string": {
+                                "fields": ["thematics"],
+                                "query": thematics_genre
+                            }
+                        }
+                    }
+                }
+            }
         )
         all_indexed_data += [indexed_data]
 

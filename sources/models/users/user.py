@@ -149,13 +149,6 @@ class User(db.Model):
         return User.query.filter_by(social_id=social_id).first()
 
     @staticmethod
-    def get_len_artist():
-        """ get length of artist """
-
-        script = User.query.filter(User.user_type != USER_AUDITOR_PRO)
-        return script.count(), script.all()
-
-    @staticmethod
     def all_beat_maker_in_three_last_month():
         """ get all BeatMaker at the six last month """
 

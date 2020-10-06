@@ -19,6 +19,7 @@ def create_all_default_contract(user_id):
 
     data_basic_lease = {
         "mp3": True,
+        'enabled': True,
         "contract_name": "basic_lease",
         "price": defaultData.beats_pricing['basic'],
         "number_audio_stream": 10000,

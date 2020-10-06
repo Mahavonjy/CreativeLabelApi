@@ -233,7 +233,7 @@ def get_mail():
         if reset_password('RequestPassword.html', keys, email=data.get('email'), name=user.name):
             if reset_pass:
                 data_user = reset_pass_schema.dump(reset_pass[0])
-                data_user['keys'], data_user['password_reset'] = keys, 1
+                data_user.update({'keys': keys, 'password_reset': 1})
                 reset_pass[0].update(data_user)
             else:
                 KeyResetPassword(dict(keys=keys, user_id=user_id, password_reset=1)).save()
@@ -266,27 +266,32 @@ def login():
     data, error = validate_data(user_password, request)
     if error:
         return custom_response(data, 400)
+
     user = User.get_user_by_email(data['email'])
 
     try:
         if user.reset_password_key:
             return custom_response("Active your account", 400)
+
     except AttributeError:
         pass
+
     try:
         response = 'invalid email' if not user else 'invalid password' if not user.check_hash(data['password']) else 0
         if response:
             return custom_response(response, 400)
+
     except TypeError:
         pass
 
     ser_user = user_schema.dump(user)
     token = Auth.generate_token(ser_user.get('id'))
     if ser_user['email']:
-        if_profile_exist = Profiles.get_profile(ser_user.get('email'))
-        user_profile = profile_schema.dump(if_profile_exist)
+        user_profile = profile_schema.dump(Profiles.get_profile(ser_user.get('email')))
+
         if user_profile.get('photo'):
             return token_return(token, ser_user['name'], data['email'], user_profile['photo'])
+
     return custom_response({'token': token, 'name': ser_user['name'], 'email': data['email']}, 200)
 
 

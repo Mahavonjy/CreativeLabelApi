@@ -48,7 +48,8 @@ def document_delete(index, doc_type, first_, second_, ref=False):
     if second_[list(second_)[0]]:
         all_option_for_search.append({"match": second_})
 
-    resp_fetched = es.search(index=index, body={"query": {"bool": {"must": all_option_for_search}}})
+    resp_fetched = es.search(index=index, doc_type=doc_type, body={"query": {"bool": {"must": all_option_for_search}}})
     if ref:
         return resp_fetched
+
     es.delete(index=index, doc_type=doc_type, id=resp_fetched['hits']['hits'][0]['_id'])

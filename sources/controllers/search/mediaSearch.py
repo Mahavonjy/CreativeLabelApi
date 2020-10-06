@@ -3,52 +3,65 @@
 
 from sources.models.profiles.profile import ProfileSchema
 from sources.models import custom_response, es
-from sources.models.users.user import User
+from sources.models.users.user import User, UserSchema
 from flask import Blueprint
+
+from sources.tools.tools import check_dict_keys
 
 api_medias_search = Blueprint('medias_search', __name__)
 profile_schema = ProfileSchema()
+user_schema = UserSchema()
 
 
-@api_medias_search.route('/songs/<string:text_>', methods=['GET'])
-def search_song_in_db(text_, ref=None):
+@api_medias_search.route('/<string:string_to_search>', methods=['GET'])
+def search_beats_and_artist(string_to_search):
     """ search matching with text_ in table medias """
 
-    resp = es.search(
+    beats_and_artist = es.search(
         index="beats",
+        doc_type="songs",
         body={"from": 0, "size": 10,
-              "query": {"bool": {"must": [{"wildcard": {"title": "*" + text_ + "*"}}]}},
-              "sort": [{"number_play": {"order": "asc", "mode": "min"}}]}
+              "query": {
+                  "query_string": {
+                      "fields": ["title", "artist", "genre", "artist_tag", "description"],
+                      "query": "*" + string_to_search + "*"
+                  }
+              },
+              "sort": [{"listened": {"order": "asc", "mode": "min"}}]}
     )
-    songs = [r['_source'] for r in resp['hits']['hits']]
-    if ref:
-        return songs
-    return custom_response({"songs": songs}, 200)
+
+    data = {'beats': [], 'artists': []}
+    for r in beats_and_artist['hits']['hits']:
+        data['beats'].append(r['_source'])
+
+        artist_profile = profile_schema.dump(User.get_one_user(r['_source']['user_id']).profile)
+        keys_to_remove = ['address', 'age', 'city', 'region', 'social_id', 'photo', 'email', 'cover_photo', 'photo']
+        artist_profile = check_dict_keys(artist_profile, _keys=keys_to_remove, inverse=True)
+        if artist_profile not in data['artists']:
+            data['artists'].append(artist_profile)
+
+    return custom_response(data, 200)
 
 
-@api_medias_search.route('/artists/<string:text_>', methods=['GET'])
-def search_artist(text_, ref=None):
-    """ search matching with text_ in table medias """
+@api_medias_search.route('/beat/<int:beat_id>', methods=['GET'])
+def get_beat_by_id(beat_id):
+    """ """
 
-    resp, l_, artists = es.search(
+    beat = es.search(
         index="beats",
-        body={"from": 0, "size": 10, "_source": ["user_id"],
-              "query": {"bool": {"must": [{"wildcard": {"artist": "*" + text_ + "*"}}]}}}
-    ), [], []
-    for r in resp['hits']['hits']:
-        if r['_source']['user_id'] not in l_:
-            l_.append(r['_source']['user_id'])
-            artists.append(profile_schema.dump(User.get_one_user(r['_source']['user_id']).profile))
-    if ref:
-        return artists
-    return custom_response({"artists": artists}, 200)
+        doc_type="songs",
+        body={
+            "query": {
+                "bool": {
+                    "must": [
+                        {"match": {"id": beat_id}}
+                    ]
+                }
+            }
+        }
+    )
 
-
-@api_medias_search.route('/all/<string:text_>', methods=['GET'])
-def search_all_in_db(text_):
-    """ search matching with text_ in table media """
-
-    return custom_response({
-        "beats": search_song_in_db(text_, True),
-        "artists": search_artist(text_, True)}
-        , 200)
+    try:
+        return custom_response(check_dict_keys(beat['hits']['hits'][0]['_source'], ['wave', 'stems'], True), 200)
+    except IndexError:
+        return custom_response("beat not found or deleted", 400)

@@ -4,7 +4,7 @@
 import datetime
 from sources.models import db
 from marshmallow import fields
-from sources.models.search.basicSearch import add_new_doc, update_doc
+from sources.models.elastic.fillInElastic import add_new_doc, update_doc
 from sources.models.schemaValidators.validates import ValidateSchema
 
 

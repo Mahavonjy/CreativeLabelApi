@@ -1,22 +1,18 @@
 #!/usr/bin/env python3
 """ shebang """
 
-import os
-
-import cloudinary
-from flask import request
-from flask import g as auth
 from flask import Blueprint, json
 from preferences import CLOUD_IMAGES_BEATS_TYPE, defaultData, GOOGLE_BUCKET_BEATS
 
 from auth.authentification import Auth
-from sources.models.users.user import User, UserSchema
+from sources.models.elastic.fillInElastic import document_delete
+from sources.models.users.user import UserSchema
 from sources.models.medias.media import Media, MediaSchema
 from sources.security.verification import Secure
 from sources.models.profiles.profile import ProfileSchema
-from sources.tools.tools import destroy_beats, destroy_image, librosa_collect, Percent, random_string, upload_beats, \
-    upload_image
-from sources.models import custom_response
+from sources.tools.tools import check_dict_keys, destroy_beats, destroy_image, librosa_collect, Percent, \
+    random_string, upload_beats, upload_image
+from sources.models import custom_response, es
 
 beats_api = Blueprint('beats', __name__)
 media_schema = MediaSchema()
@@ -39,7 +35,6 @@ def price_calculation(beat_maker_gain):
 
 
 def check_time_and_bpm(audio, data, update_bpm=False):
-
     audio.seek(0)
     bpm_, time_ = librosa_collect(audio)
     if not data.get('bpm', 0) or update_bpm:
@@ -88,29 +83,30 @@ def update_beats(song_id, user_connected_schema, user_connected_model, data, mp3
     """ function who update a beats """
 
     _u_model = user_connected_model
-    beats_to_update = media_schema.dump(beats)
+    b_rm = media_schema.dump(beats)
     params = {'fileStorage_key': _u_model.fileStorage_key, 'user_id': _u_model.id}
 
     if photo:
-        destroy_image(beats_to_update["photo"], CLOUD_IMAGES_BEATS_TYPE, **params)
-        beats_to_update["photo"] = upload_image(photo, CLOUD_IMAGES_BEATS_TYPE, **params)
+        destroy_image(b_rm["photo"], CLOUD_IMAGES_BEATS_TYPE, **params)
+        b_rm["photo"] = upload_image(photo, CLOUD_IMAGES_BEATS_TYPE, **params)
 
     if stems:
-        destroy_beats(beats_to_update["stems"], **params, stems=True)
-        beats_to_update["stems"] = upload_beats(stems, **params, stems=True)
+        destroy_beats(b_rm["stems"], **params, stems=True)
+        b_rm["stems"] = upload_beats(stems, **params, stems=True)
 
     if mp3:
-        beats_to_update = check_time_and_bpm(mp3, beats_to_update, update_bpm=True)
+        b_rm = check_time_and_bpm(mp3, b_rm, update_bpm=True)
         mp3.seek(0)
-        destroy_beats(beats_to_update["mp3"], **params)
-        beats_to_update["mp3"] = upload_beats(mp3, **params)
+        destroy_beats(b_rm["mp3"], **params)
+        b_rm["mp3"] = upload_beats(mp3, **params)
 
     if wave:
-        destroy_beats(beats_to_update["wave"], **params)
-        beats_to_update["wave"] = upload_beats(wave, **params)
+        destroy_beats(b_rm["wave"], **params)
+        b_rm["wave"] = upload_beats(wave, **params)
 
-    beats_to_update.update(data)
-    beats.update(beats_to_update)
+    document_delete(index="beats", doc_type="songs", first_={"id": song_id}, second_={"created_at": b_rm['created_at']})
+    b_rm.update(data)
+    beats.update(b_rm)
     return custom_response(media_schema.dump(beats), 200)
 
 
@@ -124,66 +120,29 @@ def delete_beats(song_id, user_connected_model, user_connected_schema):
 
     if beat:
         params = {'fileStorage_key': user_.fileStorage_key, 'user_id': user_.id}
-        beat_to_delete = media_schema.dump(beat)
+        beat_to_rm = media_schema.dump(beat)
 
-        if beat_to_delete['photo']:
-            destroy_image(beat_to_delete["photo"], CLOUD_IMAGES_BEATS_TYPE, **params)
+        if beat_to_rm['photo']:
+            destroy_image(beat_to_rm["photo"], CLOUD_IMAGES_BEATS_TYPE, **params)
 
-        if beat_to_delete["stems"]:
-            destroy_beats(beat_to_delete["stems"], **params, stems=True)
+        if beat_to_rm["stems"]:
+            destroy_beats(beat_to_rm["stems"], **params, stems=True)
 
-        if beat_to_delete["mp3"]:
-            destroy_beats(beat_to_delete["mp3"], **params)
+        if beat_to_rm["mp3"]:
+            destroy_beats(beat_to_rm["mp3"], **params)
 
-        if beat_to_delete["wave"]:
-            destroy_beats(beat_to_delete["wave"], **params)
+        if beat_to_rm["wave"]:
+            destroy_beats(beat_to_rm["wave"], **params)
 
+        document_delete(
+            index="beats",
+            doc_type="songs",
+            first_={"id": song_id},
+            second_={"created_at": beat_to_rm['created_at']}
+        )
         beat.delete()
         return custom_response("deleted", 200)
     return custom_response("beat not found or deleted", 400)
-
-
-"""
-Here begins the beats suggestion functions
-"""
-
-
-def check_list_of_beats(list_of_beats_model, with_link=False):
-    """ return list of beats with link """
-
-    all_beats = []
-    for beat in list_of_beats_model:
-        if with_link:
-            media_ = media_schema.dump(beat)
-            # media_['link'] = stream_song_public_url(True, beat.id)
-            all_beats.append(media_)
-            continue
-        all_beats.append(media_schema.dump(beat))
-
-    return all_beats
-
-
-@beats_api.route('/OneBeat/<int:song_id>', methods=['GET'])
-def get_one_beats(song_id):
-    """ get one beats """
-
-    # try:
-        # the_beat, media = get_media(song_id=song_id, not_json=True)
-        # try:
-        #     if the_beat.status_code == 400:
-        #         return custom_response("not found", 400)
-        # except AttributeError:
-        #     pass
-    # except TypeError:
-    #     return custom_response("not found", 400)
-
-    # all_user_beats = User.get_one_user(media.user_id).medias.filter_by(genre_musical='beats').all()
-    # similar_beats = get_all_song_by_beats_genre(media.genre, not_json=True, with_link=False)
-    return custom_response({
-        # "single_beat": the_beat,
-        # "all_artist_beats": [media_schema.dump(beat) for beat in all_user_beats],
-        # "similar_beats": [media_schema.dump(beat) for beat in similar_beats],
-    }, 200)
 
 
 @beats_api.route('/allMediaGenre', methods=['GET'])
@@ -198,135 +157,10 @@ def get_all_musicals_genres():
     return custom_response(data, 200)
 
 
-@beats_api.route('/random', methods=['GET'])
-def get_random_beats(json_response=False):
-    """ get 10 beats random in DB """
-
-    all_beats = check_list_of_beats(Media.randomize_beats())
-    if json_response:
-        return all_beats
-    return custom_response({"random": all_beats}, 200)
-
-
-@beats_api.route('/increasing', methods=['GET'])
-def get_increasing_beats(json_response=False):
-    """ get 10 beats random in DB """
-
-    all_beats = check_list_of_beats(Media.increasing_beats())
-    if json_response:
-        return all_beats
-    return custom_response({"increasing": all_beats}, 200)
-
-
-@beats_api.route('/descending', methods=['GET'])
-def get_descending_beats(json_response=False):
-    """ get 10 beats random in DB """
-
-    all_beats = check_list_of_beats(Media.descending_beats())
-    if json_response:
-        return all_beats
-    return custom_response({"descending": all_beats}, 200)
-
-
-@beats_api.route('/topBeatmaker', methods=['GET'])
-def get_top_beat_maker_beats(json_response=False):
-    """ get 10 beats random in DB """
-
-    beat_artist = []
-    for beat in Media.top_beats_3_last_month():
-        artist_profile = profile_schema.dump(User.get_one_user(beat.user_id).profile)
-        artist_profile['number_of_beats'] = User.get_one_user(beat.user_id)\
-                                                .medias.filter_by(genre_musical='beats').count(),
-        if artist_profile not in beat_artist:
-            beat_artist.append(artist_profile)
-    if json_response:
-        return beat_artist
-    return custom_response({"top_beatmaker": beat_artist}, 200)
-
-
-@beats_api.route('/topBeats', methods=['GET'])
-def get_top_beats(json_response=False):
-    """ top beat at the three last month """
-
-    all_beats = check_list_of_beats(Media.top_beats_3_last_month())
-    if json_response:
-        return all_beats
-    return custom_response({"top_beats": all_beats}, 200)
-
-
-@beats_api.route('/LatestBeats', methods=['GET'])
-def get_top_latest_beats(json_response=False):
-    """ get 10 beats random in DB """
-
-    all_beats = check_list_of_beats(Media.ten_last_beats())
-    if json_response:
-        return all_beats
-    return custom_response({"latest_beats": all_beats}, 200)
-
-
-@beats_api.route('/discoveryBeats', methods=['GET'])
-def african_discovery_beats(json_response=False):
-    """ Check african specific beat style """
-
-    all_beats, _beats = Media.african_discovery_beats(), []
-    if all_beats[0]:
-        try:
-            for beat in [beats for beats in all_beats]:
-                _beats.append(media_schema.dump(beat[0]))
-        except IndexError:
-            pass
-
-    if json_response:
-        return _beats
-    return custom_response({"discovery_beats": _beats}, 200)
-
-
-@beats_api.route('/NewBeatMakers', methods=['GET'])
-def all_new_beat_maker_in_the_six_last_month(json_response=False):
-    """ new beatMaker in the six last month with one or plus beats shared """
-
-    artist_profile = [profile_schema.dump(_user.profile) for _user in User.all_beat_maker_in_three_last_month()]
-    if json_response:
-        return artist_profile
-    return custom_response({"new_beatMaker": artist_profile}, 200)
-
-
-@beats_api.route('/IslPlaylist', methods=['GET'])
-def isl_beats_playlist(json_response=False):
-    """ Isl beats playlist """
-
-    _all_beats, all_beats = Media.isl_playlist_beats(), []
-    if _all_beats:
-        all_beats = check_list_of_beats(Media.isl_playlist_beats())
-
-    if json_response:
-        return all_beats
-    return custom_response({"isl_playlist": all_beats}, 200)
-
-
-@beats_api.route('/AllSuggestion', methods=['GET'])
-def all_beats_suggestion_tried():
-    """ tried all function of suggestion and trie it """
-
-    return custom_response(dict(
-        random=get_random_beats(json_response=True),
-        # top_beatmaker=get_top_beat_maker_beats(json_response=True),
-        # latest_beats=get_top_latest_beats(json_response=True),
-        # discovery_beats=african_discovery_beats(json_response=True),
-        # new_beatMaker=all_new_beat_maker_in_the_six_last_month(json_response=True),
-        # isl_playlist=isl_beats_playlist(json_response=True)
-    ), 200)
-
-
-"""
-End beats suggestion functions
-"""
-
-
 @beats_api.route('/pricing', methods=['GET'])
 @Auth.auth_required
 def get_beats_pricing(user_connected_model, user_connected_schema):
-    """ get beats pricing order """
+    """ get user pricing order """
 
     pricing = defaultData.beats_pricing
     for contract in pricing:
