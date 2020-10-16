@@ -4,6 +4,8 @@
 import requests
 from flask import g as auth
 from flask import Blueprint, request
+
+from preferences.defaultData import allowed_beats_license
 from sources.models import custom_response
 from auth.authentification import Auth
 from sources.models.carts.cart import Carts, CartSchema
@@ -23,7 +25,7 @@ def time_exceeds(func):
     def decor(*args, **kwargs):
         """ my function who get is """
 
-        user_cart = User.get_one_user(auth.user.get('id')).Carts.all()
+        user_cart = kwargs['user_connected_model'].carts.all()
         if request.method == "GET":
             kwargs['cart_list'] = []
             for row in user_cart:
@@ -31,11 +33,6 @@ def time_exceeds(func):
                 if not get_time(cart_info['created_at'], 30):
                     row.delete()
                     continue
-                media = media_schema.dump(Media.get_song_by_id(cart_info.get('song_id')))
-                generate_url = requests.get(request.host_url + 'api/medias/Streaming/' + str(media.get('id')))
-                if generate_url.status_code != 200:
-                    return custom_response("error in function streaming", 400)
-                cart_info['link'], cart_info['media'] = generate_url.text, media
                 kwargs['cart_list'].append(cart_info)
         if request.method == "POST":
             for row in user_cart:
@@ -53,34 +50,44 @@ def time_exceeds(func):
 @Auth.auth_required
 @time_exceeds
 def add_song_to_card(user_connected_model, user_connected_schema):
-    """ add song_id to cart """
+    """ add beat_id to cart """
 
     data, error = validate_data(cart_schema, request)
     if error:
         return custom_response(data, 400)
 
-    if user_connected_model.Carts.filter_by(song_id=data['song_id'], licenses_name=data['licenses_name']).first():
+    if data['license'] not in allowed_beats_license:
+        return custom_response("invalid license", 400)
+
+    if user_connected_model.carts.filter_by(beat_id=data['beat_id'], license=data['license']).first():
         return custom_response("cart existing", 400)
 
-    media = media_schema.dump(Media.get_song_by_id(data['song_id']))
-    if not media["genre_musical"] == "beats" or media['user_id'] == user_connected_model.id:
+    beat = media_schema.dump(Media.get_song_by_id(data['beat_id']))
+
+    if not beat:
+        return custom_response("beat not exist", 400)
+
+    elif beat['user_id'] == user_connected_model.id:
         return custom_response("Unauthorized", 400)
 
     new_cart_data = dict(
-        song_id=data['song_id'], price=data["price"], licenses_name=data['licenses_name'],
-        user_id=user_connected_model.id)
-    new_c = Carts(new_cart_data)
-    new_c.save()
-    return custom_response(cart_schema.dump(new_c), 200)
+        beat_id=data['beat_id'],
+        price=beat[data['license'].replace('lease', 'price')],
+        license=data['license'],
+        user_id=user_connected_model.id
+    )
+    new_cart = Carts(new_cart_data)
+    new_cart.save()
+    return custom_response(cart_schema.dump(new_cart), 200)
 
 
 @cart_api.route('/MyCart', methods=['GET'])
 @Auth.auth_required
 @time_exceeds
-def get_my_cart(**kwargs):
+def get_my_cart(user_connected_model, user_connected_schema, cart_list):
     """ get all song in my cart """
 
-    return custom_response(kwargs['cart_list'], 200)
+    return custom_response(cart_list, 200)
 
 
 @cart_api.route('/delete/<int:cart_id>', methods=['DELETE'])
@@ -88,7 +95,7 @@ def get_my_cart(**kwargs):
 def delete_in_my_cart(cart_id, user_connected_model, user_connected_schema):
     """ get all song in my cart """
 
-    cart = user_connected_model.Carts.filter_by(id=cart_id).first()
+    cart = user_connected_model.carts.filter_by(id=cart_id).first()
     if not cart:
         return custom_response("cart not existing", 400)
     cart.delete()

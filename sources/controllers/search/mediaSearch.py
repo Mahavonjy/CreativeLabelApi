@@ -27,7 +27,8 @@ def search_beats_and_artist(string_to_search):
                       "query": "*" + string_to_search + "*"
                   }
               },
-              "sort": [{"listened": {"order": "asc", "mode": "min"}}]}
+              # "sort": [{"listened": {"order": "asc", "mode": "min"}}]
+              }
     )
 
     data = {'beats': [], 'artists': []}

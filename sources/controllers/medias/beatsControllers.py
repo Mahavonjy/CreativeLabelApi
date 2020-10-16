@@ -2,11 +2,12 @@
 """ shebang """
 
 from flask import Blueprint, json
-from preferences import CLOUD_IMAGES_BEATS_TYPE, defaultData, GOOGLE_BUCKET_BEATS
+from preferences import CLOUD_IMAGES_BEATS_TYPE, defaultData
 
 from auth.authentification import Auth
+from sources.models.admirations.admirations import Admiration, AdmireSchema
 from sources.models.elastic.fillInElastic import document_delete
-from sources.models.users.user import UserSchema
+from sources.models.users.user import User, UserSchema
 from sources.models.medias.media import Media, MediaSchema
 from sources.security.verification import Secure
 from sources.models.profiles.profile import ProfileSchema
@@ -17,7 +18,7 @@ from sources.models import custom_response, es
 beats_api = Blueprint('beats', __name__)
 media_schema = MediaSchema()
 profile_schema = ProfileSchema()
-bucket_beats = GOOGLE_BUCKET_BEATS
+admiration_schema = AdmireSchema()
 user_schema = UserSchema()
 percent_isl_creative = 30
 percent_tva = 20
@@ -143,6 +144,88 @@ def delete_beats(song_id, user_connected_model, user_connected_schema):
         beat.delete()
         return custom_response("deleted", 200)
     return custom_response("beat not found or deleted", 400)
+
+
+@beats_api.route('/admire_beat/<int:beat_to_admire_id>', methods=['POST'])
+@Auth.auth_required
+def add_new_admiration_user(beat_to_admire_id, user_connected_model, user_connected_schema):
+    """ User add new admiration """
+
+    if not Media.get_song_by_id(beat_to_admire_id):
+        return custom_response("Beat not found", 400)
+
+    admire_info = user_connected_model.all_admires.filter_by(beat_id=beat_to_admire_id).first()
+
+    if admire_info:
+        return custom_response("exist", 400)
+
+    Admiration(dict(user_id=user_connected_model.id, beat_id=beat_to_admire_id)).save()
+    return custom_response("Added", 200)
+
+
+@beats_api.route('/delete_admire_beat/<int:beat_do_not_admire_id>', methods=['DELETE'])
+@Auth.auth_required
+def delete_admiration_user(beat_do_not_admire_id, user_connected_model, user_connected_schema):
+    """ User delete admiration """
+
+    admire_info = user_connected_model.all_admires.filter_by(beat_id=beat_do_not_admire_id).first()
+    if not admire_info:
+        return custom_response("Not found", 400)
+
+    admire_info.delete()
+    return custom_response("deleted", 200)
+
+
+@beats_api.route('/all_user_beats_admire/<int:user_id>', methods=['GET'])
+def all_beats_admiration(user_id):
+    """ get all beats user admiration """
+
+    user = User.get_one_user(user_id)
+    if not user:
+        return custom_response("user do not exist", 400)
+
+    all_beats = []
+    all_admiration = user.all_admires.filter_by(admire_id=None).all()
+
+    for admire in all_admiration:
+        _beat = media_schema.dump(admire.beat)
+        all_beats.append(_beat)
+
+    return custom_response(all_beats, 200)
+
+
+@beats_api.route('/my_admire', methods=['GET'])
+@Auth.auth_required
+def all_my_admiration_beats(user_connected_model, user_connected_schema):
+    """ """
+
+    return all_beats_admiration(user_connected_model.id)
+
+
+@beats_api.route('/my_beats', methods=['GET'])
+@Auth.auth_required
+def all_user_beats(user_connected_model, user_connected_schema):
+    """ return all user beats """
+
+    beats = es.search(
+        index="beats",
+        doc_type="songs",
+        body={
+            "query": {
+                "bool": {
+                    "must": [
+                        {"match": {"user_id": user_connected_model.id}}
+                    ]
+                }
+            }
+        }
+    )
+
+    _all_beats = []
+    for beat in beats['hits']['hits']:
+        _all_beats.append(check_dict_keys(beat['_source'], ['wave', 'stems'], True))
+
+    return custom_response({"beats": _all_beats}, 200)
 
 
 @beats_api.route('/allMediaGenre', methods=['GET'])

@@ -6,6 +6,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint
 
+from preferences import profile_keys_to_remove
 from preferences.defaultData import discovery_allowed_genres
 from sources.models.users.user import User
 from sources.models import custom_response, es
@@ -16,7 +17,6 @@ from sources.tools.tools import check_dict_keys, check_key_value_match
 beats_suggestion = Blueprint('beats_suggestions', __name__)
 media_schema = MediaOnStreamSchema()
 profile_schema = ProfileSchema()
-profile_keys_to_remove = ['address', 'age', 'city', 'region', 'social_id', 'photo', 'email', 'cover_photo', 'phone']
 
 
 @beats_suggestion.route('/top_beats', methods=['GET'])
@@ -37,11 +37,12 @@ def get_top_beats(listed=False):
                     }
                 }
             },
-            "sort": [
-                {"listened": "desc"},
-                {"admire": "desc"},
-                {"share": "desc"}
-            ]}
+            # "sort": [
+            #     {"listened": "desc"},
+            #     {"admire": "desc"},
+            #     {"share": "desc"}
+            # ]
+        }
     )
 
     beats = []
@@ -76,27 +77,27 @@ def get_top_beat_maker(listed=False):
     return custom_response({"top_beatmaker": top_beat_maker}, 200)
 
 
-@beats_suggestion.route('/lasted_beats', methods=['GET'])
-def get_descending_beats(listed=False):
-    """ get 10 beats in DB """
-
-    all_beats = es.search(
-        index="beats",
-        body={
-            "from": 0,
-            "size": 10,
-            "query": {"match_all": {}},
-            "sort": [{"created_at": "desc"}]
-        }
-    )
-
-    for k in all_beats['hits']['hits']:
-        all_beats.append(k['_source'])
-
-    if listed:
-        return all_beats
-
-    return custom_response({"descending": all_beats}, 200)
+# @beats_suggestion.route('/lasted_beats', methods=['GET'])
+# def get_descending_beats(listed=False):
+#     """ get 10 beats in DB """
+#
+#     all_beats = es.search(
+#         index="beats",
+#         body={
+#             "from": 0,
+#             "size": 10,
+#             "query": {"match_all": {}},
+#             "sort": [{"created_at": {"order": "desc"}}]
+#         }
+#     )
+#     _all_beats = []
+#     for k in all_beats['hits']['hits']:
+#         _all_beats.append(k['_source'])
+#
+#     if listed:
+#         return _all_beats
+#
+#     return custom_response({"descending": _all_beats}, 200)
 
 
 @beats_suggestion.route('/random', methods=['GET'])

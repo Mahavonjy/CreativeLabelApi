@@ -13,17 +13,21 @@ class Default:
     """ all default config """
 
     cloudinary.config(
-        cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-        api_key=os.getenv("CLOUDINARY_API_KEY"),
-        api_secret=os.getenv("CLOUDINARY_API_SECRET")
+        cloud_name='islcreative',
+        api_key='254174817278642',
+        api_secret='kPy1IbCPEOIpwYLvMLVWx8bcbDM'
     )
 
     # run sentry only production
-    if os.getenv('FLASK_ENV') == 'production':
-        sentry_sdk.init(
-            dsn=os.getenv('SENTRY_SDK_DSN'),
-            integrations=[FlaskIntegration(), SqlalchemyIntegration()]
-        )
+    # if os.getenv('FLASK_ENV') == 'production':
+    #     sentry_sdk.init(
+    #         dsn=os.getenv('SENTRY_SDK_DSN'),
+    #         integrations=[FlaskIntegration(), SqlalchemyIntegration()]
+    #     )
+    sentry_sdk.init(
+        dsn=os.getenv('SENTRY_SDK_DSN'),
+        integrations=[FlaskIntegration(), SqlalchemyIntegration()]
+    )
 
     DEBUG = True  # Auto refresh run
     SQLALCHEMY_POOL_SIZE = 100
@@ -54,7 +58,7 @@ class DevelopmentTest(Default):
     ES_HOST = {"host": "localhost", "port": 9200}
     ES_INDEX = ["beats", "services", "options", "materials"]
     MAIL_USERNAME = 'mahavonjy.cynthion@gmail.com'
-    MAIL_PASSWORD = 'Mallow11!'
+    MAIL_PASSWORD = 'Dracule11!'
 
 
 class Development(Default):
@@ -75,8 +79,10 @@ class Production(Default):
     SQLALCHEMY_DATABASE_URI = 'postgresql://cynthionmahavonjy:2245@creative-db/creative'
     ES_HOST = {"host": "elasticsearch", "port": 9200}
     ES_INDEX = ["beats", "services", "options", "materials"]
-    MAIL_USERNAME = os.getenv('MAIL_PROD_USERNAME_API')
-    MAIL_PASSWORD = os.getenv('MAIL_PROD_PASSWORD_API')
+    MAIL_USERNAME = 'mahavonjy.cynthion@gmail.com'
+    MAIL_PASSWORD = 'Dracule11!'
+    # MAIL_USERNAME = os.getenv('MAIL_PROD_USERNAME_API')
+    # MAIL_PASSWORD = os.getenv('MAIL_PROD_PASSWORD_API')
 
 
 app_config = {

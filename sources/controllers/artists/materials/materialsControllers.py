@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """ shebang """
+
 import cloudinary.uploader
 from flask import Blueprint, request
 
@@ -22,6 +23,18 @@ def create_new_materials_for_new_services():
 
 
 def update_material(_u_schema, user_material_to_update, requested, data):
+    """
+
+    Args:
+        _u_schema:
+        user_material_to_update:
+        requested:
+        data:
+
+    Returns:
+
+    """
+
     technical_sheet = requested.files.get('technical_sheet')
     if technical_sheet:
         fileStorage_key = _u_schema['fileStorage_key']
@@ -40,6 +53,17 @@ def update_material(_u_schema, user_material_to_update, requested, data):
 @materials_api.route('/update_option_material/<int:option_id>', methods=['PUT'])
 @Auth.auth_required
 def update_material_by_option_id(option_id, user_connected_model, user_connected_schema):
+    """
+
+    Args:
+        option_id:
+        user_connected_model:
+        user_connected_schema:
+
+    Returns:
+
+    """
+
     data, error = validate_data(materials_schema, request, return_dict=False)
     if error:
         return custom_response(data, 400)
@@ -58,6 +82,17 @@ def update_material_by_option_id(option_id, user_connected_model, user_connected
 @materials_api.route('/update_service_material/<int:service_id>', methods=['PUT'])
 @Auth.auth_required
 def update_material_by_service_id(service_id, user_connected_model, user_connected_schema):
+    """
+
+    Args:
+        service_id:
+        user_connected_model:
+        user_connected_schema:
+
+    Returns:
+
+    """
+
     data, error = validate_data(materials_schema, request, return_dict=False)
     if error:
         return custom_response(data, 400)
@@ -74,6 +109,13 @@ def update_material_by_service_id(service_id, user_connected_model, user_connect
 
 
 def delete_material_technical_sheet(material, _u_model):
+    """
+
+    Args:
+        material:
+        _u_model:
+    """
+
     user_id = _u_model.user_id
     fileStorage_key = _u_model.fileStorage_key
     technical_sheet = materials_schema.dump(material).get('technical_sheet', None)

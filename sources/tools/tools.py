@@ -138,7 +138,6 @@ def librosa_collect(file):
 
     dirname = random_string() + '.' + file.content_type.split('/')[1]
     file.save(secure_filename(dirname))
-
     y, sr = librosa.load(dirname)
     bpm, beats_frames = librosa.beat.beat_track(y=y, sr=sr)
     beats_times = librosa.frames_to_time(beats_frames, sr=sr)
@@ -257,12 +256,12 @@ def convert_dict_to_sql_json(data_dict=None, data_list=None):
 def get_time(created_at, min_value: int) -> bool:
     """ compare created time and now """
 
-    now_time = datetime.datetime.now()
+    now_time = datetime.now()
     date, rest = created_at.split('T')
     hour, _ = rest.split('.')
     hours, min_, sec = hour.split(":")
     year, month, day = date.split('-', 3)
-    date_for_created_cart = datetime.datetime(int(year), int(month), int(day), int(hours), int(min_), int(sec))
+    date_for_created_cart = datetime(int(year), int(month), int(day), int(hours), int(min_), int(sec))
     x = now_time - date_for_created_cart
     return divmod(x.days * 86400 + x.seconds, 60)[0] <= min_value
 

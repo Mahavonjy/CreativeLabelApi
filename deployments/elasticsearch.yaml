@@ -1,33 +1,44 @@
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.16.0 (0c01309)
+  creationTimestamp: null
   labels:
-    name: elasticsearch
+    io.kompose.service: elasticsearch
   name: elasticsearch
 spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      type: elastic-db
+  replicas: 1
+  strategy: {}
   template:
     metadata:
+      creationTimestamp: null
       labels:
-        type: elastic-db
+        io.kompose.service: elasticsearch
     spec:
       containers:
-        - image: quay.io/pires/docker-elasticsearch-kubernetes:6.4.2
-          name: elastic-db
+        - env:
+            - name: discovery.type
+              value: single-node
+          image: elasticsearch:7.6.1
+          name: creative-elasticsearch
           ports:
             - containerPort: 9200
           resources: {}
+      restartPolicy: Always
 status: {}
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.16.0 (0c01309)
+  creationTimestamp: null
   labels:
-    name: elasticsearch
+    io.kompose.service: elasticsearch
   name: elasticsearch
 spec:
   ports:
@@ -35,6 +46,6 @@ spec:
       port: 9200
       targetPort: 9200
   selector:
-    name: elasticsearch
+    io.kompose.service: elasticsearch
 status:
   loadBalancer: {}

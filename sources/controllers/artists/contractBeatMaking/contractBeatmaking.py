@@ -3,8 +3,10 @@
 
 from flask import request
 from flask import Blueprint
+
+from preferences.defaultData import beats_pricing
 from sources.models import custom_response
-from preferences import defaultData
+from preferences import BASIC_LICENSE, GOLD_LICENSE, PLATINUM_LICENSE, SILVER_LICENSE
 from auth.authentification import Auth
 from sources.tools.tools import validate_data
 from sources.models.artists.beatMakers.contractBeatmaking.contractBeatmaking import ContractBeatMaking, \
@@ -20,8 +22,8 @@ def create_all_default_contract(user_id):
     data_basic_lease = {
         "mp3": True,
         'enabled': True,
-        "contract_name": "basic_lease",
-        "price": defaultData.beats_pricing['basic'],
+        "contract_name": BASIC_LICENSE,
+        "price": beats_pricing['basic'],
         "number_audio_stream": 10000,
         "user_id": user_id
     }
@@ -29,8 +31,8 @@ def create_all_default_contract(user_id):
     data_silver_lease = {
         "mp3": True,
         "wave": True,
-        "contract_name": "silver_lease",
-        "price": defaultData.beats_pricing['silver'],
+        "contract_name": SILVER_LICENSE,
+        "price": beats_pricing['silver'],
         "number_of_distribution_copies": 10000,
         "number_audio_stream": 100000,
         "number_music_video": 3000,
@@ -42,8 +44,8 @@ def create_all_default_contract(user_id):
         "mp3": True,
         "wave": True,
         "stems": True,
-        "contract_name": "gold_lease",
-        "price": defaultData.beats_pricing['gold'],
+        "contract_name": GOLD_LICENSE,
+        "price": beats_pricing['gold'],
         "number_of_distribution_copies": 20000,
         "number_audio_stream": 200000,
         "number_music_video": 20000,
@@ -55,8 +57,8 @@ def create_all_default_contract(user_id):
         "mp3": True,
         "wave": True,
         "stems": True,
-        "contract_name": "platinum_lease",
-        "price": defaultData.beats_pricing['platinum'],
+        "contract_name": PLATINUM_LICENSE,
+        "price": beats_pricing['platinum'],
         "number_of_distribution_copies": 999999,
         "number_audio_stream": 999999,
         "number_music_video": 999999,

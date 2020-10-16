@@ -1,43 +1,48 @@
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.16.0 (0c01309)
+  creationTimestamp: null
   labels:
-    name: creative-db
+    io.kompose.service: creative-db
   name: creative-db
 spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      type: creative-db
-      name: creative-db
+  replicas: 1
+  strategy: {}
   template:
     metadata:
+      creationTimestamp: null
       labels:
-        type: creative-db
-        name: creative-db
+        io.kompose.service: creative-db
     spec:
       containers:
-      - env:
-          - name: POSTGRES_DB
-            value: creative
-          - name: POSTGRES_PASSWORD
-            value: "2245"
-          - name: POSTGRES_USER
-            value: cynthionmahavonjy
-        image: postgres:12.2-alpine
-        name: creative-database
-        ports:
-          - containerPort: 5432
-            protocol: TCP
-        resources: {}
+        - env:
+            - name: POSTGRES_DB
+              value: creative
+            - name: POSTGRES_PASSWORD
+              value: "2245"
+            - name: POSTGRES_USER
+              value: cynthionmahavonjy
+          image: postgres:12.2-alpine
+          name: creative-database
+          ports:
+            - containerPort: 5432
+          resources: {}
+      restartPolicy: Always
 status: {}
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.16.0 (0c01309)
+  creationTimestamp: null
   labels:
-    name: creative-db
+    io.kompose.service: creative-db
   name: creative-db
 spec:
   ports:
@@ -45,6 +50,6 @@ spec:
       port: 5432
       targetPort: 5432
   selector:
-    name: creative-db
+    io.kompose.service: creative-db
 status:
   loadBalancer: {}

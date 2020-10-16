@@ -39,6 +39,18 @@ echo
 echo "${green}----- CONTRACT BEAT TEST -----"
 pytest -p no:warnings sources/tests/beatContract/beat_contract_test.py
 
+echo
+echo "${green}----- ARTIST ADMIRATION TEST -----"
+pytest -p no:warnings sources/tests/admirations/admiration_test.py
+
+echo
+echo "${green}----- PRESTIGE TEST -----"
+pytest -p no:warnings sources/tests/prestiges/prestige_test.py
+
+echo
+echo "${green}----- CART TEST -----"
+pytest -p no:warnings sources/tests/carts/cart_test.py
+
 sleep 1
 
 sed -i -e "s/"${development_test}"/"${basic_env}"/g" .env

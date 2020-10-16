@@ -1,23 +1,52 @@
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.16.0 (0c01309)
+  creationTimestamp: null
   labels:
-    name: api
+    io.kompose.service: api
   name: api
 spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      type: creative-api
+  replicas: 1
+  strategy: {}
   template:
     metadata:
+      creationTimestamp: null
       labels:
-        type: creative-api
+        io.kompose.service: api
     spec:
       containers:
-      - image: mahavonjy11/creative-api:latest
-        name: creative-api
-        ports:
-        - containerPort: 80
-        resources: {}
+        - image: mahavonjy11/creative-api:latest
+          name: creative-api
+          ports:
+            - containerPort: 80
+          resources: {}
+      restartPolicy: Always
 status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    kompose.cmd: kompose convert
+    kompose.version: 1.16.0 (0c01309)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api
+  name: api
+spec:
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 80
+  selector:
+    io.kompose.service: api
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+      - ip: 34.68.140.135

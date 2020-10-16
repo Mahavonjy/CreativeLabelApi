@@ -20,9 +20,9 @@ from sources.models.schemaValidators.validates import ValidateSchema
 from sources.models.stars.noteStars import Stars
 
 _f = "Reservations.artist_owner_id"
-a_f = "Admiration.admire_id"
 booking_f = "Reservations.auditor_who_reserve_id"
 u_f = "Admiration.user_id"
+a_f = "Admiration.admire_id"
 _h = "PaymentHistory.artist_id"
 p_f = "PaymentHistory.buyer_id"
 
@@ -51,11 +51,11 @@ class User(db.Model):
 
     # All Users Relationship
     medias = db.relationship(Media, lazy='dynamic')
-    Carts = db.relationship(Carts, lazy='dynamic')
+    carts = db.relationship(Carts, lazy='dynamic')
     services = db.relationship(Services, lazy='dynamic')
     options = db.relationship(Options, lazy='dynamic')
-    user = db.relationship('Admiration', foreign_keys=u_f, backref='user', lazy='dynamic', uselist=True)
-    admire = db.relationship('Admiration', foreign_keys=a_f, backref='admire', lazy='dynamic', uselist=True)
+    all_admires = db.relationship('Admiration', foreign_keys=u_f, backref='user', lazy='dynamic', uselist=True)
+    my_admirers = db.relationship('Admiration', foreign_keys=a_f, backref='admire', lazy='dynamic', uselist=True)
     purchase_history = db.relationship(PaymentHistory, foreign_keys=p_f, backref='buyer', lazy='dynamic', uselist=True)
     purchased_history = db.relationship(PaymentHistory, foreign_keys=_h, backref='artist', lazy='dynamic', uselist=True)
     booking_list = db.relationship('Reservations', foreign_keys=booking_f, backref='sender_reservation', lazy='dynamic')
@@ -67,8 +67,13 @@ class User(db.Model):
     condition_globals = db.relationship("ConditionGlobals", backref=db.backref("condition_globals", uselist=False))
     stars = db.relationship(Stars, backref=db.backref("stars", uselist=False))
     ContractBeat = db.relationship(ContractBeatMaking, lazy='dynamic')
-    sender = db.relationship('Prestige', foreign_keys='Prestige.sender_id', backref='sender', lazy='dynamic')
-    recipient = db.relationship('Prestige', foreign_keys='Prestige.recipient_id', backref='recipient', lazy='dynamic')
+    prestige_sends = db.relationship('Prestige', foreign_keys='Prestige.sender_id', backref='sender', lazy='dynamic')
+    prestige_receipts = db.relationship(
+        'Prestige',
+        foreign_keys='Prestige.recipient_id',
+        backref='recipient',
+        lazy='dynamic'
+    )
 
     # class constructor
     def __init__(self, data):
@@ -101,8 +106,11 @@ class User(db.Model):
         db.session.commit()
 
     def update(self, data):
-        """ update a user """
+        """
 
+        Args:
+            data:
+        """
         self.name = data.get('name')
         self.email = data.get('email')
         self.right = data.get('right')
@@ -120,8 +128,14 @@ class User(db.Model):
         db.session.commit()
 
     def check_hash(self, password):
-        """ check if password match """
+        """
 
+        Args:
+            password:
+
+        Returns:
+
+        """
         return bcrypt.check_password_hash(self.password, password)
 
     @staticmethod

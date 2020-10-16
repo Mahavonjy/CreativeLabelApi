@@ -2,7 +2,6 @@
 """ shebang """
 
 import os
-import time
 
 from preferences import BLUES_ALLOWED
 from sources.tests.testParent.testParent import Test
@@ -11,29 +10,6 @@ import json
 
 
 class TestMedia(Test):
-    headers = None
-    mp3_file = None
-    wave_file = None
-    zip_file = None
-    photo_file = None
-    path = os.getcwd()
-    directory = "/sources/tests/medias/media_file_test/"
-    photo_name = "image_allowed_test.png"
-    mp3_name = "media_allowed_test.mp3"
-    wave_name = "media_wave_allowed_test.wav"
-    zip_name = "zipfile_test.zip"
-    beat = {
-        "title": "beats_test",
-        "artist": "artist_test",
-        "description": "artist_test",
-        "artist_tag": "artist_test",
-        "bpm": b'0',
-        "genre": "test_genre",
-        "basic_price": b'12',
-        "silver_price": b'13',
-        "gold_price": b'13',
-        "platinum_price": b'23'
-    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -98,35 +74,15 @@ class TestMedia(Test):
         self.check_uploadBeat_error(error_message='stems not supported')
 
         directory_png = self.path + self.directory + self.photo_name
-        png = (os.path.basename(directory_png), open(directory_png, 'rb'), "image/png")
+        photo = (os.path.basename(directory_png), open(directory_png, 'rb'), "image/png")
         directory_mp3 = self.path + self.directory + self.mp3_name
         mp3 = (os.path.basename(directory_mp3), open(directory_mp3, 'rb'), "audio/mp3")
         directory_wave = self.path + self.directory + self.wave_name
-        wav = (os.path.basename(directory_wave), open(directory_wave, 'rb'), "audio/wav")
+        beats_wave = (os.path.basename(directory_wave), open(directory_wave, 'rb'), "audio/wav")
         directory_zip = self.path + self.directory + self.zip_name
-        _zip = (os.path.basename(directory_zip), open(directory_zip, 'rb'), "application/zip")
-        self.beat.update({'photo': png, 'file': mp3, 'beats_wave': wav, 'stems': _zip})
+        stems = (os.path.basename(directory_zip), open(directory_zip, 'rb'), "application/zip")
+        self.beat.update({'photo': photo, 'file': mp3, 'beats_wave': beats_wave, 'stems': stems})
         self.check_uploadBeat_error(status_code=200)
-
-    def create_beat_test(self):
-        """ """
-
-        self.headers = {"Isl-Token": self.check_beatMaker_token()}
-        self.beat['genre'] = BLUES_ALLOWED
-        self.beat.update({
-            'photo': self.photo_file,
-            'file': self.mp3_file,
-            'beats_wave': self.wave_file,
-            'stems': self.zip_file
-        })
-        data_form_type = MultipartEncoder(fields=self.beat)
-        resp = self.app.post(
-            'api/beats/uploadBeat',
-            headers=self.headers,
-            content_type=data_form_type.content_type,
-            data=data_form_type
-        )
-        self.assertEqual(resp.status_code, 200)
 
     def test_update_beat(self):
         """ """

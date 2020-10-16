@@ -24,7 +24,6 @@ class Media(db.Model):
     silver_price = db.Column(db.Float(), nullable=True)
     gold_price = db.Column(db.Float(), nullable=True)
     platinum_price = db.Column(db.Float(), nullable=True)
-    admire = db.Column(db.Integer, default=0)
     genre = db.Column(db.String(155), nullable=False)
     artist = db.Column(db.String(125), nullable=False)
     artist_tag = db.Column(db.String(255), nullable=True)
@@ -41,7 +40,7 @@ class Media(db.Model):
 
     # Relationship
     prestige = db.relationship(Prestige, lazy='dynamic', cascade="all, delete, save-update")
-    admiration = db.relationship(Admiration, cascade="all, delete, save-update", lazy='dynamic')
+    admirations = db.relationship(Admiration, cascade="all, delete, save-update", lazy='dynamic')
 
     # class constructor
     def __init__(self, data):
@@ -84,7 +83,6 @@ class Media(db.Model):
         self.artist = data.get('artist')
         self.photo = data.get('photo')
         self.genre = data.get('genre')
-        self.admire = data.get('admire')
         self.basic_price = data.get('basic_price')
         self.silver_price = data.get('silver_price')
         self.gold_price = data.get('gold_price')
@@ -139,7 +137,6 @@ class MediaSchema(ValidateSchema):
     mp3 = fields.Str(allow_none=True)
     genre = fields.Str(required=True)
     photo = fields.Str(allow_none=True)
-    admire = fields.Int(allow_none=True)
     share = fields.Int(allow_none=True)
     bpm = fields.Float(allow_none=True)
     time = fields.Str(allow_none=True)
@@ -164,7 +161,6 @@ class MediaOnStreamSchema(ValidateSchema):
     mp3 = fields.Str(allow_none=True)
     genre = fields.Str(required=True)
     photo = fields.Str(allow_none=True)
-    admire = fields.Int(allow_none=True)
     share = fields.Int(allow_none=True)
     bpm = fields.Float(allow_none=True)
     time = fields.Str(allow_none=True)

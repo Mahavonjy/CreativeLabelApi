@@ -14,19 +14,22 @@ class Admiration(db.Model):
     __tablename__ = 'admirations'
 
     id = db.Column(db.BIGINT, primary_key=True)
-    admire_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    song_id = db.Column(db.Integer, db.ForeignKey('medias.id'), nullable=True)
+    admire_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    beat_id = db.Column(db.Integer, db.ForeignKey('medias.id'), nullable=True)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
+
+    # relationship
+    beat = db.relationship("Media", backref=db.backref("medias", uselist=False))
 
     # class constructor
     def __init__(self, data):
         """ Class constructor """
 
         self.user_id = data.get('user_id')
-        self.song_id = data.get('song_id') if data.get('song_id') else None
-        self.admire_id = data.get('admire_id') if data.get('admire_id') else None
+        self.beat_id = data.get('beat_id', None)
+        self.admire_id = data.get('admire_id', None)
         self.created_at = datetime.datetime.utcnow()
         self.modified_at = datetime.datetime.utcnow()
 
@@ -42,10 +45,10 @@ class Admiration(db.Model):
         db.session.commit()
 
     @staticmethod
-    def user_admire_song(song_id, user_id):
-        """ if exist song_id admired by user  """
+    def user_admire_song(beat_id, user_id):
+        """ if exist beat_id admired by user  """
 
-        return Admiration.query.filter_by(user_id=user_id, song_id=song_id).first()
+        return Admiration.query.filter_by(user_id=user_id, beat_id=beat_id).first()
 
 
 class AdmireSchema(ValidateSchema):
@@ -54,6 +57,6 @@ class AdmireSchema(ValidateSchema):
     id = fields.Int(dump_only=True)
     admire_id = fields.Int(allow_none=True)
     user_id = fields.Int(required=True)
-    song_id = fields.Int(allow_none=True)
+    beat_id = fields.Int(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)

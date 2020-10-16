@@ -8,8 +8,8 @@ from sources.models import custom_response
 from sources.models.profiles.profile import ProfileSchema
 from sources.tools.tools import validate_data
 from sources.models.users.user import UserSchema
-from preferences import ALLOWED_MUSIC_MP3, ALLOWED_MUSIC_MPEG, ALLOWED_MUSIC_WAV, ALLOWED_MUSIC_WAVE, FILE_ZIPPED, \
-    USER_ARTIST_BEATMAKER
+from preferences import ALLOWED_MUSIC_MP3, ALLOWED_MUSIC_MPEG, ALLOWED_MUSIC_WAV, ALLOWED_MUSIC_WAVE, \
+    ALLOWED_MUSIC_X_WAV, FILE_ZIPPED, USER_ARTIST_BEATMAKER
 
 profile_schema = ProfileSchema()
 media_schema = MediaSchema()
@@ -50,7 +50,7 @@ def _specific(photo=None, mp3=None, wave=None, stems=None, update=False):
 
         if wave:
             file_type_wave = wave.content_type
-            if file_type_wave.split('/', 1)[1] not in [ALLOWED_MUSIC_WAVE, ALLOWED_MUSIC_WAV]:
+            if file_type_wave.split('/', 1)[1] not in [ALLOWED_MUSIC_WAVE, ALLOWED_MUSIC_WAV, ALLOWED_MUSIC_X_WAV]:
                 return "wave file not allowed"
     except AttributeError:
         pass

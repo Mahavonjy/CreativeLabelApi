@@ -14,10 +14,10 @@ class Carts(db.Model):
     __tablename__ = 'carts'
 
     id = db.Column(db.BIGINT, primary_key=True)
-    song_id = db.Column(db.Integer)
+    beat_id = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    price = db.Column(db.Integer)
-    licenses_name = db.Column(db.String(50))
+    price = db.Column(db.Float())
+    license = db.Column(db.String(50))
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
 
@@ -25,10 +25,10 @@ class Carts(db.Model):
     def __init__(self, data):
         """ Class constructor """
 
-        self.song_id = data.get("song_id")
+        self.beat_id = data.get("beat_id")
         self.user_id = data.get("user_id")
         self.price = data.get("price")
-        self.licenses_name = data.get("licenses_name")
+        self.license = data.get("license")
         self.created_at = datetime.datetime.now()
         self.modified_at = datetime.datetime.now()
 
@@ -50,8 +50,8 @@ class CartSchema(ValidateSchema):
 
     user_id = fields.Int()
     id = fields.Int(dump_only=True)
-    song_id = fields.Int(required=True)
-    price = fields.Int(required=False)
-    licenses_name = fields.Str(required=True)
+    beat_id = fields.Int(required=True)
+    price = fields.Float(required=False)
+    license = fields.Str(required=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)

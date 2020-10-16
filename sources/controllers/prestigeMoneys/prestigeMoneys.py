@@ -1,67 +1,118 @@
 #!/usr/bin/env python3
 """ shebang """
 
+from sources.models.artists.services.artistServices import Services
+from sources.models.medias.media import Media
 from sources.models.prestigeMoneys.prestigeMoneys import Prestige, PrestigeSchema
 from sources.models.users.user import User, UserSchema
-from sources.tools.tools import random_string, convert_dict_to_sql_json
+from sources.tools.tools import random_string
 from auth.authentification import Auth
 from sources.mail.SendMail import send_prestige
 from sources.models import custom_response
-from preferences import defaultData
-from flask import wrappers
+from preferences import PRESTIGE_ALLOWED_TYPE
 from flask import Blueprint
-from sqlalchemy import func
-import datetime
 
 prestige_api = Blueprint('prestige', __name__)
 prestige_schema = PrestigeSchema()
-user_schema = UserSchema()
 
 
-def prestige_data(ser_user_sender_id, ser_user_recipient_id, prestige, song_id):
+def prestige_data(sender_id=None, recipient_id=None, prestige=None, beat_id=None, service_id=None):
     """
 
-    :param ser_user_sender_id: id of user who send a prestige
-    :param ser_user_recipient_id: id of artist who receive the prestige
-    :param prestige: this is an information of the prestige
-    :param song_id: store an id song
-    :return: a dict of all information
+    Args:
+        sender_id:
+        recipient_id:
+        prestige:
+        beat_id:
+        service_id:
+
+    Returns:
+
     """
 
     return dict(
-        key_share=random_string(20), media_id=song_id, recipient_id=ser_user_recipient_id,
-        sender_id=ser_user_sender_id, prestige=defaultData.prestige_allowed_type[prestige]
+        key_share=random_string(20),
+        beat_id=beat_id,
+        service_id=service_id,
+        recipient_id=recipient_id,
+        sender_id=sender_id,
+        prestige=prestige
     )
 
 
-@prestige_api.route('/send/<int:prestige>/<int:song_id>', methods=['POST'])
+@prestige_api.route('/<string:prestige>/beat/<int:beat_id>', methods=['POST'])
+@prestige_api.route('/<string:prestige>/service/<int:service_id>', methods=['POST'])
 @Auth.auth_required
-def send_prestige_email(prestige, song_id, user_connected_model, user_connected_schema):
+def send_prestige_email(user_connected_model, user_connected_schema, prestige, beat_id=None, service_id=None):
     """
 
-    @param song_id: store an id song
-    @param prestige:  prestige type
-    @param user_connected_schema:
-    @param user_connected_model:
-    :return: success if success else prestige not found
+    Args:
+        prestige:
+        beat_id:
+        service_id:
+        user_connected_model:
+        user_connected_schema:
     """
 
-    # song = response_is_song_not_exist = get_one_media(song_id, True)
-    # if isinstance(response_is_song_not_exist, wrappers.Response) and response_is_song_not_exist.status_code == 400:
-    #     return response_is_song_not_exist
-    # user_recipient = User.get_one_user(song.get('user_id'))
-    # ser_user_recipient = user_schema.dump(user_recipient)
-    # if user_connected_schema.get('email') == ser_user_recipient.get('email'):
-    #     return custom_response('Unauthorized', 400)
-    # data = prestige_data(user_connected_schema.get('id'), ser_user_recipient.get('id'), prestige, song_id)
-    # if not data:
-    #     return custom_response("prestige not found", 400)
-    # now = datetime.datetime.now().strftime("%Y-%m")
-    # Prestige(data).save()
-    # send_prestige("SendPrestige.html", user_connected_schema.get('name'), user_connected_schema.get('email'),
-    #               ser_user_recipient.get('email'), data.get('prestige'), song.get('title'))
-    # user_recipient_story_model = user_recipient.history[0]
-    # recipient_story['months_story'][str(now)]['prestige'].append(defaultData.prestige_allowed_type[prestige])
-    # recipient_story['months_story'] = func.json_build_object(*convert_dict_to_sql_json(recipient_story['months_story']))
-    # user_recipient.history[0].update(recipient_story)
-    # return custom_response("success", 200)
+    if prestige not in list(PRESTIGE_ALLOWED_TYPE):
+        return custom_response("prestige type not found", 400)
+
+    prestige = PRESTIGE_ALLOWED_TYPE[prestige]
+    mail_data = dict(template="prestige.html")
+
+    if beat_id:
+        beat = Media.get_song_by_id(beat_id)
+        if not beat:
+            return custom_response("beat not found", 400)
+
+        recipient = User.get_one_user(beat.user_id)
+        mail_data.update(dict(beat_title=beat.title))
+
+    else:
+        service = Services.get_by_service_id(service_id)
+        if not service:
+            return custom_response("service not found", 400)
+
+        recipient = User.get_one_user(service.user_id)
+        mail_data.update(dict(service_title=service.title))
+
+    if user_connected_model.email == recipient.email:
+        return custom_response('Unauthorized', 400)
+
+    data = prestige_data(
+        sender_id=user_connected_model.id,
+        recipient_id=recipient.id,
+        service_id=service_id,
+        prestige=prestige,
+        beat_id=beat_id,
+    )
+    mail_data.update(dict(
+        reference=data['key_share'],
+        sender_name=user_connected_model.name,
+        sender_email=user_connected_model.email,
+        recipient_email=recipient.email,
+        prestige=prestige)
+    )
+    Prestige(data).save()
+    send_prestige(**mail_data)
+
+    return custom_response("success", 200)
+
+
+@prestige_api.route('/me', methods=['GET'])
+@Auth.auth_required
+def get_my_prestige_send(user_connected_model, user_connected_schema):
+    """
+
+    Args:
+        user_connected_model:
+        user_connected_schema:
+    """
+
+    all_prestige = {"sends": [], "receipted": []}
+    sends = user_connected_model.prestige_sends.all()
+    all_prestige["sends"] = [prestige_schema.dump(send) for send in sends]
+    receipted = user_connected_model.prestige_receipts.all()
+    all_prestige["receipted"] = [prestige_schema.dump(receipt) for receipt in receipted]
+
+    return custom_response(all_prestige, 200)

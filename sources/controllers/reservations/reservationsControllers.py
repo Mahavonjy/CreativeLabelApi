@@ -59,6 +59,8 @@ def check_price_details(price=None, ht_price=None):
 @reservation_api.route('/new', methods=['POST'])
 @Auth.auth_required
 def create_a_new_reservation(user_connected_model, user_connected_schema):
+    """ """
+
     data, error = validate_data(reservation_schema, request)
     if error:
         return custom_response(data, 400)
@@ -83,7 +85,7 @@ def create_a_new_reservation(user_connected_model, user_connected_schema):
         'reference': payment_reference,
         'isl_amount': isl_amount,
         'artist_amount': artist_amount,
-        'ip_address': data['stripe_token']['client_ip'],
+        'ip_address': None,
         'total_amount': total_amount
     }
 
@@ -93,40 +95,51 @@ def create_a_new_reservation(user_connected_model, user_connected_schema):
     artist = User.get_one_user(data["artist_owner_id"])
     data["artist_email"] = artist.email
 
-    payment = payment_stripe(total_amount, data['stripe_token']['id'], "Purchase Service KantoBiz")
+    # payment = payment_stripe(total_amount, data['stripe_token']['id'], "Purchase Service KantoBiz")
 
     if data["email"] != user_connected_schema["email"]:
         data["auditor_email"] = user_connected_schema["email"]
 
-    if payment.paid:
-        new_reservation = Reservations({
-            "event": data["event"],
-            "status": PENDING,
-            "address": data["address"],
-            "total_amount": total_amount,
-            "event_date": data["event_date"],
-            "services_id": data["services_id"],
-            "artist_owner_id": data["artist_owner_id"],
-            "options_id_list": data["options_id_list"],
-            "payment_history_id": payment_history_to_save.id,
-            "auditor_who_reserve_id": user_connected_model.id,
-            "refund_policy": artist.condition_globals[0].refund_policy
-        })
-        new_reservation.save()
-        payment_success_send_email({"user_data": data}, payment_reference, total_amount, total_tva)
-        return custom_response(reservation_basic_schema.dump(new_reservation), 200)
+    # if payment.paid:
+    new_reservation = Reservations({
+        "event": data["event"],
+        "status": PENDING,
+        "address": data["address"],
+        "total_amount": total_amount,
+        "event_date": data["event_date"],
+        "services_id": data["services_id"],
+        "artist_owner_id": data["artist_owner_id"],
+        "options_id_list": data["options_id_list"],
+        "payment_history_id": payment_history_to_save.id,
+        "auditor_who_reserve_id": user_connected_model.id,
+        "refund_policy": artist.condition_globals[0].refund_policy
+    })
+    new_reservation.save()
+    payment_success_send_email({"user_data": data}, payment_reference, total_amount, total_tva)
+    return custom_response(reservation_basic_schema.dump(new_reservation), 200)
 
-    auditor_email = data.get("auditor_email")
-    if auditor_email:
-        payment_refused('PaymentRefused.html', data=data, user_type="customer", email=auditor_email)
-    payment_refused("PaymentRefused.html", data=data, user_type="customer", email=data["email"])
-    payment_refused("PaymentRefused.html", data=data, user_type="admin", email=data["artist_email"])
-    return custom_response("payment refused", 400)
+    # auditor_email = data.get("auditor_email")
+    # if auditor_email:
+    #     payment_refused('PaymentRefused.html', data=data, user_type="customer", email=auditor_email)
+    # payment_refused("PaymentRefused.html", data=data, user_type="customer", email=data["email"])
+    # payment_refused("PaymentRefused.html", data=data, user_type="admin", email=data["artist_email"])
+    # return custom_response("payment refused", 400)
 
 
 @reservation_api.route('/artist_decline/<int:reservation_id>', methods=['PUT'])
 @Auth.auth_required
 def artist_decline_reservation(reservation_id, user_connected_model, user_connected_schema):
+    """
+
+    Args:
+        reservation_id:
+        user_connected_model:
+        user_connected_schema:
+
+    Returns:
+
+    """
+
     user_reservation = user_connected_model.reservation_list.filter_by(id=reservation_id).first()
     if user_reservation:
         reservation_s = reservation_basic_schema.dump(user_reservation)
@@ -176,6 +189,17 @@ def artist_decline_reservation(reservation_id, user_connected_model, user_connec
 @reservation_api.route('/artist_accept/<int:reservation_id>', methods=['PUT'])
 @Auth.auth_required
 def artist_accept_reservation(reservation_id, user_connected_model, user_connected_schema):
+    """
+
+    Args:
+        reservation_id:
+        user_connected_model:
+        user_connected_schema:
+
+    Returns:
+
+    """
+
     user_reservation = user_connected_model.reservation_list.filter_by(id=reservation_id).first()
     if user_reservation:
         reservation_s = reservation_basic_schema.dump(user_reservation)
@@ -220,6 +244,17 @@ def artist_accept_reservation(reservation_id, user_connected_model, user_connect
 @reservation_api.route('/auditor_decline/<int:reservation_id>', methods=['PUT'])
 @Auth.auth_required
 def auditor_decline_reservation(reservation_id, user_connected_model, user_connected_schema):
+    """
+
+    Args:
+        reservation_id:
+        user_connected_model:
+        user_connected_schema:
+
+    Returns:
+
+    """
+
     user_reservation = user_connected_model.booking_list.filter_by(id=reservation_id).first()
 
     if user_reservation:
@@ -268,6 +303,16 @@ def auditor_decline_reservation(reservation_id, user_connected_model, user_conne
 
 
 def custom_response_after_update(user_connected_model, user_reservation):
+    """
+
+    Args:
+        user_connected_model:
+        user_reservation:
+
+    Returns:
+
+    """
+
     tmp = check_reservation_info_with_service_info(reservation_basic_schema, Services, User, user_reservation, True)
     tmp.update({"payment_history": check_all_user_payment_history(
         user_connected_model, payment_history_schema, User, Reservations)})

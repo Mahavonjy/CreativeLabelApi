@@ -77,9 +77,9 @@ def show_profile(user_connected_model, user_connected_schema):
 
     return custom_response({
         "notes": notes,
-        "role": user_connected_schema['user_type'],
-        "my_followings": len(user_connected_model.user.all()),
-        "my_followers": len(user_connected_model.admire.all()),
+        "role": user_connected_model.user_type,
+        "my_followings": user_connected_model.all_admires.count(),
+        "my_followers": user_connected_model.my_admirers.count(),
         "my_profile": profile_schema.dump(profile),
         "conditions": user_condition_globals,
         "banking": user_banking or {},

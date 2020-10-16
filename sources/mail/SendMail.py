@@ -15,7 +15,7 @@ from flask_mail import Message
 from preferences import CLOUD_INVOICE
 
 template_mail = "Mail/"
-reference_path_in_sources = "BeatsReferencePdf/"
+reference_path_in_sources = "beatsReferencePdf/"
 sender_mail = app_config[os.getenv('FLASK_ENV')].MAIL_USERNAME
 
 
@@ -102,12 +102,27 @@ def password_updated(template, email, name):
     return send_message_to_user(msg)
 
 
-def send_prestige(template, sender_name, sender_email, recipient_email, prestige, music):
+def send_prestige(
+        template,
+        reference,
+        sender_name,
+        sender_email,
+        recipient_email,
+        prestige,
+        beat_title=None,
+        service_title=None):
     """ this is function for send prestige """
 
-    msg = Message('Prestige money', sender=sender_mail, recipients=[recipient_email])
+    msg = Message('Prestige', sender=sender_mail, recipients=[recipient_email])
     msg.html = r(
-        template_mail + template, sender_email=sender_email, sender_name=sender_name, prestige=prestige, music=music)
+        template_mail + template,
+        prestige=prestige,
+        sender_name=sender_name,
+        sender_email=sender_email,
+        service_title=service_title,
+        beat_title=beat_title,
+        reference=reference,
+    )
     return send_message_to_user(msg)
 
 

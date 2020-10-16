@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """ shebang """
 
+import json
+
 from preferences import USER_ARTIST_BEATMAKER
 from sources.models.artists.beatMakers.contractBeatmaking.contractBeatmaking import ContractBeatMaking
 from sources.models.artists.conditions.globals import ConditionGlobals
@@ -9,7 +11,6 @@ from requests_toolbelt import MultipartEncoder
 from sources.models.keyResetPassword.keyResetPasswords import KeyResetPassword
 from sources.models.users.user import User
 from auth.authentification import Auth
-import json
 
 
 class TestAuthentification(Test):
@@ -85,24 +86,6 @@ class TestAuthentification(Test):
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(json_returned, error_message)
         self.service_test[key] = key_true_value
-
-    def createTestAccount(self):
-        data_form_type = MultipartEncoder(fields={"name": self.name, "email": self.email, "password": self.password})
-        response = self.app.post('api/users/register', data=data_form_type, content_type=data_form_type.content_type)
-        self.assertEqual(response.status_code, 200)
-
-        # Check my key in data
-        with self._app.app_context():
-            user = User.get_user_by_email(email=self.email)
-            self.assertTrue(user)
-            keys_obj = KeyResetPassword.get_by_user_id(user.id)
-            self.assertTrue(keys_obj)
-
-        new_data = {"keys": keys_obj.keys, "email": self.email}
-        response = self.app.post(
-            'api/users/get_if_keys_validate', data=json.dumps(new_data), content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 200)
 
     def test_change_user_type_auditor_to_artist(self):
 

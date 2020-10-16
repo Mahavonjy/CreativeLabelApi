@@ -3,11 +3,16 @@
     Init all variable global in project
 """
 
+# BEAT LICENSE
+BASIC_LICENSE = "basic_lease"
+SILVER_LICENSE = "silver_lease"
+GOLD_LICENSE = "gold_lease"
+PLATINUM_LICENSE = "platinum_lease"
+
 # COUNTRY
 all_country_allowed = ["MG"]
 
 # ALL AUDIO TYPE ALLOWED
-
 OTHERS = "autres"
 FOLK_ALLOWED = "Folk"
 METAL_ALLOWED = "Metal"
@@ -61,13 +66,9 @@ ZAFINDRAONA_ALLOWED = "Zafindraona"
 HIP_HOP_ALLOWED = "Hip-hop"
 COUPE_DECALE_ALLOWED = "Coupé-Décalé"
 
-# BUCKET LIST OF NAME ON GOOGLE CLOUD STORAGE
-GOOGLE_BUCKET_BEATS = 'beats'
-GOOGLE_BUCKET_AUDIOS = 'audios'
-
+# CLOUD STORAGE NAME
 CLOUD_BEATS = 'beats'
 CLOUD_AUDIOS = 'audios'
-
 CLOUD_INVOICE = 'invoices'
 CLOUD_BEAT_STEMS = 'beats_stems'
 CLOUD_TECHNICAL_SHEET = 'technical_sheets'
@@ -82,14 +83,13 @@ CLOUD_IMAGES_FOLDERS = [CLOUD_TECHNICAL_SHEET, CLOUD_IMAGES_AUDIOS_TYPE, CLOUD_I
                         CLOUD_IMAGES_PROFILES_TYPE, CLOUD_IMAGES_PARTNERS_TYPE]
 
 # PRESTIGE TYPE
-CAFE_PRESTIGE = "café"
-BASY_MENA_PRESTIGE = "Basy Mena"
-PRESTIGE_MONEY = "Prestige Money"
+PRESTIGE_ALLOWED_TYPE = {"basy_mena": "Basy Mena", "cafe": "café", "prestige_money": "Prestige Money"}
 
 # MUSICAL ALLOWED TYPE
 ALLOWED_MUSIC_MP3 = "mp3"
 ALLOWED_MUSIC_WAVE = "wave"
 ALLOWED_MUSIC_WAV = "wav"
+ALLOWED_MUSIC_X_WAV = "x-wav"
 ALLOWED_MUSIC_MPEG = "mpeg"
 
 # ALL MUSICAL GENRES
@@ -133,7 +133,6 @@ FILE_ZIPPED = "zip"
 FR = "fr"
 
 # THEMATICS OPTIONS
-
 MUSIC_VIDEO_EDITOR = 'Monteur vidéoclip'
 CAMERAMAN = 'Cameraman'
 PHOTOGRAPHERS = 'Photographes'
@@ -163,7 +162,6 @@ STAND_UP = 'Stand up'
 VIDEO_CLIP_DIRECTOR = 'Réalisateur clip vidéo'
 
 # DANCE
-
 BACHATA = "Bachata"
 CAPOEIRA = "Capoeira"
 CHACHACHA = "Chachacha"
@@ -177,7 +175,6 @@ SALSA = "Salsa"
 TANGO = "Tango"
 
 # EVENTS
-
 MARIAGE = "Mariage"
 TRADITIONAL_PARTY = "Fête traditionnelle"
 BIRTHDAY_PARTY = "Anniversaire"
@@ -197,3 +194,6 @@ DECLINED = "declined"
 # TRANSACTION_TYPE
 KANTOBIZ = "kantobiz"
 BEATMAKING = "beats"
+
+# Profile
+profile_keys_to_remove = ['address', 'age', 'city', 'region', 'social_id', 'photo', 'email', 'cover_photo', 'phone']
